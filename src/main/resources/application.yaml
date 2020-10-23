@@ -1,0 +1,61 @@
+mybatis:
+  #mybatis扫描xml
+  mapper-locations: classpath:com.example.jinshuju.mapper/*.xml
+  #配置映射类所在包
+  type-aliases-package: classpath:com.example.jinshuju.pojo
+server:
+  #访问端口号
+  port: 8080
+  servlet:
+    #编码
+    encoding:
+      #编码格式
+      charset: UTF-8
+      enabled: true
+      force: true
+    session:
+      #session生命周期
+      timeout: 30m
+  tomcat:
+    uri-encoding: utf-8
+spring:
+  application:
+    #访问根路径
+    #应用名称
+    name: jinshuju
+  datasource:
+    #数据库相关配置 直接整合到mybatis里面
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    initial-size: 5
+    max-idle: 10
+    max-wait: 10000
+    min-idle: 5
+    password: 123456
+    url: jdbc:mysql://localhost:3306/jinshuju?autoReconnect=true&characterEncoding=utf-8&testOnBorrow=true&serverTimezone=UTC
+    username: root
+  jackson:
+    #时间格式化
+    date-format: yyyy-MM-dd HH:mm:ss
+  mail:
+    #邮箱配置
+    #邮箱编码
+    default-encoding: UTF-8
+    #自己的邮箱，我的是126邮箱
+    host: smtp.126.com
+    #SMTP授权码
+    password: SBMNEQPBBXGXGNZX
+    #默认端口25
+    port: 25
+    #使用smtp协议
+    protocol: smtp
+    #自己的邮箱号
+    username: adandp776@126.com
+    #
+    nickname: 金数据（伪）
+  redis:
+    host: 127.0.0.1
+    password: 123456
+    port: 6379
+  mvc:
+    #静态文件路径
+    static-path-pattern: /**

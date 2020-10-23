@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.jinshuju.mapper.UserMapper">
+    <!-- mapper:根标签，namespace：命名空间，随便写，一般保证命名空间唯一 -->
+    <!-- <mapper namespace="MapperDemo"> statement，内容：sql语句。id：唯一标识，随便写，在同一个命名空间下保持唯一,resultType：sql语句查询结果集的封装类型,tb_user即为数据库中的表
+        </mapper> -->
+    <resultMap id="UserResultMap" type="com.example.jinshuju.pojo.User">
+        <!-- 关联对象，一对一 property：映射数据库列的实体对象的属性 colum:数据库的列名或者列标签别名 javaType：完整Java类名或者别名
+			resultMap：引用外部resultMap jdbcType支持的JDBC类型列表列出的JDBC类型。这个属性只在insert,update或delete的时候针对允许空的列有用 -->
+        <id column="user_id" property="userId"/>
+        <result property="userName" column="user_name"/>
+        <result property="userPassword" column="user_password"/>
+        <result property="userEmail" column="user_email"/>
+        <result property="userEmailStatus" column="user_email_status"/>
+        <result property="userEmailKey" column="user_email_key"/>
+        <result property="userEmailKeyTime" column="user_email_key_time"/>
+        <result property="userTelephone" column="user_telephone"/>
+        <result property="userCreateTime" column="user_create_time"/>
+        <result property="userUpdateTime" column="user_update_time"/>
+        <result property="userImg" column="user_img"/>
+        <result property="userRefreshToken" column="user_refreshToken"/>
+    </resultMap>
+
+    <!--  新建用户  -->
+    <insert id="insertUser" parameterType="com.example.jinshuju.pojo.User">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName!=null and userName!=''">user_name,</if>
+            <if test="userPassword!=null and userPassword!=''">user_password,</if>
+            <if test="userEmail!=null and userEmail!=''">user_email,</if>
+            <if test="userEmailStatus!=''">user_email_status,</if>
+            <if test="userEmailKey!=0">user_email_key,</if>
+            <if test="userEmailKeyTime!=null">user_email_key_time,</if>
+            <if test="userTelephone!=null and userTelephone!=''">user_telephone,</if>
+            <if test="userCreateTime!=null">user_create_time,</if>
+            <if test="userUpdateTime!=null">user_update_time,</if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="userName!=null and userName!=''">#{userName},</if>
+            <if test="userPassword!=null and userPassword!=''">#{userPassword},</if>
+            <if test="userEmail!=null and userEmail!=''">#{userEmail},</if>
+            <if test="userEmailStatus!=''">#{userEmailStatus},</if>
+            <if test="userEmailKey!=0">#{userEmailKey},</if>
+            <if test="userEmailKeyTime!=null">#{userEmailKeyTime},</if>
+            <if test="userTelephone!=null and userTelephone!=''">#{userTelephone},</if>
+            <if test="userCreateTime!=null">#{userCreateTime},</if>
+            <if test="userUpdateTime!=null">#{userUpdateTime},</if>
+        </trim>
+    </insert>
+    <insert id="insertRefreshToken"></insert>
+    <select id="checkUser" resultType="java.lang.Boolean" parameterType="String">
+        select count(1) from user where user_name = #{username}
+    </select>
+    <select id="loginUserByUserName" resultMap="UserResultMap" parameterType="com.example.jinshuju.pojo.User">
+        select * from user where user_name = #{username}
+    </select>
+    <select id="loginUserByEmail" resultMap="UserResultMap" parameterType="com.example.jinshuju.pojo.User">
+        select * from user where user_email = #{username}
+    </select>
+    <select id="findOneById" resultType="com.example.jinshuju.pojo.User" parameterType="int">
+        select * from user when user_id = #{userid};
+    </select>
+
+
+</mapper>
