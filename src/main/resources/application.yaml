@@ -43,7 +43,6 @@ spring:
     #自己的邮箱，我的是126邮箱
     host: smtp.126.com
     #SMTP授权码
-    password: SBMNEQPBBXGXGNZX
     #默认端口25
     port: 25
     #使用smtp协议
