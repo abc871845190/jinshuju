@@ -20,6 +20,6 @@
         select * from user_refresh_token where token = #{token};
     </select>
     <select id="getCreateTimeById" resultType="java.sql.Timestamp" parameterType="int">
-        select create_time from user_refresh_token where id = #{userid};
+        select create_time from user_refresh_token where user_id = #{userid};
     </select>
 </mapper>

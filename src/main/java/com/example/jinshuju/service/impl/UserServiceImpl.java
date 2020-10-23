@@ -112,20 +112,21 @@ public class UserServiceImpl implements UserService {
     private String createRefreshToken(HttpServletResponse response, User foundUser, Timestamp lastTime) {
         //删除一下原来的refreshToken
         int userid = foundUser.getUserId();
-        log.info("userid is   ==>   " + String.valueOf(userid));
+        //log.info("userid is   ==>   " + String.valueOf(userid));
         tokenMapper.deleteRefreshTokenById(userid);
         //生成token,自定1小时过期
         String token = JwtUtils.createJWT(ClaimsUtils.UserToClaims(foundUser), Constants.TimeValue.ONE_HOUR * 2);
-        log.info("create token   ==>   " + token);
+        //log.info("create token   ==>   " + token);
         //生成md5版本的token
         String tokenKey = DigestUtils.md5DigestAsHex(token.getBytes());
-        log.info("create md5 token   ==>   " + tokenKey);
+        //log.info("create md5 token   ==>   " + tokenKey);
         //保存token到redis
         redisUtils.set(Constants.User.KEY_TOKEN + tokenKey, token, Constants.TimeValue.ONE_HOUR * 2);
         //把tokenKey写到cookie里面
         CookiesUtils.setCookies(response, Constants.User.COOKIES_TOKEN, tokenKey, "/");
         //生成refreshToken
         String refreshToken = JwtUtils.createRefreshJWT(String.valueOf(foundUser.getUserId()), Constants.TimeValue.ONE_WEEK * 1000);
+        //log.info("create refreshToken is   ==>   "+refreshToken);
         UserRefreshToken userRefreshToken = new UserRefreshToken();
         userRefreshToken.setUserId(foundUser.getUserId());
         userRefreshToken.setRefreshToken(refreshToken);
@@ -141,14 +142,14 @@ public class UserServiceImpl implements UserService {
     public User checkUserLogin(HttpServletRequest request, HttpServletResponse response) {
         //拿cookies的md5token
         String tokenKey = CookiesUtils.getCookieValue(request, Constants.User.COOKIES_TOKEN);
-        log.info("tokenKey   ==>   " + tokenKey);
+        //log.info("tokenKey   ==>   " + tokenKey);
         //把cookies的md5token在redis里面拿数据
         User realuser = parseByToken(tokenKey);
         if (realuser == null) {
             log.info("realuser is null");
             //报错证明token已经过期或者没有该token
             String token = (String) redisUtils.get(Constants.User.KEY_TOKEN + tokenKey);
-            log.info("token is   ==>   " + token);
+            //log.info("token is   ==>   " + token);
             UserRefreshToken userRefreshToken = tokenMapper.getRefreshTokenByToken(token);
             //到数据库拿refreshToken看是否存在，
             if (userRefreshToken == null) {
@@ -162,10 +163,10 @@ public class UserServiceImpl implements UserService {
                 //有效，就创建新的refreshToken，和新的Token
                 //解析refreshToken，
                 String refreshToken = userRefreshToken.getRefreshToken();
-                log.info("refreshToken is   ==>   " + refreshToken);
+                //log.info("refreshToken is   ==>   " + refreshToken);
                 Claims claims = JwtUtils.parseJWT(refreshToken);
                 String userid = claims.getId();
-                log.info("refreshToken userid   ==>   " + userid);
+                //log.info("refreshToken userid   ==>   " + userid);
                 User user = userMapper.findOneById(Integer.parseInt(userid));
                 //获取之前的createdtime
                 Timestamp lasttime = tokenMapper.getCreateTimeById(Integer.parseInt(userid));
@@ -173,12 +174,13 @@ public class UserServiceImpl implements UserService {
                 tokenMapper.deleteRefreshTokenById(Integer.parseInt(userid));
                 //创建新的refreshToken
                 String newTokenKey = createRefreshToken(response, user, lasttime);
-                log.info("new TokenKey is   ==>   " + newTokenKey);
+                //log.info("new TokenKey is   ==>   " + newTokenKey);
                 //返回token
                 return parseByToken(newTokenKey);
             } catch (Exception e1) {
                 //报错，即refreshToken过期
                 //TODO:提示用户登陆
+                e1.printStackTrace();
                 log.info("refreshToken is expiration");
                 return null;
             }
@@ -198,7 +200,7 @@ public class UserServiceImpl implements UserService {
 
     private User parseByToken(String tokenKey) {
         String token = (String) redisUtils.get(Constants.User.KEY_TOKEN + tokenKey);
-        log.info("redis-token   ==>   " + token);
+        //log.info("redis-token   ==>   " + token);
         if (token != null) {
             //有token，解析token
             try {

@@ -57,8 +57,8 @@
     <select id="loginUserByEmail" resultMap="UserResultMap" parameterType="com.example.jinshuju.pojo.User">
         select * from user where user_email = #{username}
     </select>
-    <select id="findOneById" resultType="com.example.jinshuju.pojo.User" parameterType="int">
-        select * from user when user_id = #{userid};
+    <select id="findOneById" resultMap="UserResultMap" parameterType="int">
+        select * from user where user_id = #{userid};
     </select>
 
 
