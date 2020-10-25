@@ -47,7 +47,7 @@ public class UserController {
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
     })
-    @PostMapping("/insertUser")
+    @PostMapping("/User")
     public Result insertUser(@RequestBody User user) {
         log.info("user is :" + user.toString());
         return userService.registerUser(user);
@@ -98,7 +98,7 @@ public class UserController {
             @ApiImplicitParam(paramType = "query", name = "oriPsw", value = "原密码", required = true, dataType = "String", example = "123456"),
             @ApiImplicitParam(paramType = "query", name = "newPsw", value = "新密码", required = true, dataType = "String", example = "1234567")
     })
-    @PostMapping("/updatePsw")
+    @PutMapping("/updatePsw")
     public Result updatePsw(@RequestBody Map<String, Object> map) {
         int userid = (int) map.get("userid");
         String originPsw = (String) map.get("oriPsw");
@@ -140,7 +140,7 @@ public class UserController {
      * @return
      */
     @ApiOperation("验证码邮箱")
-    @PostMapping("/bindEmail")
+    @PutMapping("/bindEmail")
     public Result bindEmail(@RequestBody String email) {
         int key = TextUtils.RandomCode();
         //TODO:讲验证码存进redis数据库,并设置数据缓存时间5分钟

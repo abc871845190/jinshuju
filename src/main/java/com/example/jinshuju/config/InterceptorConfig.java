@@ -19,7 +19,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registration.addPathPatterns("/**");
         //添加不拦截路径
         registration.excludePathPatterns(
-                "/UserController/insertUser",
+                "/UserController/User",
                 "/UserController/loginUser",
                 "/swagger-resources/**",
                 "/webjars/**",
