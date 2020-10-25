@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * 用户控制类
@@ -80,29 +81,30 @@ public class UserController {
     }
 
     /**
-     * 检查原密码是否一样，用于修改密码
-     *
-     * @param user
-     * @return
-     */
-    public Result checkPsw(@RequestBody User user) {
-        return userService.checkPsw(user);
-    }
-
-    /**
      * 修改密码，用json存用户id和密码
      *
-     * @param user
      * @return
      */
-    @ApiOperation("修改密码")
+    @ApiOperation(value = "修改密码", response = Result.class)
     @ApiResponses({
-            @ApiResponse(code = 1, message = "成功"),
-            @ApiResponse(code = 2, message = "密码为空")
+            @ApiResponse(code = 1, message = "更新密码成功"),
+            @ApiResponse(code = 2, message = "更新密码失败"),
+            @ApiResponse(code = 2, message = "原密码和用户密码不一样"),
+            @ApiResponse(code = 2, message = "用户id找不到密码")
+
     })
-    @PutMapping("/updatePsw")
-    public Result updatePsw(@RequestBody User user) {
-        return userService.updatePsw(user);
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", name = "userid", value = "用户id", required = true, dataType = "int",example = "1"),
+            @ApiImplicitParam(paramType = "query", name = "oriPsw", value = "原密码", required = true, dataType = "String",example = "123456"),
+            @ApiImplicitParam(paramType = "query", name = "newPsw", value = "新密码", required = true, dataType = "String",example = "1234567")
+    })
+    @PostMapping("/updatePsw")
+    public Result updatePsw(@RequestBody Map<String, Object> map) {
+        int userid = (int) map.get("userid");
+        String originPsw = (String) map.get("oriPsw");
+        String newPsw = (String) map.get("newPsw");
+        //log.info("id = " + userid + "  oriPsw = " + originPsw + "  newPsw = " + newPsw);
+        return userService.updatePsw(userid, originPsw, newPsw);
     }
 
     /**

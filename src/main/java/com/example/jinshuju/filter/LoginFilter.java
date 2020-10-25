@@ -30,7 +30,6 @@ public class LoginFilter extends HandlerInterceptorAdapter {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        log.info("检测登陆中");
         //开始拦截登陆,检测是否登陆
         User user = userService.checkUserLogin(request, response);
         if (user != null) {
@@ -55,7 +54,6 @@ public class LoginFilter extends HandlerInterceptorAdapter {
      */
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        log.info("检测登录完成");
     }
 
     /**

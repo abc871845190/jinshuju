@@ -53,11 +53,12 @@
             <if test="userUpdateTime!=null">#{userUpdateTime},</if>
         </trim>
     </insert>
-    <update id="updatePswById" parameterType="com.example.jinshuju.pojo.User">
 
-    </update>
     <update id="checkUpdateCode" parameterType="com.example.jinshuju.pojo.User">
         update user set user_email = #{userEmail},user_telephone = #{userTelephone} where user_id = #{userId}
+    </update>
+    <update id="updatePswById">
+        update user set user_password = #{newPsw},user_update_time = #{now} where user_id = #{userid}
     </update>
     <select id="checkUser" resultType="java.lang.Boolean" parameterType="String">
         select count(1) from user where user_name = #{username}
@@ -76,6 +77,9 @@
     </select>
     <select id="checkUserNameByName" resultType="java.lang.Boolean" parameterType="String">
         select count(1) from user where user_name = #{username}
+    </select>
+    <select id="findOneAllById" resultMap="UserResultMap" parameterType="int">
+        select * from user where user_id = #{userid}
     </select>
 
 

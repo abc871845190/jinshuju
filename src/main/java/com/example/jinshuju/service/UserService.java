@@ -66,18 +66,21 @@ public interface UserService {
     /**
      * 修改密码
      *
-     * @param user
+     * @param userid
+     * @param originPsw
+     * @param newPsw
      * @return
      */
-    Result updatePsw(User user);
+    Result updatePsw(int userid, String originPsw, String newPsw);
 
     /**
-     * 判断用户原密码是否一样
+     * 检查原密码是否一致，用于修改密码
      *
-     * @param user
+     * @param userPsw
+     * @param originPsw
      * @return
      */
-    Result checkPsw(User user);
+    boolean checkPsw(String userPsw, String originPsw);
 
     Result checkUpdateCode(User user);
 }

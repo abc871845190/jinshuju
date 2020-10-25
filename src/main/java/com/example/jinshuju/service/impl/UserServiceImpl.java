@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
@@ -207,27 +208,55 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result updatePsw(User user) {
+    public Result updatePsw(int userid, String originPsw, String newPsw) {
         //判空
-        String psw = user.getUserPassword();
-        if (TextUtils.isEmpty(psw)) {
-            return ResultUtils.fail("密码为空");
+        if (userid == 0) {
+            return ResultUtils.fail("用户id为空");
         }
-        //加密
-        user.setUserPassword(bCryptPasswordEncoder.encode(psw));
-        user.setUserUpdateTime(new Timestamp(System.currentTimeMillis()));
-        return userMapper.updatePswById(user) == true ? ResultUtils.success("更新密码成功") : ResultUtils.fail("更新密码失败");
+        if (TextUtils.isEmpty(originPsw)) {
+            return ResultUtils.fail("原密码为空");
+        }
+        if (TextUtils.isEmpty(newPsw)) {
+            return ResultUtils.fail("新密码为空");
+        }
+        if (originPsw.equals(newPsw)) {
+            return ResultUtils.fail("原密码和新密码一样");
+        }
+        //拿用户数据
+        User foundUser = userMapper.findOneAllById(userid);
+        if (foundUser != null) {
+            //判原密码
+            Boolean equalsPsw = checkPsw(foundUser.getUserPassword(), originPsw);
+            //log.info("equalPsw is "+equalsPsw);
+            if (equalsPsw) {
+                //原密码一致，加密，更新密码
+                if (userMapper.updatePswById(userid, bCryptPasswordEncoder.encode(newPsw), new Timestamp(System.currentTimeMillis()))) {
+                    return ResultUtils.success("更新密码成功");
+                } else {
+                    return ResultUtils.fail("更新密码失败");
+                }
+            } else {
+                return ResultUtils.fail("原密码和用户密码不一样");
+            }
+        }
+        return ResultUtils.fail("用户id找不到密码");
     }
 
     @Override
-    public Result checkPsw(User user) {
-
-        return null;
+    public boolean checkPsw(String userPsw, String originPsw) {
+        //log.info("userPsw is   ==>   "+userPsw);
+        if (bCryptPasswordEncoder.matches(originPsw, userPsw)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public Result checkUpdateCode(User user) {
-        return ResultUtils.success("成功。",userMapper.checkUpdateCode(user));
+        int code = userMapper.checkUpdateCode(user);
+        log.info("code is   ==>   " + String.valueOf(code));
+        return ResultUtils.success("成功。", code);
     }
 
     private User parseByToken(String tokenKey) {

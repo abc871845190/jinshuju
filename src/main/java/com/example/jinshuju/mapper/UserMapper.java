@@ -4,6 +4,8 @@ import com.example.jinshuju.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.sql.Timestamp;
+
 @Mapper
 public interface UserMapper {
     /**
@@ -47,6 +49,14 @@ public interface UserMapper {
     User findOneById(int userid);
 
     /**
+     * 根据id 查找用户所有信息
+     *
+     * @param userid
+     * @return
+     */
+    User findOneAllById(int userid);
+
+    /**
      * 根据邮箱查记录
      *
      * @param email
@@ -65,10 +75,11 @@ public interface UserMapper {
     /**
      * 修改密码
      *
-     * @param user
+     * @param userid
+     * @param newPsw
      * @return
      */
-    Boolean updatePswById(User user);
+    Boolean updatePswById(@Param("userid") int userid, @Param("newPsw") String newPsw, @Param("now") Timestamp now);
 
     int checkUpdateCode(User user);
 }

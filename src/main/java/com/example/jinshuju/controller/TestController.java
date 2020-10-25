@@ -32,7 +32,6 @@ public class TestController {
     /**
      * 验证邮箱
      *
-     * @param email
      * @return
      */
     @ApiOperation("验证邮箱")
