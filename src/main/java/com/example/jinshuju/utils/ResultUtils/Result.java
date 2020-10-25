@@ -30,8 +30,9 @@ public class Result<T> {
         return data;
     }
 
-    public void setData(T data) {
+    public Result setData(T data) {
         this.data = data;
+        return this;
     }
 
     @Override

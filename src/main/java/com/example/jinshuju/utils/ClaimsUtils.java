@@ -15,6 +15,7 @@ public class ClaimsUtils {
     public static final String USERNAME = "username";
     public static final String USERIMG = "userimg";
     public static final String USERMAIL = "usermail";
+    public static final String USERTELEPHONE = "usertelephone";
 
     /**
      * 用户转化为map
@@ -32,6 +33,7 @@ public class ClaimsUtils {
             claims.put(USERIMG, user.getUserImg());
         }
         claims.put(USERMAIL, user.getUserEmail());
+        claims.put(USERTELEPHONE,user.getUserTelephone());
         return claims;
     }
 
@@ -47,6 +49,7 @@ public class ClaimsUtils {
         user.setUserId((int) claims.get(ID));
         user.setUserImg((String) claims.get(USERIMG));
         user.setUserEmail((String) claims.get(USERMAIL));
+        user.setUserTelephone((String) claims.get(USERTELEPHONE));
         return user;
     }
 }

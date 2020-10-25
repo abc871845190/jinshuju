@@ -18,9 +18,15 @@
         <result property="userCreateTime" column="user_create_time"/>
         <result property="userUpdateTime" column="user_update_time"/>
         <result property="userImg" column="user_img"/>
-        <result property="userRefreshToken" column="user_refreshToken"/>
     </resultMap>
 
+    <resultMap id="UserDataMap" type="com.example.jinshuju.pojo.User">
+        <result property="userName" column="user_name"/>
+        <result property="userEmail" column="user_email"/>
+        <result property="userTelephone" column="user_telephone"/>
+        <result property="userCreateTime" column="user_create_time"/>
+        <result property="userImg" column="user_img"/>
+    </resultMap>
     <!--  新建用户  -->
     <insert id="insertUser" parameterType="com.example.jinshuju.pojo.User">
         insert into user
@@ -47,18 +53,29 @@
             <if test="userUpdateTime!=null">#{userUpdateTime},</if>
         </trim>
     </insert>
-    <insert id="insertRefreshToken"></insert>
+    <update id="updatePswById" parameterType="com.example.jinshuju.pojo.User">
+
+    </update>
+    <update id="checkUpdateCode" parameterType="com.example.jinshuju.pojo.User">
+        update user set user_email = #{userEmail},user_telephone = #{userTelephone} where user_id = #{userId}
+    </update>
     <select id="checkUser" resultType="java.lang.Boolean" parameterType="String">
         select count(1) from user where user_name = #{username}
     </select>
-    <select id="loginUserByUserName" resultMap="UserResultMap" parameterType="com.example.jinshuju.pojo.User">
+    <select id="loginUserByUserName" resultMap="UserResultMap" parameterType="String">
         select * from user where user_name = #{username}
     </select>
-    <select id="loginUserByEmail" resultMap="UserResultMap" parameterType="com.example.jinshuju.pojo.User">
+    <select id="loginUserByEmail" resultMap="UserResultMap" parameterType="String">
         select * from user where user_email = #{username}
     </select>
-    <select id="findOneById" resultMap="UserResultMap" parameterType="int">
-        select * from user where user_id = #{userid};
+    <select id="findOneById" resultMap="UserDataMap" parameterType="int">
+        select * from user where user_id = #{userid}
+    </select>
+    <select id="checkEmailByEmail" resultType="java.lang.Boolean" parameterType="String">
+        select count(1) from user where user_email = #{email}
+    </select>
+    <select id="checkUserNameByName" resultType="java.lang.Boolean" parameterType="String">
+        select count(1) from user where user_name = #{username}
     </select>
 
 

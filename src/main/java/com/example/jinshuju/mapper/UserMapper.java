@@ -46,4 +46,29 @@ public interface UserMapper {
      */
     User findOneById(int userid);
 
+    /**
+     * 根据邮箱查记录
+     *
+     * @param email
+     * @return
+     */
+    Boolean checkEmailByEmail(String email);
+
+    /**
+     * 根据用户名查记录
+     *
+     * @param username
+     * @return
+     */
+    Boolean checkUserNameByName(String username);
+
+    /**
+     * 修改密码
+     *
+     * @param user
+     * @return
+     */
+    Boolean updatePswById(User user);
+
+    int checkUpdateCode(User user);
 }

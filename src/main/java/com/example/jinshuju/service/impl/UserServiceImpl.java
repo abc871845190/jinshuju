@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
@@ -115,7 +114,7 @@ public class UserServiceImpl implements UserService {
         //log.info("userid is   ==>   " + String.valueOf(userid));
         tokenMapper.deleteRefreshTokenById(userid);
         //生成token,自定1小时过期
-        String token = JwtUtils.createJWT(ClaimsUtils.UserToClaims(foundUser), Constants.TimeValue.ONE_HOUR * 2);
+        String token = JwtUtils.createJWT(ClaimsUtils.UserToClaims(foundUser), Constants.TimeValue.ONE_HOUR * 2 * 1000);
         //log.info("create token   ==>   " + token);
         //生成md5版本的token
         String tokenKey = DigestUtils.md5DigestAsHex(token.getBytes());
@@ -189,14 +188,47 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result getUser(User user,
-                          HttpServletRequest request,
-                          HttpServletResponse response) {
-        User realuser = checkUserLogin(request, response);
-
-        return ResultUtils.success(realuser.toString());
+    public Result getUserInfo(int userid) {
+        User user1 = userMapper.findOneById(userid);
+        if (user1 == null) {
+            return ResultUtils.fail("用户不存在");
+        }
+        return ResultUtils.success().setData(user1);
     }
 
+    @Override
+    public Result checkEmail(String email) {
+        return userMapper.checkEmailByEmail(email) == true ? ResultUtils.success("邮箱存在") : ResultUtils.fail("邮箱不存在");
+    }
+
+    @Override
+    public Result checkUserName(String username) {
+        return userMapper.checkUserNameByName(username) == true ? ResultUtils.success("用户名存在") : ResultUtils.fail("用户名不存在");
+    }
+
+    @Override
+    public Result updatePsw(User user) {
+        //判空
+        String psw = user.getUserPassword();
+        if (TextUtils.isEmpty(psw)) {
+            return ResultUtils.fail("密码为空");
+        }
+        //加密
+        user.setUserPassword(bCryptPasswordEncoder.encode(psw));
+        user.setUserUpdateTime(new Timestamp(System.currentTimeMillis()));
+        return userMapper.updatePswById(user) == true ? ResultUtils.success("更新密码成功") : ResultUtils.fail("更新密码失败");
+    }
+
+    @Override
+    public Result checkPsw(User user) {
+
+        return null;
+    }
+
+    @Override
+    public Result checkUpdateCode(User user) {
+        return ResultUtils.success("成功。",userMapper.checkUpdateCode(user));
+    }
 
     private User parseByToken(String tokenKey) {
         String token = (String) redisUtils.get(Constants.User.KEY_TOKEN + tokenKey);

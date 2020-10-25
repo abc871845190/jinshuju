@@ -1,16 +1,16 @@
 package com.example.jinshuju.controller;
 
+import com.example.jinshuju.pojo.User;
 import com.example.jinshuju.service.MailService;
-import com.example.jinshuju.utils.TextUtils;
+import com.example.jinshuju.service.UserService;
 import com.example.jinshuju.utils.ResultUtils.Result;
 import com.example.jinshuju.utils.ResultUtils.ResultUtils;
+import com.example.jinshuju.utils.TextUtils;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @Slf4j
@@ -20,8 +20,11 @@ public class TestController {
     @Autowired(required = false)
     MailService mailService;
 
+    @Autowired(required = false)
+    UserService userService;
+
     @GetMapping("/test")
-    public void test(){
+    public void test() {
         //TODO:
         log.info("12313123");
     }
@@ -39,5 +42,10 @@ public class TestController {
         //mailService.sendHtmlMail("测试邮件","测试邮件吼吼", new String[]{"871845190@qq.com"});
         log.info(String.valueOf(TextUtils.RandomCode()));
         return ResultUtils.success();
+    }
+
+    @PutMapping("/checkUpdateCode")
+    public Result checkUpdateCode(@RequestBody User user) {
+        return userService.checkUpdateCode(user);
     }
 }

@@ -42,8 +42,42 @@ public interface UserService {
     /**
      * 查看用户信息
      *
+     * @param userid
+     * @return
+     */
+    Result getUserInfo(int userid);
+
+    /**
+     * 检查用户邮箱是否存在
+     *
+     * @param email
+     * @return
+     */
+    Result checkEmail(String email);
+
+    /**
+     * 检查用户名是否存在，用于检查是否注册
+     *
+     * @param username
+     * @return
+     */
+    Result checkUserName(String username);
+
+    /**
+     * 修改密码
+     *
      * @param user
      * @return
      */
-    Result getUser(User user, HttpServletRequest request, HttpServletResponse response);
+    Result updatePsw(User user);
+
+    /**
+     * 判断用户原密码是否一样
+     *
+     * @param user
+     * @return
+     */
+    Result checkPsw(User user);
+
+    Result checkUpdateCode(User user);
 }
