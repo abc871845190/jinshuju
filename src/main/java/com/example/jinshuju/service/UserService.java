@@ -2,7 +2,6 @@ package com.example.jinshuju.service;
 
 import com.example.jinshuju.pojo.User;
 import com.example.jinshuju.utils.ResultUtils.Result;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
