@@ -82,5 +82,21 @@ public interface UserService {
      */
     boolean checkPsw(String userPsw, String originPsw);
 
+    /**
+     * 修改邮箱
+     *
+     * @param user
+     * @return
+     */
+    Result updateEmail(User user);
+
+    /**
+     * 修改电话
+     *
+     * @param user
+     * @return
+     */
+    Result updateTelephone(User user);
+
     Result checkUpdateCode(User user);
 }

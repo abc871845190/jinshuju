@@ -81,5 +81,21 @@ public interface UserMapper {
      */
     Boolean updatePswById(@Param("userid") int userid, @Param("newPsw") String newPsw, @Param("now") Timestamp now);
 
+    /**
+     * 修改邮箱
+     *
+     * @param user
+     * @return
+     */
+    Boolean updateEmailById(User user);
+
+    /**
+     * 修改电话
+     *
+     * @param user
+     * @return
+     */
+    Boolean updateTelephoneById(User user);
+
     int checkUpdateCode(User user);
 }

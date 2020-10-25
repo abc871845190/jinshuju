@@ -253,6 +253,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Result updateEmail(User user) {
+        //判空
+        if (user.getUserId()==0){
+            return ResultUtils.fail("用户id为空");
+        }
+        if (TextUtils.isEmpty(user.getUserEmail())){
+            return ResultUtils.fail("邮箱为空");
+        }
+        if (userMapper.updateEmailById(user)){
+            return ResultUtils.success("修改邮箱成功");
+        }else{
+            return ResultUtils.fail("修改邮箱失败");
+        }
+
+    }
+
+    @Override
+    public Result updateTelephone(User user) {
+        //判空
+        if (user.getUserId()==0){
+            return ResultUtils.fail("用户id为空");
+        }
+        if (TextUtils.isEmpty(user.getUserTelephone())){
+            return ResultUtils.fail("电话为空");
+        }
+        if (userMapper.updateTelephoneById(user)){
+            return ResultUtils.success("修改电话成功");
+        }else{
+            return ResultUtils.fail("修改电话失败");
+        }
+    }
+
+    @Override
     public Result checkUpdateCode(User user) {
         int code = userMapper.checkUpdateCode(user);
         log.info("code is   ==>   " + String.valueOf(code));

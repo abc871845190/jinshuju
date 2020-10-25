@@ -108,20 +108,29 @@ public class UserController {
     }
 
     /**
-     * 修改用户信息
+     * 修改邮箱
      *
-     * @param userid 用户id
      * @param user   用户对象
      * @return
      */
-    @ApiOperation("修改用户信息")
+    @ApiOperation(value = "修改邮箱",response = Result.class)
     @ApiResponses({
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
     })
-    @PutMapping("/updateData/{userid}")
-    public Result updateData(@PathVariable("userid") int userid, @RequestBody User user) {
-        return ResultUtils.success();
+    @PutMapping("/updateEmail")
+    public Result updateEmail(@RequestBody User user) {
+        return userService.updateEmail(user);
+    }
+
+    @ApiOperation(value = "修改电话",response = Result.class)
+    @ApiResponses({
+            @ApiResponse(code = 1, message = "成功"),
+            @ApiResponse(code = 2, message = "失败")
+    })
+    @PutMapping("/updateTelephone")
+    public Result updateTelephone(@RequestBody User user){
+        return userService.updateTelephone(user);
     }
 
     /**
