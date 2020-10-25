@@ -94,9 +94,9 @@ public class UserController {
 
     })
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "query", name = "userid", value = "用户id", required = true, dataType = "int",example = "1"),
-            @ApiImplicitParam(paramType = "query", name = "oriPsw", value = "原密码", required = true, dataType = "String",example = "123456"),
-            @ApiImplicitParam(paramType = "query", name = "newPsw", value = "新密码", required = true, dataType = "String",example = "1234567")
+            @ApiImplicitParam(paramType = "query", name = "userid", value = "用户id", required = true, dataType = "int", example = "1"),
+            @ApiImplicitParam(paramType = "query", name = "oriPsw", value = "原密码", required = true, dataType = "String", example = "123456"),
+            @ApiImplicitParam(paramType = "query", name = "newPsw", value = "新密码", required = true, dataType = "String", example = "1234567")
     })
     @PostMapping("/updatePsw")
     public Result updatePsw(@RequestBody Map<String, Object> map) {
@@ -110,10 +110,10 @@ public class UserController {
     /**
      * 修改邮箱
      *
-     * @param user   用户对象
+     * @param user 用户对象
      * @return
      */
-    @ApiOperation(value = "修改邮箱",response = Result.class)
+    @ApiOperation(value = "修改邮箱", response = Result.class)
     @ApiResponses({
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
@@ -123,13 +123,13 @@ public class UserController {
         return userService.updateEmail(user);
     }
 
-    @ApiOperation(value = "修改电话",response = Result.class)
+    @ApiOperation(value = "修改电话", response = Result.class)
     @ApiResponses({
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
     })
     @PutMapping("/updateTelephone")
-    public Result updateTelephone(@RequestBody User user){
+    public Result updateTelephone(@RequestBody User user) {
         return userService.updateTelephone(user);
     }
 
@@ -168,5 +168,15 @@ public class UserController {
     @GetMapping("/checkUserName")
     public Result checkUserName(@RequestParam("username") String username) {
         return userService.checkUserName(username);
+    }
+
+    @ApiOperation(value = "注销", response = Result.class)
+    @ApiResponses({
+            @ApiResponse(code = 1, message = "成功"),
+            @ApiResponse(code = 2, message = "失败")
+    })
+    @GetMapping("/logout")
+    public Result logout(HttpServletRequest request, HttpServletResponse response) {
+        return userService.logout(request, response);
     }
 }

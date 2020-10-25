@@ -37,4 +37,12 @@ public interface TokenMapper {
      * @return
      */
     Timestamp getCreateTimeById(int userid);
+
+    /**
+     * 根据token删除refreshToken
+     *
+     * @param token
+     * @return
+     */
+    Boolean deleteRefreshTokenByToken(String token);
 }

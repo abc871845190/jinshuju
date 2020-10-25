@@ -16,6 +16,9 @@
     <delete id="deleteRefreshTokenById" parameterType="int">
         delete from user_refresh_token where user_id = #{userid};
     </delete>
+    <delete id="deleteRefreshTokenByToken" parameterType="String">
+        delete from user_refresh_token where token = #{token}
+    </delete>
     <select id="getRefreshTokenByToken" resultMap="UserRefreshTokenResultMap" parameterType="String">
         select * from user_refresh_token where token = #{token};
     </select>

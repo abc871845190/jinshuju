@@ -286,6 +286,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Result logout(HttpServletRequest request, HttpServletResponse response) {
+        //拿请求的cookies的md5token
+        String tokenKey = CookiesUtils.getCookieValue(request,Constants.User.COOKIES_TOKEN);
+        //判空
+        if (TextUtils.isEmpty(tokenKey)){
+            return ResultUtils.fail("token为空");
+        }
+        //删除redis的token
+        String token = (String) redisUtils.get(Constants.User.KEY_TOKEN + tokenKey);
+        redisUtils.del(Constants.User.KEY_TOKEN + tokenKey);
+        //删除数据库的refreshToken
+        tokenMapper.deleteRefreshTokenByToken(token);
+        //删除cookies的md5token
+        CookiesUtils.deleteCookies(request,response,Constants.User.COOKIES_TOKEN);
+        return ResultUtils.success("退出登录成功");
+    }
+
+    @Override
     public Result checkUpdateCode(User user) {
         int code = userMapper.checkUpdateCode(user);
         log.info("code is   ==>   " + String.valueOf(code));

@@ -98,5 +98,12 @@ public interface UserService {
      */
     Result updateTelephone(User user);
 
+    /**
+     * 注销
+     *
+     * @return
+     */
+    Result logout(HttpServletRequest request, HttpServletResponse response);
+
     Result checkUpdateCode(User user);
 }
