@@ -28,4 +28,20 @@ public interface FormMapper {
      * @return
      */
     Boolean saveFormType(Form form);
+
+    /**
+     * 根据id 删除表单，和关联表单的所有表数据
+     *
+     * @param formId
+     * @return
+     */
+    Boolean deleteFormById(int formId);
+
+    /**
+     * 插入组件关系
+     *
+     * @param form
+     * @return
+     */
+    int insertTemplate(Form form);
 }

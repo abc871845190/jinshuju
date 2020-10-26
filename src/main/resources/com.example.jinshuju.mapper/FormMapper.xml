@@ -14,7 +14,6 @@
             <if test="formTitle != null and formTitle != ''">form_title,</if>
             <if test="formTitle == null and formTitle == ''">form_title,</if>
             <if test="formDesc != null and formDesc != ''">form_desc,</if>
-            <if test="formDesc == null and formDesc == ''">form_desc,</if>
             form_create_time,
             form_update_time,
             <if test="formTag != null and formTag != null">form_tag,</if>
@@ -30,6 +29,7 @@
             <if test="formName == null and formName == ''">"未命名表单名",</if>
             <if test="formTitle != null and formTitle != ''">#{formTitle},</if>
             <if test="formTitle == null and formTitle == ''">"未命名标题",</if>
+            <if test="formDesc != null and formDesc != ''">#{formDesc},</if>
             #{formCreateTime},
             #{formUpdateTime},
             <if test="formTag != null and formTag != null">#{formTag},</if>
@@ -44,5 +44,40 @@
             select LAST_INSERT_ID()
         </selectKey>
     </insert>
-    <insert id="saveFormType"></insert>
+    <insert id="saveFormType" parameterType="com.example.jinshuju.pojo.Form">
+        insert into form_form_type (
+        form_id,
+        form_type_id
+        ) values(
+        #{formId},
+        select id from form_type where form_type = #{formType}
+        )
+    </insert>
+    <insert id="insertTemplate" parameterType="com.example.jinshuju.pojo.Form">
+        insert into form_template (
+        form_id,
+        template_id,
+        template_title,
+        template_content,
+        template_count,
+        template_default
+        ) values
+        <foreach collection="templateList" item="item" index="index" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{formId},
+                #{item.templateId},
+                <if test="item.templateTitle == null and item.templateTitle == ''">"未定义组件名",</if>
+                <if test="item.templateTitle != null and item.templateTitle != ''">#{item.templateTitle},</if>
+                <if test="item.templateContent == null and item.templateContent == ''">"默认json数据",</if>
+                <if test="item.templateContent != null and item.templateContent != ''">#{item.templateContent},</if>
+                <if test="item.templateCount == 0">${index},</if>
+                <if test="item.templateCount != 0">#{item.templateCount},</if>
+                <if test="item.templateDefault == null and item.templateDefault == ''">"null",</if>
+                <if test="item.templateDefault != null and item.templateDefault != ''">#{item.templateDefault},</if>
+            </trim>
+        </foreach>
+    </insert>
+    <delete id="deleteFormById" parameterType="int">
+        delete from form where form_id = #{formId}
+    </delete>
 </mapper>

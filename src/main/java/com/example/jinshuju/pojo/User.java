@@ -1,11 +1,15 @@
 package com.example.jinshuju.pojo;
 
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+@ApiModel(value = "User")
 @Data
 public class User {
     private int userId;
+    @ApiModelProperty(value = "用户名", name = "userName", dataType = "String", required = true, example = "test")
     private String userName;
     private String userPassword;
     private String userTelephone;
