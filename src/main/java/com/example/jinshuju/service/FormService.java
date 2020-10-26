@@ -1,6 +1,7 @@
 package com.example.jinshuju.service;
 
 import com.example.jinshuju.pojo.Form;
+import com.example.jinshuju.pojo.User;
 import com.example.jinshuju.utils.ResultUtils.Result;
 
 public interface FormService {
@@ -10,5 +11,5 @@ public interface FormService {
      * @param form
      * @return
      */
-    Result createForm(Form form);
+    Result createForm(User user, Form form);
 }

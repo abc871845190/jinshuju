@@ -24,7 +24,7 @@ public class RedisConfig extends CachingConfigurerSupport{
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
-        // 设置值（value）的序列化采用Jackson2JsonRedisSerializer。
+        // 设置值（value）的序化采用Jackson2JsonRedisSerializer列。
         redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
         // 设置键（key）的序列化采用StringRedisSerializer。
         redisTemplate.setKeySerializer(new StringRedisSerializer());

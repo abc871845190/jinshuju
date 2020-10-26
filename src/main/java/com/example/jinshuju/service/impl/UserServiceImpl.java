@@ -255,15 +255,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result updateEmail(User user) {
         //判空
-        if (user.getUserId()==0){
+        if (user.getUserId() == 0) {
             return ResultUtils.fail("用户id为空");
         }
-        if (TextUtils.isEmpty(user.getUserEmail())){
+        if (TextUtils.isEmpty(user.getUserEmail())) {
             return ResultUtils.fail("邮箱为空");
         }
-        if (userMapper.updateEmailById(user)){
+        if (userMapper.updateEmailById(user)) {
             return ResultUtils.success("修改邮箱成功");
-        }else{
+        } else {
             return ResultUtils.fail("修改邮箱失败");
         }
 
@@ -272,15 +272,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result updateTelephone(User user) {
         //判空
-        if (user.getUserId()==0){
+        if (user.getUserId() == 0) {
             return ResultUtils.fail("用户id为空");
         }
-        if (TextUtils.isEmpty(user.getUserTelephone())){
+        if (TextUtils.isEmpty(user.getUserTelephone())) {
             return ResultUtils.fail("电话为空");
         }
-        if (userMapper.updateTelephoneById(user)){
+        if (userMapper.updateTelephoneById(user)) {
             return ResultUtils.success("修改电话成功");
-        }else{
+        } else {
             return ResultUtils.fail("修改电话失败");
         }
     }
@@ -288,9 +288,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result logout(HttpServletRequest request, HttpServletResponse response) {
         //拿请求的cookies的md5token
-        String tokenKey = CookiesUtils.getCookieValue(request,Constants.User.COOKIES_TOKEN);
+        String tokenKey = CookiesUtils.getCookieValue(request, Constants.User.COOKIES_TOKEN);
         //判空
-        if (TextUtils.isEmpty(tokenKey)){
+        if (TextUtils.isEmpty(tokenKey)) {
             return ResultUtils.fail("token为空");
         }
         //删除redis的token
@@ -299,7 +299,7 @@ public class UserServiceImpl implements UserService {
         //删除数据库的refreshToken
         tokenMapper.deleteRefreshTokenByToken(token);
         //删除cookies的md5token
-        CookiesUtils.deleteCookies(request,response,Constants.User.COOKIES_TOKEN);
+        CookiesUtils.deleteCookies(request, response, Constants.User.COOKIES_TOKEN);
         return ResultUtils.success("退出登录成功");
     }
 
