@@ -20,4 +20,12 @@ public interface FormService {
      * @return
      */
     Result getForms(User user);
+
+    /**
+     * 查找单个表单信息
+     *
+     * @param formId
+     * @return
+     */
+    Result getForm(int formId);
 }

@@ -10,6 +10,7 @@ public class Template {
   private String templateDesc;
   private String templateTitle;
   private String templateContent;
+  private String templateContentDefault;
   private int templateCount;
   private String templateDefault;
 }

@@ -58,4 +58,8 @@ public class FormController {
         return ResultUtils.fail("还没登陆呢，怎么查表单");
     }
 
+    @GetMapping("/form/{formId}")
+    public Result getForm(@PathVariable("formId") int formId){
+        return formService.getForm(formId);
+    }
 }

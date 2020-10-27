@@ -47,5 +47,19 @@ public interface FormMapper {
      */
     int insertTemplate(Form form);
 
+    /**
+     * 根据用户id获取用户所有表单信息
+     *
+     * @param userId
+     * @return
+     */
     List<Form> getFormsByUserId(int userId);
+
+    /**
+     * 根据表单id查看表单信息
+     *
+     * @param formId
+     * @return
+     */
+    Form getFormByFormId(int formId);
 }

@@ -4,7 +4,8 @@
 
 
     <insert id="saveFormAndUser">
-        insert into user_form(user_id,form_id) values (#{userId},#{formId})
+        insert into user_form(user_id, form_id)
+        values (#{userId}, #{formId})
     </insert>
     <insert id="insertForm" parameterType="com.example.jinshuju.pojo.Form">
         insert into form
@@ -45,13 +46,10 @@
         </selectKey>
     </insert>
     <insert id="saveFormType" parameterType="com.example.jinshuju.pojo.Form">
-        insert into form_form_type (
-        form_id,
-        form_type_id
-        ) values(
-        #{formId},
-        (select id from form_type where form_type = #{formType})
-        )
+        insert into form_form_type (form_id,
+                                    form_type_id)
+        values (#{formId},
+                (select id from form_type where form_type = #{formType}))
     </insert>
     <insert id="insertTemplate" parameterType="com.example.jinshuju.pojo.Form">
         insert into form_template (
@@ -68,7 +66,9 @@
                 #{item.templateId},
                 <if test="item.templateTitle == null or item.templateTitle == ''">"未定义组件名",</if>
                 <if test="item.templateTitle != null and item.templateTitle != ''">#{item.templateTitle},</if>
-                <if test="item.templateContent == null or item.templateContent == ''">(SELECT template_content_default FROM template WHERE template_id = #{item.templateId}),</if>
+                <if test="item.templateContent == null or item.templateContent == ''">
+                    (SELECT template_content_default FROM template WHERE template_id = #{item.templateId}),
+                </if>
                 <if test="item.templateContent != null and item.templateContent != ''">#{item.templateContent},</if>
                 <if test="item.templateCount == 0">${index+1},</if>
                 <if test="item.templateCount != 0">#{item.templateCount},</if>
@@ -78,7 +78,71 @@
         </foreach>
     </insert>
     <delete id="deleteFormById" parameterType="int">
-        delete from form where form_id = #{formId}
+        delete
+        from form
+        where form_id = #{formId}
     </delete>
-    <select id="getFormsByUserId" resultType="com.example.jinshuju.pojo.Form"></select>
+
+    <resultMap id="getFormsByUserIdMap" type="com.example.jinshuju.pojo.Form">
+        <id property="formId" column="form_id"/>
+        <result property="formName" column="form_name"/>
+        <result property="formTitle" column="form_title"/>
+        <result property="formDesc" column="form_desc"/>
+        <result property="formCreateTime" column="form_create_time"/>
+        <result property="formUpdateTime" column="form_update_time"/>
+        <result property="formTag" column="form_tag"/>
+        <result property="formOpen" column="form_open"/>
+        <result property="formUrl" column="form_url"/>
+        <result property="formViewCount" column="form_view_count"/>
+        <result property="formResultViewCount" column="form_result_view_count"/>
+        <result property="formImg" column="form_img"/>
+        <result property="formType" column="form_type"/>
+        <collection property="templateList" ofType="com.example.jinshuju.pojo.Template"
+                    column="form_id" select="getTemplatesByFormId"/>
+    </resultMap>
+    <resultMap id="TemplateResultMap" type="com.example.jinshuju.pojo.Template">
+        <id property="templateId" column="template_id"/>
+        <result property="templateName" column="template_name"/>
+        <result property="templateDesc" column="template_desc"/>
+        <result property="templateContentDefault" column="template_content_default"/>
+        <result property="templateTitle" column="template_title"/>
+        <result property="templateContent" column="template_content"/>
+        <result property="templateCount" column="template_count"/>
+        <result property="templateDefault" column="template_default"/>
+    </resultMap>
+    <select id="getFormsByUserId" resultMap="getFormsByUserIdMap" parameterType="int">
+        SELECT f.*,
+               ft.form_type
+        FROM form f,
+             form_form_type fft,
+             form_type ft,
+             user_form uf
+        WHERE uf.user_id = #{userId}
+          AND f.form_id = uf.form_id
+          AND f.form_id = fft.form_id
+          AND fft.form_type_id = ft.id
+    </select>
+    <select id="getTemplatesByFormId" parameterType="int" resultMap="TemplateResultMap">
+        SELECT ft.template_id,
+               ft.template_title,
+               ft.template_default,
+               ft.template_count,
+               ft.template_content,
+               t.template_name,
+               t.template_desc
+        FROM form_template ft,
+             template t
+        WHERE form_id = #{formId}
+          AND ft.template_id = t.template_id
+    </select>
+    <select id="getFormByFormId" resultMap="getFormsByUserIdMap" parameterType="int">
+        SELECT f.*,
+               ft.form_type
+        FROM form f,
+             form_form_type fft,
+             form_type ft
+        WHERE f.form_id = #{formId}
+          AND f.form_id = fft.form_id
+          AND fft.form_type_id = ft.id
+    </select>
 </mapper>
