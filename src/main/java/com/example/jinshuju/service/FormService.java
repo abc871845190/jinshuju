@@ -28,4 +28,21 @@ public interface FormService {
      * @return
      */
     Result getForm(int formId);
+
+    /**
+     * 复制同一个表单信息
+     *
+     * @param user
+     * @param formId
+     * @return
+     */
+    Result copyForm(User user, int formId);
+
+    /**
+     * 删除表单
+     *
+     * @param formId
+     * @return
+     */
+    Result deleteForm(int formId);
 }

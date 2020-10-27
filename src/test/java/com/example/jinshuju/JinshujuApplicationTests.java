@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.sql.Timestamp;
+
 @SpringBootTest
 @Slf4j
 class JinshujuApplicationTests {
@@ -35,7 +37,7 @@ class JinshujuApplicationTests {
 //        om.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS,false);
 //        log.info(om.writeValueAsString(user));
 
-        log.info(String.valueOf(bCryptPasswordEncoder.matches("123456","$2a$10$W4Aiv0gOq/tOAzF4rptXw.q4QXERFL9nclJgAraYacRT4JDA4Y5Hu")));
+        log.info(String.valueOf(new Timestamp(System.currentTimeMillis())));
     }
 
     @Test

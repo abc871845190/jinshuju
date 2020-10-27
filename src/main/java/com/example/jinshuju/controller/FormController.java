@@ -35,11 +35,11 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @PostMapping("/form")
-    public Result createForm(@RequestBody Form form, HttpServletRequest request, HttpServletResponse response){
+    public Result createForm(@RequestBody Form form, HttpServletRequest request, HttpServletResponse response) {
         //log.info(form.toString());
-        User user = userService.checkUserLogin(request,response);
-        if (user!=null){
-            return formService.createForm(user,form);
+        User user = userService.checkUserLogin(request, response);
+        if (user != null) {
+            return formService.createForm(user, form);
         }
         return ResultUtils.fail("还没登陆呢插什么表单");
     }
@@ -50,16 +50,55 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @GetMapping("/form")
-    public Result getForms(HttpServletRequest request,HttpServletResponse response){
-        User user = userService.checkUserLogin(request,response);
-        if (user!=null){
+    public Result getForms(HttpServletRequest request, HttpServletResponse response) {
+        User user = userService.checkUserLogin(request, response);
+        if (user != null) {
             return formService.getForms(user);
         }
         return ResultUtils.fail("还没登陆呢，怎么查表单");
     }
 
+    @ApiOperation(value = "查找用户单个表单", response = Result.class)
+    @ApiResponses({
+            @ApiResponse(code = 1, message = "成功"),
+            @ApiResponse(code = 2, message = "失败")
+    })
     @GetMapping("/form/{formId}")
-    public Result getForm(@PathVariable("formId") int formId){
+    public Result getForm(@PathVariable("formId") int formId) {
         return formService.getForm(formId);
+    }
+
+    @ApiOperation(value = "复制表单", response = Result.class)
+    @ApiResponses({
+            @ApiResponse(code = 1, message = "成功"),
+            @ApiResponse(code = 2, message = "失败")
+    })
+    @PostMapping("/copy/{formId}")
+    public Result copyForm(@PathVariable("formId") int formId,
+                           HttpServletRequest request,
+                           HttpServletResponse response) {
+        User user = userService.checkUserLogin(request, response);
+        if (user != null) {
+            return formService.copyForm(user, formId);
+        }
+        return ResultUtils.fail("还没登陆呢，怎么复制");
+    }
+
+    @ApiOperation(value = "删除表单", response = Result.class)
+    @ApiResponses({
+            @ApiResponse(code = 1, message = "成功"),
+            @ApiResponse(code = 2, message = "失败")
+    })
+    @DeleteMapping("/form/{formId}")
+    public Result deleteForm(@PathVariable("forId") int formId){
+        return formService.deleteForm(formId);
+    }
+
+    @PutMapping("/form/{formId}")
+    public Result updateFormName(@RequestParam("formName") String formName,
+                                 @PathVariable("formId") int formId){
+
+        log.info(formName+"  "+formId);
+        return ResultUtils.success();
     }
 }
