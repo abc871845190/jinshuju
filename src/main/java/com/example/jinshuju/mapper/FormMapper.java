@@ -3,6 +3,8 @@ package com.example.jinshuju.mapper;
 import com.example.jinshuju.pojo.Form;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface FormMapper {
 
     /**
@@ -44,4 +46,6 @@ public interface FormMapper {
      * @return
      */
     int insertTemplate(Form form);
+
+    List<Form> getFormsByUserId(int userId);
 }

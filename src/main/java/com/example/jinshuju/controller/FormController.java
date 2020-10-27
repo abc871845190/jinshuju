@@ -12,10 +12,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,6 +42,20 @@ public class FormController {
             return formService.createForm(user,form);
         }
         return ResultUtils.fail("还没登陆呢插什么表单");
+    }
+
+    @ApiOperation(value = "查找用户表单", response = Result.class)
+    @ApiResponses({
+            @ApiResponse(code = 1, message = "成功"),
+            @ApiResponse(code = 2, message = "失败")
+    })
+    @GetMapping("/form")
+    public Result getForms(HttpServletRequest request,HttpServletResponse response){
+        User user = userService.checkUserLogin(request,response);
+        if (user!=null){
+            return formService.getForms(user);
+        }
+        return ResultUtils.fail("还没登陆呢，怎么查表单");
     }
 
 }

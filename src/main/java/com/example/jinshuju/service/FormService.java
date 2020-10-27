@@ -12,4 +12,12 @@ public interface FormService {
      * @return
      */
     Result createForm(User user, Form form);
+
+    /**
+     * 查找用户的表单
+     *
+     * @param user
+     * @return
+     */
+    Result getForms(User user);
 }

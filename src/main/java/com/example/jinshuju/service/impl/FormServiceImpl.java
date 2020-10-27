@@ -11,7 +11,6 @@ import com.example.jinshuju.utils.TextUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -31,6 +30,7 @@ public class FormServiceImpl implements FormService {
         form.setFormViewCount(0);
         form.setFormResultViewCount(0);
         //插入form，获取id
+        log.info(form.toString());
         if (formMapper.insertForm(form)){
             //插入成功，原form实例添加id，获取id
             int formId = form.getFormId();
@@ -47,26 +47,43 @@ public class FormServiceImpl implements FormService {
                         //批量插入表单组件关系表
                         List<Template> templateList = form.getTemplateList();
                         if (templateList.isEmpty()){
-                            formMapper.deleteFormById(formId);
+                            boolean flag = formMapper.deleteFormById(formId);
+                            log.info("delete form boolean is   ==>   "+flag);
                             return ResultUtils.fail("组件为空");
                         }else{
                             //插入
                             return formMapper.insertTemplate(form) > 0 ? ResultUtils.success("插入表单成功！"):ResultUtils.fail("插入组件失败");
                         }
                     }else{
-                        formMapper.deleteFormById(formId);
+                        boolean flag = formMapper.deleteFormById(formId);
+                        log.info("delete form boolean is   ==>   "+flag);
                         return ResultUtils.fail("插入类别表失败");
                     }
                 }else{
-                    formMapper.deleteFormById(formId);
+                    boolean flag = formMapper.deleteFormById(formId);
+                    log.info("delete form boolean is   ==>   "+flag);
                     return ResultUtils.fail("表单类别为空");
                 }
             }else{
-                formMapper.deleteFormById(formId);
+                boolean flag = formMapper.deleteFormById(formId);
+                log.info("delete form boolean is   ==>   "+flag);
                 return ResultUtils.fail("插入表单用户关系表失败");
             }
         }else{
             return ResultUtils.fail("插入表单失败");
         }
     }
+
+    @Override
+    public Result getForms(User user) {
+
+        //获取用户id
+        int userId = user.getUserId();
+        //根据用户id获得用户所有的表单list
+        List<Form> formList = formMapper.getFormsByUserId(userId);
+
+        return null;
+    }
+
+
 }
