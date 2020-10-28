@@ -63,5 +63,62 @@ public interface FormMapper {
      */
     Form getFormByFormId(int formId);
 
+    /**
+     * 根据表单id修改表单名
+     *
+     * @param formId
+     * @param formName
+     * @return
+     */
+    Boolean updateFormNameById(@Param("formId") int formId, @Param("formName") String formName);
 
+    /**
+     * 检查表单id是否存在
+     *
+     * @param formId
+     * @return
+     */
+    Boolean checkFormById(int formId);
+
+    /**
+     * 根据表单id修改表单Tag
+     *
+     * @param formId
+     * @param formTag
+     * @return
+     */
+    Boolean updateFormTagById(@Param("formId") int formId, @Param("formTag") String formTag);
+
+    /**
+     * 根据表单id获取公开填写信息
+     *
+     * @param formId
+     * @return
+     */
+    int getFormOpenByid(int formId);
+
+    /**
+     * 设置表单是否开启填写
+     *
+     * @param formId
+     * @param formOpen
+     * @return
+     */
+    Boolean updateFormOpenById(int formId, int formOpen);
+
+    /**
+     * 根据表单id更新表单信息
+     *
+     * @param form
+     * @return
+     */
+    Boolean updateFormById(Form form);
+
+    /**
+     * 根据表单id删除绑定的组件list
+     *
+     * @param formId
+     * @return
+     */
+    Boolean deleteTemplateList(int formId);
 }

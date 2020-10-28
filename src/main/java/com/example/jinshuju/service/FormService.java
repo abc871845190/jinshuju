@@ -45,4 +45,54 @@ public interface FormService {
      * @return
      */
     Result deleteForm(int formId);
+
+    /**
+     * 修改表单名
+     *
+     * @param formId
+     * @param formName
+     * @return
+     */
+    Result updateFormName(int formId, String formName);
+
+    /**
+     * 修改表单Tag
+     *
+     * @param formId
+     * @param formTag
+     * @return
+     */
+    Result updateFormTag(int formId, String formTag);
+
+    /**
+     * 检查id是否存在
+     *
+     * @param formId
+     * @return
+     */
+    Boolean checkFormId(int formId);
+
+    /**
+     * 修改表单
+     *
+     * @param form
+     * @return
+     */
+    Result updateForm(Form form);
+
+    /**
+     * 某id的表单浏览量+1
+     *
+     * @param formId
+     */
+    void updateFormView(int formId);
+
+    /**
+     * 设置表单是否开启填写
+     * 默认为0，0为未公开
+     * 1为公开填写
+     * @param formId
+     * @return
+     */
+    Result updateFormOpen(int formId);
 }

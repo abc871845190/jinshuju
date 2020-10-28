@@ -49,15 +49,7 @@ public class FormServiceImpl implements FormService {
                 if (!TextUtils.isEmpty(form.getFormType())) {
                     //插入
                     if (formMapper.saveFormType(form)) {
-                        //批量插入表单组件关系表
-                        List<Template> templateList = form.getTemplateList();
-                        if (templateList.isEmpty()) {
-                            deleteForm(formId);
-                            return ResultUtils.fail("组件为空");
-                        } else {
-                            //插入
-                            return formMapper.insertTemplate(form) > 0 ? ResultUtils.success("插入表单成功！") : ResultUtils.fail("插入组件失败");
-                        }
+                        return insertTemplateList(form);
                     } else {
                         deleteForm(formId);
                         return ResultUtils.fail("插入类别表失败");
@@ -75,6 +67,18 @@ public class FormServiceImpl implements FormService {
         }
     }
 
+    private Result insertTemplateList(Form form) {
+        //批量插入表单组件关系表
+        List<Template> templateList = form.getTemplateList();
+        if (templateList.isEmpty()) {
+            deleteForm(form.getFormId());
+            return ResultUtils.fail("组件为空");
+        } else {
+            //插入
+            return formMapper.insertTemplate(form) > 0 ? ResultUtils.success("插入表单成功！") : ResultUtils.fail("插入组件失败");
+        }
+    }
+
     @Override
     public Result getForms(User user) {
         //获取用户id
@@ -89,12 +93,16 @@ public class FormServiceImpl implements FormService {
         if (formId == 0) {
             return ResultUtils.fail("id不能为0");
         }
-        //根据表单id 拿单个表单信息
-        Form form = formMapper.getFormByFormId(formId);
-        if (form == null) {
-            return ResultUtils.fail("提取表单失败");
+        //判断id是否存在
+        if (formMapper.checkFormById(formId)) {
+            //根据表单id 拿单个表单信息
+            Form form = formMapper.getFormByFormId(formId);
+            if (form == null) {
+                return ResultUtils.fail("提取表单失败");
+            }
+            return ResultUtils.success("成功", form);
         }
-        return ResultUtils.success("成功", form);
+        return ResultUtils.fail("表单id不存在");
     }
 
     @Override
@@ -112,15 +120,97 @@ public class FormServiceImpl implements FormService {
             form.setFormViewCount(0);
             form.setFormResultViewCount(0);
             //插入新表单
-            return doCreateForm(user,form);
+            return doCreateForm(user, form);
         }
         return ResultUtils.fail("该id还没创建呢");
     }
 
     @Override
     public Result deleteForm(int formId) {
-        boolean flag = formMapper.deleteFormById(formId);
-        log.info("delete form boolean is   ==>   " + flag);
-        return flag == true ? ResultUtils.success("删除表单成功") : ResultUtils.fail("删除表单失败");
+        //判断id是否存在
+        if (formMapper.checkFormById(formId)) {
+            boolean flag = formMapper.deleteFormById(formId);
+            log.info("delete form boolean is   ==>   " + flag);
+            return flag == true ? ResultUtils.success("删除表单成功") : ResultUtils.fail("删除表单失败");
+        }
+        return ResultUtils.fail("表单id不存在");
+    }
+
+    @Override
+    public Result updateFormName(int formId, String formName) {
+        //判断为空
+        if (TextUtils.isEmpty(formName)) {
+            return ResultUtils.fail("表单名为空");
+        }
+        if (formId == 0) {
+            return ResultUtils.fail("表单id不能为0");
+        }
+        if (checkFormId(formId)) {
+            Boolean flag = formMapper.updateFormNameById(formId, formName);
+            return flag == true ? ResultUtils.success("修改表单名成功") : ResultUtils.fail("表单名重复");
+        }
+        return ResultUtils.fail("表单id不存在");
+    }
+
+    @Override
+    public Result updateFormTag(int formId, String formTag) {
+        //判断为空
+        if (TextUtils.isEmpty(formTag)) {
+            return ResultUtils.fail("表单名为空");
+        }
+        if (formId == 0) {
+            return ResultUtils.fail("表单id不能为0");
+        }
+        if (checkFormId(formId)) {
+            Boolean flag = formMapper.updateFormTagById(formId, formTag);
+            return flag == true ? ResultUtils.success("修改表单tag成功") : ResultUtils.fail("表单tag重复");
+        }
+        return ResultUtils.fail("表单id不存在");
+    }
+
+    @Override
+    public Boolean checkFormId(int formId) {
+        return formMapper.checkFormById(formId);
+    }
+
+    @Override
+    public Result updateForm(Form form) {
+        //必填的数据有 id,name = title,desc,updatetime,formimg,template
+        //填补数据
+        form.setFormUpdateTime(new Timestamp(System.currentTimeMillis()));
+        //先更新form表字段所更改的内容
+        if (formMapper.updateFormById(form)){
+            //删除与form绑定的组件
+            int formId = form.getFormId();
+            formMapper.deleteTemplateList(formId);
+        }else{
+
+        }
+
+        //插入新的组件list
+        return insertTemplateList(form);
+    }
+
+    @Override
+    public void updateFormView(int formId) {
+        //TODO:判断表单是否公开
+        //TODO:+1浏览量
+    }
+
+    @Override
+    public Result updateFormOpen(int formId) {
+        //判断id是否存在
+        if (formMapper.checkFormById(formId)) {
+            //数据库拿open数字
+            int flag = formMapper.getFormOpenByid(formId);
+            if (flag == 0) {
+                formMapper.updateFormOpenById(formId, flag + 1);
+                return ResultUtils.success("该表单已公开填写");
+            } else {
+                formMapper.updateFormOpenById(formId, flag - 1);
+                return ResultUtils.success("该表单已关闭公开填写");
+            }
+        }
+        return ResultUtils.fail("表单id不存在");
     }
 }

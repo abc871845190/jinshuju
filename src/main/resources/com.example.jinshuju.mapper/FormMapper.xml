@@ -70,20 +70,37 @@
                     (SELECT template_content_default FROM template WHERE template_id = #{item.templateId}),
                 </if>
                 <if test="item.templateContent != null and item.templateContent != ''">#{item.templateContent},</if>
-                <if test="item.templateCount == 0">${index+1},</if>
+                <!--<if test="item.templateCount == 0">${index+1},</if>-->
                 <if test="item.templateCount != 0">#{item.templateCount},</if>
                 <if test="item.templateDefault == null or item.templateDefault == ''">"null",</if>
                 <if test="item.templateDefault != null and item.templateDefault != ''">#{item.templateDefault},</if>
             </trim>
         </foreach>
     </insert>
+    <update id="updateFormNameById">
+        update form
+        set form_name = #{formName}
+        where form_id = #{formId}
+    </update>
+    <update id="updateFormTagById">
+        update form
+        set form_tag = #{formTag}
+        where form_id = #{formId}
+    </update>
+    <update id="updateFormOpenById">
+        update form
+        set form_open = #{formOpen}
+        where form_id = #{formId}
+    </update>
+    <update id="updateFormById"></update>
     <delete id="deleteFormById" parameterType="int">
         delete
         from form
         where form_id = #{formId}
     </delete>
+    <delete id="deleteTemplateList"></delete>
 
-    <resultMap id="getFormsByUserIdMap" type="com.example.jinshuju.pojo.Form">
+    <resultMap id="FormResultMap" type="com.example.jinshuju.pojo.Form">
         <id property="formId" column="form_id"/>
         <result property="formName" column="form_name"/>
         <result property="formTitle" column="form_title"/>
@@ -110,7 +127,7 @@
         <result property="templateCount" column="template_count"/>
         <result property="templateDefault" column="template_default"/>
     </resultMap>
-    <select id="getFormsByUserId" resultMap="getFormsByUserIdMap" parameterType="int">
+    <select id="getFormsByUserId" resultMap="FormResultMap" parameterType="int">
         SELECT f.*,
                ft.form_type
         FROM form f,
@@ -135,7 +152,7 @@
         WHERE form_id = #{formId}
           AND ft.template_id = t.template_id
     </select>
-    <select id="getFormByFormId" resultMap="getFormsByUserIdMap" parameterType="int">
+    <select id="getFormByFormId" resultMap="FormResultMap" parameterType="int">
         SELECT f.*,
                ft.form_type
         FROM form f,
@@ -144,5 +161,15 @@
         WHERE f.form_id = #{formId}
           AND f.form_id = fft.form_id
           AND fft.form_type_id = ft.id
+    </select>
+    <select id="checkFormById" resultType="java.lang.Boolean" parameterType="int">
+        select count(1)
+        from form
+        where form_id = #{formId}
+    </select>
+    <select id="getFormOpenByid" resultType="java.lang.Integer">
+        select form_open
+        from form
+        where form_id = #{formId}
     </select>
 </mapper>
