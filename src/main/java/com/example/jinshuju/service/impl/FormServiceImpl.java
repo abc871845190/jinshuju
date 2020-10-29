@@ -1,6 +1,7 @@
 package com.example.jinshuju.service.impl;
 
 import com.example.jinshuju.mapper.FormMapper;
+import com.example.jinshuju.mapper.UserMapper;
 import com.example.jinshuju.pojo.Form;
 import com.example.jinshuju.pojo.Template;
 import com.example.jinshuju.pojo.User;
@@ -21,6 +22,9 @@ public class FormServiceImpl implements FormService {
 
     @Autowired(required = false)
     FormMapper formMapper;
+
+    @Autowired(required = false)
+    UserMapper userMapper;
 
     @Override
     public Result createForm(User user, Form form) {
@@ -83,9 +87,12 @@ public class FormServiceImpl implements FormService {
     public Result getForms(User user) {
         //获取用户id
         int userId = user.getUserId();
-        //根据用户id获得用户所有的表单list
-        List<Form> formList = formMapper.getFormsByUserId(userId);
-        return ResultUtils.success("成功", formList);
+        if(userMapper.checkUserExist(userId)){
+            //根据用户id获得用户所有的表单list
+            List<Form> formList = formMapper.getFormsByUserId(userId);
+            return ResultUtils.success("成功", formList);
+        }
+        return ResultUtils.fail("用户id不存在");
     }
 
     @Override
