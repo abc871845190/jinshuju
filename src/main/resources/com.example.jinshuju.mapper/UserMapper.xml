@@ -55,37 +55,66 @@
     </insert>
 
     <update id="checkUpdateCode" parameterType="com.example.jinshuju.pojo.User">
-        update user set user_email = #{userEmail},user_telephone = #{userTelephone} where user_id = #{userId}
+        update user
+        set user_email     = #{userEmail},
+            user_telephone = #{userTelephone}
+        where user_id = #{userId}
     </update>
     <update id="updatePswById">
-        update user set user_password = #{newPsw},user_update_time = #{now} where user_id = #{userid}
+        update user
+        set user_password    = #{newPsw},
+            user_update_time = #{now}
+        where user_id = #{userid}
     </update>
     <update id="updateEmailById" parameterType="com.example.jinshuju.pojo.User">
-       update user set user_email = #{userEmail} where user_id = #{userId}
+        update user
+        set user_email = #{userEmail}
+        where user_id = #{userId}
     </update>
     <update id="updateTelephoneById" parameterType="com.example.jinshuju.pojo.User">
-        update user set user_telephone = #{userTelephone} where user_id = #{userId}
+        update user
+        set user_telephone = #{userTelephone}
+        where user_id = #{userId}
     </update>
     <select id="checkUser" resultType="java.lang.Boolean" parameterType="String">
-        select count(1) from user where user_name = #{username}
+        select count(1)
+        from user
+        where user_name = #{username}
     </select>
     <select id="loginUserByUserName" resultMap="UserResultMap" parameterType="String">
-        select * from user where user_name = #{username}
+        select *
+        from user
+        where user_name = #{username}
     </select>
     <select id="loginUserByEmail" resultMap="UserResultMap" parameterType="String">
-        select * from user where user_email = #{username}
+        select *
+        from user
+        where user_email = #{username}
     </select>
     <select id="findOneById" resultMap="UserDataMap" parameterType="int">
-        select * from user where user_id = #{userid}
+        select *
+        from user
+        where user_id = #{userid}
     </select>
     <select id="checkEmailByEmail" resultType="java.lang.Boolean" parameterType="String">
-        select count(1) from user where user_email = #{email}
+        select count(1)
+        from user
+        where user_email = #{email}
     </select>
     <select id="checkUserNameByName" resultType="java.lang.Boolean" parameterType="String">
-        select count(1) from user where user_name = #{username}
+        select count(1)
+        from user
+        where user_name = #{username}
     </select>
     <select id="findOneAllById" resultMap="UserResultMap" parameterType="int">
-        select * from user where user_id = #{userid}
+        select *
+        from user
+        where user_id = #{userid}
+    </select>
+    <select id="checkUserExist" resultType="java.lang.Boolean" parameterType="int">
+        select count(1)
+        from user
+        where user_id = #{userId}
     </select>
 
 

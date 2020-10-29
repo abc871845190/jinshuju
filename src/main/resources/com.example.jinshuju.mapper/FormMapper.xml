@@ -92,13 +92,29 @@
         set form_open = #{formOpen}
         where form_id = #{formId}
     </update>
-    <update id="updateFormById"></update>
+    <update id="updateFormById" parameterType="com.example.jinshuju.pojo.Form">
+        update form
+        <set>
+            <if test="formName == null or formName == ''">form_name = "未命名表单名",</if>
+            <if test="formName != null or formName != ''">form_name = #{formName},</if>
+            <if test="formTitle == null or formTitle == ''">form_title = "未命名标题",</if>
+            <if test="formTitle != null or formTitle != ''">form_title = #{formTitle},</if>
+            <if test="formDesc != null or formDesc != ''">form_desc = #{formDesc},</if>
+            <if test="formImg != null or formImg != ''">form_desc = #{formImg},</if>
+            form_update_time = #{formUpdateTime}
+        </set>
+        where form_id = #{formId}
+    </update>
     <delete id="deleteFormById" parameterType="int">
         delete
         from form
         where form_id = #{formId}
     </delete>
-    <delete id="deleteTemplateList"></delete>
+    <delete id="deleteTemplateList" parameterType="int">
+        delete
+        from form_template
+        where form_id = #{formId}
+    </delete>
 
     <resultMap id="FormResultMap" type="com.example.jinshuju.pojo.Form">
         <id property="formId" column="form_id"/>

@@ -71,8 +71,8 @@ public class FormServiceImpl implements FormService {
         //批量插入表单组件关系表
         List<Template> templateList = form.getTemplateList();
         if (templateList.isEmpty()) {
-            deleteForm(form.getFormId());
-            return ResultUtils.fail("组件为空");
+            //0组件表单
+            return ResultUtils.fail("插入表单成功");
         } else {
             //插入
             return formMapper.insertTemplate(form) > 0 ? ResultUtils.success("插入表单成功！") : ResultUtils.fail("插入组件失败");
@@ -178,15 +178,12 @@ public class FormServiceImpl implements FormService {
         //必填的数据有 id,name = title,desc,updatetime,formimg,template
         //填补数据
         form.setFormUpdateTime(new Timestamp(System.currentTimeMillis()));
+        //如果表单数据一模一样，照样运行一次插入更新操作，不会中途停止。
         //先更新form表字段所更改的内容
-        if (formMapper.updateFormById(form)){
-            //删除与form绑定的组件
-            int formId = form.getFormId();
-            formMapper.deleteTemplateList(formId);
-        }else{
-
-        }
-
+        formMapper.updateFormById(form);
+        //删除与form绑定的组件
+        int formId = form.getFormId();
+        formMapper.deleteTemplateList(formId);
         //插入新的组件list
         return insertTemplateList(form);
     }

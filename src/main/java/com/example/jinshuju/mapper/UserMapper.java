@@ -97,5 +97,12 @@ public interface UserMapper {
      */
     Boolean updateTelephoneById(User user);
 
+    /**
+     * 根据用户id查询用户是否存在
+     *
+     * @return
+     */
+    Boolean checkUserExist(int userId);
+
     int checkUpdateCode(User user);
 }
