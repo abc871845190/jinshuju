@@ -91,8 +91,26 @@ public interface FormService {
      * 设置表单是否开启填写
      * 默认为0，0为未公开
      * 1为公开填写
+     *
      * @param formId
      * @return
      */
     Result updateFormOpen(int formId);
+
+    /**
+     * 获取该tag下的第n个分页
+     *
+     * @param formTag
+     * @param pageInt
+     * @return
+     */
+    Result getFormsPage(String formTag, int pageInt);
+
+    /**
+     * 获取该tag的总分页数
+     *
+     * @param formTag
+     * @return
+     */
+    Result getPageCount(String formTag);
 }

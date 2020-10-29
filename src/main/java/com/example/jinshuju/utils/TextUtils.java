@@ -19,6 +19,17 @@ public class TextUtils {
      */
     public static int RandomCode() {
         //10000 - 99999 返回
-        return (int) Math.round(Math.random()*89999+10000);
+        return (int) Math.round(Math.random() * 89999 + 10000);
+    }
+
+    /**
+     * 分割String字符串
+     *
+     * @param targetString
+     * @param regex
+     * @return
+     */
+    public static String[] splitString(String targetString, String regex) {
+        return targetString.split(regex);
     }
 }

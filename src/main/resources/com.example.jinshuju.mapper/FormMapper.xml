@@ -188,4 +188,36 @@
         from form
         where form_id = #{formId}
     </select>
+    <select id="getFormsByTagAndPage" resultMap="FormResultMap">
+        SELECT
+        f.*,
+        ft.form_type
+        FROM
+        form f,
+        form_form_type fft,
+        form_type ft
+        WHERE
+        f.form_id = fft.form_id
+        AND fft.form_type_id = ft.id
+        <if test="formTagArray != null">
+            AND
+            <foreach collection="formTagArray" index="index" item="item" open="(" close=")" separator="and">
+                find_in_set(#{item},f.form_tag)
+            </foreach>
+        </if>
+        <if test="offset != 0">
+            LIMIT #{offset},#{rows}
+        </if>
+    </select>
+    <select id="getFormsCountByTag" resultType="java.lang.Integer">
+        select count(*)
+        from form
+        where 1 = 1
+        <if test="formTagArray != null">
+            and
+            <foreach collection="formTagArray" index="index" item="item" open="(" close=")" separator="and">
+                find_in_set(#{item},form_tag)
+            </foreach>
+        </if>
+    </select>
 </mapper>

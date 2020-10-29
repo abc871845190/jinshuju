@@ -7,6 +7,7 @@ import com.example.jinshuju.pojo.Template;
 import com.example.jinshuju.pojo.User;
 import com.example.jinshuju.service.FormService;
 import com.example.jinshuju.utils.ResultUtils.Result;
+import com.example.jinshuju.utils.ResultUtils.ResultEnum;
 import com.example.jinshuju.utils.ResultUtils.ResultUtils;
 import com.example.jinshuju.utils.TextUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -87,7 +88,7 @@ public class FormServiceImpl implements FormService {
     public Result getForms(User user) {
         //获取用户id
         int userId = user.getUserId();
-        if(userMapper.checkUserExist(userId)){
+        if (userMapper.checkUserExist(userId)) {
             //根据用户id获得用户所有的表单list
             List<Form> formList = formMapper.getFormsByUserId(userId);
             return ResultUtils.success("成功", formList);
@@ -216,5 +217,26 @@ public class FormServiceImpl implements FormService {
             }
         }
         return ResultUtils.fail("表单id不存在");
+    }
+
+    @Override
+    public Result getFormsPage(String formTag, int pageInt) {
+        //初定size为20个
+        int rows = 20;
+        int offset = (pageInt - 1) * rows;
+        //解析formTag
+        String[] formTagArray = TextUtils.splitString(formTag, ",");
+        List<Form> formList = formMapper.getFormsByTagAndPage(formTagArray, offset, rows);
+        return ResultUtils.success("成功",formList);
+    }
+
+    @Override
+    public Result getPageCount(String formTag) {
+        //初定size为20个
+        int rows = 20;
+        //解析formTag
+        String[] formTagArray = TextUtils.splitString(formTag, ",");
+        int allCount = formMapper.getFormsCountByTag(formTagArray);
+        return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), (allCount + rows - 1) / rows);
     }
 }

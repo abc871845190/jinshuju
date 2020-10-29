@@ -135,4 +135,25 @@ public class FormController {
     public Result updateFormOpen(@PathVariable("formId") int formId){
         return formService.updateFormOpen(formId);
     }
+
+    @ApiOperation(value = "获取该tag下的第n个分页", response = Result.class)
+    @ApiResponses({
+            @ApiResponse(code = 1, message = "成功"),
+            @ApiResponse(code = 2, message = "失败")
+    })
+    @GetMapping("/getFormsPage")
+    public Result getFormsPage(@RequestParam("formTag") String formTag,
+                               @RequestParam("page") int pageInt){
+        return formService.getFormsPage(formTag,pageInt);
+    }
+
+    @ApiOperation(value = "获取该tag下的总分页数", response = Result.class)
+    @ApiResponses({
+            @ApiResponse(code = 1, message = "成功"),
+            @ApiResponse(code = 2, message = "失败")
+    })
+    @GetMapping("/getPageCount")
+    public Result getPageCount(@RequestParam("formTag") String formTag){
+        return formService.getPageCount(formTag);
+    }
 }
