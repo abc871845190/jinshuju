@@ -239,4 +239,10 @@ public class FormServiceImpl implements FormService {
         int allCount = formMapper.getFormsCountByTag(formTagArray);
         return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), (allCount + rows - 1) / rows);
     }
+
+    @Override
+    public Result getSmithName(String formName) {
+        //
+        return ResultUtils.success(ResultEnum.SUCCESS.getMsg());
+    }
 }

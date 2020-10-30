@@ -67,6 +67,8 @@ public class UserController {
     public Result loginUser(@RequestBody User user,
                             HttpServletRequest request,
                             HttpServletResponse response) {
+        response.setHeader("Access-Control-Allow-Origin","*");
+        response.setHeader("Access-Control-Allow-Methods","POST,GET,PUT,DELETE");
         return userService.loginUser(user, request, response);
     }
 

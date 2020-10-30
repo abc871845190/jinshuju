@@ -21,6 +21,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registration.excludePathPatterns(
                 "/UserController/User",
                 "/UserController/loginUser",
+                "/TestController/**",
                 "/swagger-resources/**",
                 "/webjars/**",
                 "/v2/**",
@@ -43,5 +44,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public LoginFilter loginFilter() {
         return new LoginFilter();
     }
+
 }
 

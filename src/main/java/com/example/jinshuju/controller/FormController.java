@@ -136,18 +136,19 @@ public class FormController {
         return formService.updateFormOpen(formId);
     }
 
-    @ApiOperation(value = "获取该tag下的第n个分页", response = Result.class)
+    @ApiOperation(value = "获取所有已公开表单该tag下的第n个分页", response = Result.class)
     @ApiResponses({
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
     })
     @GetMapping("/getFormsPage")
-    public Result getFormsPage(@RequestParam("formTag") String formTag,
-                               @RequestParam("page") int pageInt){
+    public Result getFormsPage(@RequestParam(name = "keyWord",required = false) String keyWord,
+            @RequestParam(name = "formTag",required = true) String formTag,
+                               @RequestParam(name = "page",required = true) int pageInt){
         return formService.getFormsPage(formTag,pageInt);
     }
 
-    @ApiOperation(value = "获取该tag下的总分页数", response = Result.class)
+    @ApiOperation(value = "获取所有已公开表单该tag下的总分页数", response = Result.class)
     @ApiResponses({
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
@@ -156,4 +157,24 @@ public class FormController {
     public Result getPageCount(@RequestParam("formTag") String formTag){
         return formService.getPageCount(formTag);
     }
+
+//    @ApiOperation(value = "根据搜索名迷糊获取所有已公开表单", response = Result.class)
+//    @ApiResponses({
+//            @ApiResponse(code = 1, message = "成功"),
+//            @ApiResponse(code = 2, message = "失败")
+//    })
+//    @GetMapping("/getSmithName")
+//    public Result getSmithName(@RequestParam("keyWord") String formName,
+//                               @RequestParam("formTag") String formTag,
+//                               @RequestParam("page") int pageInt){
+//        log.info(formName+"   "+formTag+"   "+pageInt);
+//        if (TextUtils.isEmpty(formName)){
+//
+//        }else if (TextUtils.isEmpty(formTag)){
+//
+//        }else if(pageInt == 0){
+//
+//        }
+//        return ResultUtils.success();
+//    }
 }

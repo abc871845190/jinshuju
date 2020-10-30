@@ -113,4 +113,12 @@ public interface FormService {
      * @return
      */
     Result getPageCount(String formTag);
+
+    /**
+     * 模糊查询已公开表单名
+     *
+     * @param formName
+     * @return
+     */
+    Result getSmithName(String formName);
 }

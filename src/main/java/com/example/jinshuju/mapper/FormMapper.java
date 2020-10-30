@@ -123,7 +123,7 @@ public interface FormMapper {
     Boolean deleteTemplateList(int formId);
 
     /**
-     * 根据 tag和page 查询分页表单
+     * 根据 tag和page 查询分页表单（都设置已公开）
      *
      * @param formTagArray 标签List
      * @param offset       从n个数据开始
@@ -133,7 +133,7 @@ public interface FormMapper {
     List<Form> getFormsByTagAndPage(@Param("formTagArray") String[] formTagArray, @Param("offset") int offset, @Param("rows") int rows);
 
     /**
-     * 根据 tag 查询分页总数目
+     * 根据 tag 查询分页总数目（都设置已公开的）
      *
      * @return
      */
