@@ -220,29 +220,46 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
-    public Result getFormsPage(String formTag, int pageInt) {
+    public Result getFormsPage(String keyWord, String formTag, int pageInt) {
+        //如果传值keyWord = null 或者 = "" 在sql判断
+        //keyWord判空
+        if (TextUtils.isEmpty(keyWord)){
+            keyWord = null;
+        }
         //初定size为20个
         int rows = 20;
         int offset = (pageInt - 1) * rows;
-        //解析formTag
-        String[] formTagArray = TextUtils.splitString(formTag, ",");
-        List<Form> formList = formMapper.getFormsByTagAndPage(formTagArray, offset, rows);
-        return ResultUtils.success("成功",formList);
+        //解析formTag 如果formTag = null 或者 = ""
+        String[] formTagArray;
+        if (TextUtils.isEmpty(formTag)) {
+            //一律处理formTagArray为null
+            formTagArray = null;
+        } else {
+            //不为空
+            formTagArray = TextUtils.splitString(formTag, ",");
+        }
+        List<Form> formList = formMapper.getFormsByTagAndPage(keyWord, formTagArray, offset, rows);
+        return ResultUtils.success("成功", formList);
     }
 
     @Override
-    public Result getPageCount(String formTag) {
+    public Result getPageCount(String keyWord, String formTag) {
+        //keyWord判空
+        if (TextUtils.isEmpty(keyWord)){
+            keyWord = null;
+        }
         //初定size为20个
         int rows = 20;
         //解析formTag
-        String[] formTagArray = TextUtils.splitString(formTag, ",");
-        int allCount = formMapper.getFormsCountByTag(formTagArray);
+        String[] formTagArray;
+        if (TextUtils.isEmpty(formTag)) {
+            //一律处理formTagArray为null
+            formTagArray = null;
+        } else {
+            //不为空
+            formTagArray = TextUtils.splitString(formTag, ",");
+        }
+        int allCount = formMapper.getFormsCountByTag(keyWord, formTagArray);
         return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), (allCount + rows - 1) / rows);
-    }
-
-    @Override
-    public Result getSmithName(String formName) {
-        //
-        return ResultUtils.success(ResultEnum.SUCCESS.getMsg());
     }
 }

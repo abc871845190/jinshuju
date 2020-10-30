@@ -125,17 +125,19 @@ public interface FormMapper {
     /**
      * 根据 tag和page 查询分页表单（都设置已公开）
      *
-     * @param formTagArray 标签List
-     * @param offset       从n个数据开始
-     * @param rows         一次查询返回的size
+     * @param keyWord 表单名关键词
+     * @param formTagArray
+     * @param offset
+     * @param rows
      * @return
      */
-    List<Form> getFormsByTagAndPage(@Param("formTagArray") String[] formTagArray, @Param("offset") int offset, @Param("rows") int rows);
+    List<Form> getFormsByTagAndPage(@Param("keyWord") String keyWord, @Param("formTagArray") String[] formTagArray, @Param("offset") int offset, @Param("rows") int rows);
 
     /**
      * 根据 tag 查询分页总数目（都设置已公开的）
-     *
+     * @param keyWord 表单名关键词
+     * @param formTagArray
      * @return
      */
-    int getFormsCountByTag(String[] formTagArray);
+    int getFormsCountByTag(@Param("keyWord") String keyWord,@Param("formTagArray") String[] formTagArray);
 }

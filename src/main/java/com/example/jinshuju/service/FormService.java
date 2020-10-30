@@ -100,11 +100,12 @@ public interface FormService {
     /**
      * 获取该tag下的第n个分页
      *
+     * @param keyWord
      * @param formTag
      * @param pageInt
      * @return
      */
-    Result getFormsPage(String formTag, int pageInt);
+    Result getFormsPage(String keyWord, String formTag, int pageInt);
 
     /**
      * 获取该tag的总分页数
@@ -112,13 +113,6 @@ public interface FormService {
      * @param formTag
      * @return
      */
-    Result getPageCount(String formTag);
+    Result getPageCount(String keyWord, String formTag);
 
-    /**
-     * 模糊查询已公开表单名
-     *
-     * @param formName
-     * @return
-     */
-    Result getSmithName(String formName);
 }

@@ -206,9 +206,10 @@
                 find_in_set(#{item},f.form_tag)
             </foreach>
         </if>
-        <if test="offset != 0">
-            LIMIT #{offset},#{rows}
+        <if test="keyWord != null">
+            AND find_in_set(#{keyWord},f.form_name)
         </if>
+        LIMIT #{offset},#{rows}
     </select>
     <select id="getFormsCountByTag" resultType="java.lang.Integer">
         select count(*)
@@ -220,6 +221,9 @@
             <foreach collection="formTagArray" index="index" item="item" open="(" close=")" separator="and">
                 find_in_set(#{item},form_tag)
             </foreach>
+        </if>
+        <if test="keyWord != null">
+            AND find_in_set(#{keyWord},form_name)
         </if>
     </select>
 </mapper>

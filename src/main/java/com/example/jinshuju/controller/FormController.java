@@ -90,7 +90,7 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @DeleteMapping("/form/{formId}")
-    public Result deleteForm(@PathVariable("forId") int formId){
+    public Result deleteForm(@PathVariable("forId") int formId) {
         return formService.deleteForm(formId);
     }
 
@@ -101,8 +101,8 @@ public class FormController {
     })
     @PutMapping("/updateName/{formId}/{formName}")
     public Result updateFormName(@PathVariable("formName") String formName,
-                                 @PathVariable("formId") int formId){
-        return formService.updateFormName(formId,formName);
+                                 @PathVariable("formId") int formId) {
+        return formService.updateFormName(formId, formName);
     }
 
     @ApiOperation(value = "修改表单tag", response = Result.class)
@@ -112,8 +112,8 @@ public class FormController {
     })
     @PutMapping("/updateTag/{formId}/{formTag}")
     public Result updateFormTag(@PathVariable("formTag") String formTag,
-                                @PathVariable("formId") int formId){
-        return formService.updateFormTag(formId,formTag);
+                                @PathVariable("formId") int formId) {
+        return formService.updateFormTag(formId, formTag);
     }
 
     @ApiOperation(value = "修改表单,要附带id", response = Result.class)
@@ -122,7 +122,7 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @PutMapping("/updateForm")
-    public Result updateForm(@RequestBody Form form){
+    public Result updateForm(@RequestBody Form form) {
         return formService.updateForm(form);
     }
 
@@ -132,49 +132,33 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @PutMapping("/updateOpen/{formId}")
-    public Result updateFormOpen(@PathVariable("formId") int formId){
+    public Result updateFormOpen(@PathVariable("formId") int formId) {
         return formService.updateFormOpen(formId);
     }
 
-    @ApiOperation(value = "获取所有已公开表单该tag下的第n个分页", response = Result.class)
+    @ApiOperation(value = "获取所有已公开表单该tag下的第n个分页以及搜寻的关键字", response = Result.class)
     @ApiResponses({
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
     })
     @GetMapping("/getFormsPage")
-    public Result getFormsPage(@RequestParam(name = "keyWord",required = false) String keyWord,
-            @RequestParam(name = "formTag",required = true) String formTag,
-                               @RequestParam(name = "page",required = true) int pageInt){
-        return formService.getFormsPage(formTag,pageInt);
+    public Result getFormsPage(@RequestParam(name = "keyWord", required = false, defaultValue = "") String keyWord,
+                               @RequestParam(name = "formTag", required = false, defaultValue = "") String formTag,
+                               @RequestParam(name = "page", required = false, defaultValue = "1") int pageInt) {
+        //log.info(keyWord + "   " + formTag + "   " + pageInt);
+        return formService.getFormsPage(keyWord, formTag, pageInt);
     }
 
-    @ApiOperation(value = "获取所有已公开表单该tag下的总分页数", response = Result.class)
+    @ApiOperation(value = "获取所有已公开表单该tag下的总分页数以及关键字", response = Result.class)
     @ApiResponses({
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
     })
     @GetMapping("/getPageCount")
-    public Result getPageCount(@RequestParam("formTag") String formTag){
-        return formService.getPageCount(formTag);
+    public Result getPageCount(@RequestParam(name = "keyWord", required = false, defaultValue = "") String keyWord,
+                               @RequestParam(name = "formTag", required = false, defaultValue = "") String formTag) {
+        log.info(keyWord + "   " + formTag);
+        return formService.getPageCount(keyWord, formTag);
     }
 
-//    @ApiOperation(value = "根据搜索名迷糊获取所有已公开表单", response = Result.class)
-//    @ApiResponses({
-//            @ApiResponse(code = 1, message = "成功"),
-//            @ApiResponse(code = 2, message = "失败")
-//    })
-//    @GetMapping("/getSmithName")
-//    public Result getSmithName(@RequestParam("keyWord") String formName,
-//                               @RequestParam("formTag") String formTag,
-//                               @RequestParam("page") int pageInt){
-//        log.info(formName+"   "+formTag+"   "+pageInt);
-//        if (TextUtils.isEmpty(formName)){
-//
-//        }else if (TextUtils.isEmpty(formTag)){
-//
-//        }else if(pageInt == 0){
-//
-//        }
-//        return ResultUtils.success();
-//    }
 }
