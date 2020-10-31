@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.jinshuju.mapper.DataMapper">
+
+    <insert id="insertData" parameterType="com.example.jinshuju.pojo.Data">
+        INSERT INTO data ( form_id, user_id, data_create_time )
+        VALUES
+        ( #{form.formId}, #{user.userId}, #{dataCreateTime})
+        <selectKey keyProperty="dataId" resultType="int" keyColumn="data_id" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+    <insert id="insertDataDetails" parameterType="com.example.jinshuju.pojo.Data">
+        insert into data_details (data_id, form_template_id, data_content)
+        values
+        <foreach collection="dataDetailsList" index="index" item="item" separator=",">
+            (#{dataId},#{item.formTemplateId},#{item.dataContent})
+        </foreach>
+    </insert>
+</mapper>

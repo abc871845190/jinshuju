@@ -6,7 +6,6 @@ import lombok.Data;
 public class DataDetails {
 
     private int id;
-    private Template template;
+    private int formTemplateId;
     private String dataContent;
-    private java.sql.Timestamp dataWriteTime;
 }
