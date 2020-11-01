@@ -3,6 +3,7 @@ package com.example.jinshuju.controller;
 import com.example.jinshuju.pojo.Data;
 import com.example.jinshuju.service.DataService;
 import com.example.jinshuju.utils.ResultUtils.Result;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/DataController")
 @Slf4j
+@Api("数据项Api")
 public class DataController {
 
     @Autowired(required = false)

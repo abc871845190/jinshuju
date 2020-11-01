@@ -2,7 +2,6 @@ package com.example.jinshuju.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.RequestHandler;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -21,7 +20,7 @@ public class Swagger2Config {
      * @ApiIgnore 忽略某类/方法/参数的文档
      */
 
-    public static final String VERSION = "1.0.0";
+    public static final String VERSION = "1.1.0";
 
     /**
      * 配置docket以配置Swagger具体参数
@@ -44,9 +43,9 @@ public class Swagger2Config {
                 //regex(final String pathRegex)  通过正则表达式控制，返回true扫描，false不扫描
                 //ant(final String antPattern)  通过ant()表达式控制，返回true扫描，false不扫描
                 .paths(PathSelectors.any())
-                .build()
+                .build();
                 //给文档分组
-                .groupName("用户接口");
+                //.groupName("用户接口");
     }
 
     private ApiInfo UserApiInfo() {
