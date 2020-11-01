@@ -62,3 +62,10 @@ spring:
   mvc:
     #静态文件路径
     static-path-pattern: /**
+  servlet:
+    multipart:
+      #上传单个文件总最大值
+      max-file-size: 1MB
+      #上传文件最大值
+      max-request-size: 1MB
+      enabled: true
