@@ -34,7 +34,6 @@ public class FormServiceImpl implements FormService {
         form.setFormUpdateTime(new Timestamp(System.currentTimeMillis()));
         form.setFormOpen(0);
         form.setFormViewCount(0);
-        form.setFormResultViewCount(0);
         //插入form，获取id
         //log.info(form.toString());
         return doCreateForm(user, form);
@@ -126,7 +125,6 @@ public class FormServiceImpl implements FormService {
             form.setFormCreateTime(new Timestamp(System.currentTimeMillis()));
             form.setFormUpdateTime(new Timestamp(System.currentTimeMillis()));
             form.setFormViewCount(0);
-            form.setFormResultViewCount(0);
             //插入新表单
             return doCreateForm(user, form);
         }
@@ -207,7 +205,7 @@ public class FormServiceImpl implements FormService {
         //判断id是否存在
         if (formMapper.checkFormById(formId)) {
             //数据库拿open数字
-            int flag = formMapper.getFormOpenByid(formId);
+            int flag = formMapper.getFormOpenById(formId);
             if (flag == 0) {
                 formMapper.updateFormOpenById(formId, flag + 1);
                 return ResultUtils.success("该表单已公开填写");

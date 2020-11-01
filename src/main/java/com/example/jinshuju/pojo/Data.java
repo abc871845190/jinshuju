@@ -9,5 +9,7 @@ public class Data {
     private Form form;
     private User user;
     private java.sql.Timestamp dataCreateTime;
+    private java.sql.Timestamp dataUpdateTime;
+    private int dataWriteTime;
     private List<DataDetails> dataDetailsList;
 }

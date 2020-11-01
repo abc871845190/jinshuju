@@ -37,7 +37,6 @@
             #{formOpen},
             <if test="formUrl != null and formUrl != null">#{formUrl},</if>
             #{formViewCount},
-            #{formResultViewCount},
             <if test="formImg != null and formImg != ''">#{formImg},</if>
             <if test="formImg == null or formImg == ''">"-----------",</if>
         </trim>
@@ -127,21 +126,10 @@
         <result property="formOpen" column="form_open"/>
         <result property="formUrl" column="form_url"/>
         <result property="formViewCount" column="form_view_count"/>
-        <result property="formResultViewCount" column="form_result_view_count"/>
         <result property="formImg" column="form_img"/>
         <result property="formType" column="form_type"/>
         <collection property="templateList" ofType="com.example.jinshuju.pojo.Template"
                     column="form_id" select="getTemplatesByFormId"/>
-    </resultMap>
-    <resultMap id="TemplateResultMap" type="com.example.jinshuju.pojo.Template">
-        <id property="templateId" column="template_id"/>
-        <result property="templateName" column="template_name"/>
-        <result property="templateDesc" column="template_desc"/>
-        <result property="templateContentDefault" column="template_content_default"/>
-        <result property="templateTitle" column="template_title"/>
-        <result property="templateContent" column="template_content"/>
-        <result property="templateCount" column="template_count"/>
-        <result property="templateDefault" column="template_default"/>
     </resultMap>
     <select id="getFormsByUserId" resultMap="FormResultMap" parameterType="int">
         SELECT f.*,
@@ -155,8 +143,20 @@
           AND f.form_id = fft.form_id
           AND fft.form_type_id = ft.id
     </select>
+    <resultMap id="TemplateResultMap" type="com.example.jinshuju.pojo.Template">
+        <id property="templateId" column="template_id"/>
+        <result property="templateName" column="template_name"/>
+        <result property="templateDesc" column="template_desc"/>
+        <result property="templateContentDefault" column="template_content_default"/>
+        <result property="templateTitle" column="template_title"/>
+        <result property="templateContent" column="template_content"/>
+        <result property="templateCount" column="template_count"/>
+        <result property="templateDefault" column="template_default"/>
+        <result property="formTemplateId" column="form_template_id"/>
+    </resultMap>
     <select id="getTemplatesByFormId" parameterType="int" resultMap="TemplateResultMap">
-        SELECT ft.template_id,
+        SELECT ft.form_template_id,
+               ft.template_id,
                ft.template_title,
                ft.template_default,
                ft.template_count,
@@ -183,7 +183,7 @@
         from form
         where form_id = #{formId}
     </select>
-    <select id="getFormOpenByid" resultType="java.lang.Integer">
+    <select id="getFormOpenById" resultType="java.lang.Integer">
         select form_open
         from form
         where form_id = #{formId}

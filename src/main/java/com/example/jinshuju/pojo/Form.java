@@ -17,7 +17,6 @@ public class Form {
     private int formOpen;
     private String formUrl;
     private int formViewCount;
-    private int formResultViewCount;
     private String formImg;
     private String formType;
     private List<Template> templateList;

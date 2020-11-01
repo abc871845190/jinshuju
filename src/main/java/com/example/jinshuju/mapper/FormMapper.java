@@ -95,7 +95,7 @@ public interface FormMapper {
      * @param formId
      * @return
      */
-    int getFormOpenByid(int formId);
+    int getFormOpenById(int formId);
 
     /**
      * 设置表单是否开启填写
