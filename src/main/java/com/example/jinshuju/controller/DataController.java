@@ -62,7 +62,7 @@ public class DataController {
         return dataService.updateData(data);
     }
 
-    @PostMapping("/upload")
+    @PostMapping("/uploadExcel")
     public Result uploadExcel(@RequestParam("excelFile") MultipartFile excelFile) {
         if (excelFile != null) {
             return ResultUtils.success();
