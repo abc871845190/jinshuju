@@ -14,12 +14,12 @@ public interface FormService {
     Result createForm(User user, Form form);
 
     /**
-     * 查找用户的表单
+     * 查找用户的表单,按两种排序方式
      *
      * @param user
      * @return
      */
-    Result getForms(User user);
+    Result getForms(User user, int flag);
 
     /**
      * 查找单个表单信息
@@ -114,5 +114,12 @@ public interface FormService {
      * @return
      */
     Result getPageCount(String keyWord, String formTag);
+
+    /**
+     * 查看我为别人填写过的表单
+     *
+     * @return
+     */
+    Result getFilledForms(User user);
 
 }

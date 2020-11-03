@@ -40,6 +40,7 @@
             <if test="userTelephone!=null and userTelephone!=''">user_telephone,</if>
             <if test="userCreateTime!=null">user_create_time,</if>
             <if test="userUpdateTime!=null">user_update_time,</if>
+            <if test="userImg!=null">user_img,</if>
         </trim>
         <trim prefix="values(" suffix=")" suffixOverrides=",">
             <if test="userName!=null and userName!=''">#{userName},</if>
@@ -51,6 +52,7 @@
             <if test="userTelephone!=null and userTelephone!=''">#{userTelephone},</if>
             <if test="userCreateTime!=null">#{userCreateTime},</if>
             <if test="userUpdateTime!=null">#{userUpdateTime},</if>
+            <if test="userImg!=null">#{userImg},</if>
         </trim>
     </insert>
 

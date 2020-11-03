@@ -1,6 +1,7 @@
 package com.example.jinshuju.mapper;
 
 import com.example.jinshuju.pojo.Form;
+import com.example.jinshuju.pojo.User;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -12,16 +13,7 @@ public interface FormMapper {
      *
      * @return
      */
-    Boolean insertForm(Form form);
-
-    /**
-     * 存储From和User的关系，存外键表
-     *
-     * @param userId
-     * @param formId
-     * @return
-     */
-    Boolean saveFormAndUser(@Param("userId") int userId, @Param("formId") int formId);
+    Boolean insertForm(@Param("user") User user, @Param("form") Form form);
 
     /**
      * 根据form pojo的类别更新类别关系表
@@ -32,7 +24,7 @@ public interface FormMapper {
     Boolean saveFormType(Form form);
 
     /**
-     * 根据id 删除表单，和关联表单的所有表数据
+     * 根据id 删除表单，和关联表单的所有表数据()
      *
      * @param formId
      * @return
@@ -48,12 +40,20 @@ public interface FormMapper {
     int insertTemplate(Form form);
 
     /**
-     * 根据用户id获取用户所有表单信息
+     * 根据用户id获取用户所有表单信息，按表单创建时间(默认)
      *
      * @param userId
      * @return
      */
-    List<Form> getFormsByUserId(int userId);
+    List<Form> getFormsByUserIdAndCreateTime(int userId);
+
+    /**
+     * 根据用户id获取用户所有表单信息，按数据提交时间排序
+     *
+     * @param userId
+     * @return
+     */
+    List<Form> getFormsByUserIdAndDataAddTime(int userId);
 
     /**
      * 根据表单id查看表单信息
@@ -125,7 +125,7 @@ public interface FormMapper {
     /**
      * 根据 tag和page 查询分页表单（都设置已公开）
      *
-     * @param keyWord 表单名关键词
+     * @param keyWord      表单名关键词
      * @param formTagArray
      * @param offset
      * @param rows
@@ -135,9 +135,18 @@ public interface FormMapper {
 
     /**
      * 根据 tag 查询分页总数目（都设置已公开的）
-     * @param keyWord 表单名关键词
+     *
+     * @param keyWord      表单名关键词
      * @param formTagArray
      * @return
      */
-    int getFormsCountByTag(@Param("keyWord") String keyWord,@Param("formTagArray") String[] formTagArray);
+    int getFormsCountByTag(@Param("keyWord") String keyWord, @Param("formTagArray") String[] formTagArray);
+
+    /**
+     * 根据用户id 获取该id所填写过别人的表单，---排除自己的表单---
+     *
+     * @param userId
+     * @return
+     */
+    List<Form> getFilledFormsByUserId(int userId);
 }

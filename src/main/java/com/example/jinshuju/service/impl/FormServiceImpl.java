@@ -6,6 +6,7 @@ import com.example.jinshuju.pojo.Form;
 import com.example.jinshuju.pojo.Template;
 import com.example.jinshuju.pojo.User;
 import com.example.jinshuju.service.FormService;
+import com.example.jinshuju.service.UserService;
 import com.example.jinshuju.utils.ResultUtils.Result;
 import com.example.jinshuju.utils.ResultUtils.ResultEnum;
 import com.example.jinshuju.utils.ResultUtils.ResultUtils;
@@ -27,6 +28,9 @@ public class FormServiceImpl implements FormService {
     @Autowired(required = false)
     UserMapper userMapper;
 
+    @Autowired(required = false)
+    UserService userService;
+
     @Override
     public Result createForm(User user, Form form) {
         //填补数据
@@ -40,32 +44,25 @@ public class FormServiceImpl implements FormService {
     }
 
     private Result doCreateForm(User user, Form form) {
-        if (formMapper.insertForm(form)) {
+        if (formMapper.insertForm(user, form)) {
             //插入成功，原form实例添加id，获取id
             int formId = form.getFormId();
-            //获取用户id
-            int userId = user.getUserId();
-            //根据id更新用户表单关系表
-            if (formMapper.saveFormAndUser(userId, formId)) {
-                //更新form的类别表
-                //log.info(form.toString());
-                //判断form type属性是否为空
-                if (!TextUtils.isEmpty(form.getFormType())) {
-                    //插入
-                    if (formMapper.saveFormType(form)) {
-                        return insertTemplateList(form);
-                    } else {
-                        deleteForm(formId);
-                        return ResultUtils.fail("插入类别表失败");
-                    }
+            //更新form的类别表
+            //log.info(form.toString());
+            //判断form type属性是否为空
+            if (!TextUtils.isEmpty(form.getFormType())) {
+                //插入
+                if (formMapper.saveFormType(form)) {
+                    return insertTemplateList(form);
                 } else {
                     deleteForm(formId);
-                    return ResultUtils.fail("表单类别为空");
+                    return ResultUtils.fail("插入类别表失败");
                 }
             } else {
                 deleteForm(formId);
-                return ResultUtils.fail("插入表单用户关系表失败");
+                return ResultUtils.fail("表单类别为空");
             }
+
         } else {
             return ResultUtils.fail("插入表单失败");
         }
@@ -84,12 +81,18 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
-    public Result getForms(User user) {
+    public Result getForms(User user, int flag) {
         //获取用户id
         int userId = user.getUserId();
         if (userMapper.checkUserExist(userId)) {
-            //根据用户id获得用户所有的表单list
-            List<Form> formList = formMapper.getFormsByUserId(userId);
+            List<Form> formList = null;
+            if (flag == 0) {
+                //根据用户id获得用户所有的表单list,按表单创建时间顺序
+                formList = formMapper.getFormsByUserIdAndCreateTime(userId);
+            } else {
+                //按数据提交时间顺序排序
+                formList = formMapper.getFormsByUserIdAndDataAddTime(userId);
+            }
             return ResultUtils.success("成功", formList);
         }
         return ResultUtils.fail("用户id不存在");
@@ -221,7 +224,7 @@ public class FormServiceImpl implements FormService {
     public Result getFormsPage(String keyWord, String formTag, int pageInt) {
         //如果传值keyWord = null 或者 = "" 在sql判断
         //keyWord判空
-        if (TextUtils.isEmpty(keyWord)){
+        if (TextUtils.isEmpty(keyWord)) {
             keyWord = null;
         }
         //初定size为20个
@@ -243,7 +246,7 @@ public class FormServiceImpl implements FormService {
     @Override
     public Result getPageCount(String keyWord, String formTag) {
         //keyWord判空
-        if (TextUtils.isEmpty(keyWord)){
+        if (TextUtils.isEmpty(keyWord)) {
             keyWord = null;
         }
         //初定size为20个
@@ -259,5 +262,15 @@ public class FormServiceImpl implements FormService {
         }
         int allCount = formMapper.getFormsCountByTag(keyWord, formTagArray);
         return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), (allCount + rows - 1) / rows);
+    }
+
+    @Override
+    public Result getFilledForms(User user) {
+        if (user == null) {
+            return ResultUtils.fail("获取用户失败，请登录");
+        }
+        //通过id获取我在data表所填写过的记录，不包括自己的表单
+        List<Form> formList = formMapper.getFilledFormsByUserId(user.getUserId());
+        return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), formList);
     }
 }

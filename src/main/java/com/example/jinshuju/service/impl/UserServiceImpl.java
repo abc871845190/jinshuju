@@ -61,6 +61,7 @@ public class UserServiceImpl implements UserService {
         user.setUserCreateTime(new Timestamp(System.currentTimeMillis()));
         user.setUserUpdateTime(new Timestamp(System.currentTimeMillis()));
         user.setUserEmailStatus(0);
+        user.setUserImg("localhost:8080/img/default_img.jpg");
         //用户密码加密
         user.setUserPassword(bCryptPasswordEncoder.encode(user.getUserPassword()));
         //存入数据库

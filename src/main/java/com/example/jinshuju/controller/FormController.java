@@ -44,16 +44,18 @@ public class FormController {
         return ResultUtils.fail("还没登陆呢插什么表单");
     }
 
-    @ApiOperation(value = "查找用户表单", response = Result.class)
+    @ApiOperation(value = "查找用户表单+表单排序", response = Result.class)
     @ApiResponses({
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
     })
     @GetMapping("/form")
-    public Result getForms(HttpServletRequest request, HttpServletResponse response) {
+    public Result getForms(@RequestParam(name = "flag", defaultValue = "0", required = false) int flag,
+                           HttpServletRequest request,
+                           HttpServletResponse response) {
         User user = userService.checkUserLogin(request, response);
         if (user != null) {
-            return formService.getForms(user);
+            return formService.getForms(user, flag);
         }
         return ResultUtils.fail("还没登陆呢，怎么查表单");
     }
@@ -157,8 +159,17 @@ public class FormController {
     @GetMapping("/getPageCount")
     public Result getPageCount(@RequestParam(name = "keyWord", required = false, defaultValue = "") String keyWord,
                                @RequestParam(name = "formTag", required = false, defaultValue = "") String formTag) {
-        log.info(keyWord + "   " + formTag);
+        //log.info(keyWord + "   " + formTag);
         return formService.getPageCount(keyWord, formTag);
     }
 
+    @ApiOperation(value = "查看我为别人填写过的表单", response = Result.class)
+    @ApiResponses({
+            @ApiResponse(code = 1, message = "成功"),
+            @ApiResponse(code = 2, message = "失败")
+    })
+    @GetMapping("/getFillesForms")
+    public Result getFilledForms(HttpServletRequest request, HttpServletResponse response) {
+        return formService.getFilledForms(userService.checkUserLogin(request, response));
+    }
 }

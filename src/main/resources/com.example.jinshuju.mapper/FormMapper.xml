@@ -3,44 +3,41 @@
 <mapper namespace="com.example.jinshuju.mapper.FormMapper">
 
 
-    <insert id="saveFormAndUser">
-        insert into user_form(user_id, form_id)
-        values (#{userId}, #{formId})
-    </insert>
-    <insert id="insertForm" parameterType="com.example.jinshuju.pojo.Form">
+    <insert id="insertForm">
         insert into form
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="formName != null and formName != ''">form_name,</if>
-            <if test="formName == null or formName == ''">form_name,</if>
-            <if test="formTitle != null and formTitle != ''">form_title,</if>
-            <if test="formTitle == null or formTitle == ''">form_title,</if>
-            <if test="formDesc != null and formDesc != ''">form_desc,</if>
+            <if test="form.formName != null and form.formName != ''">form_name,</if>
+            <if test="form.formName == null or form.formName == ''">form_name,</if>
+            <if test="form.formTitle != null and form.formTitle != ''">form_title,</if>
+            <if test="form.formTitle == null or form.formTitle == ''">form_title,</if>
+            <if test="form.formDesc != null and form.formDesc != ''">form_desc,</if>
             form_create_time,
             form_update_time,
-            <if test="formTag != null and formTag != null">form_tag,</if>
+            <if test="form.formTag != null and form.formTag != null">form_tag,</if>
             form_open,
-            <if test="formUrl != null and formUrl != null">form_url,</if>
+            <if test="form.formUrl != null and form.formUrl != null">form_url,</if>
             form_view_count,
-            form_result_view_count,
-            <if test="formImg != null and formImg != ''">form_img,</if>
-            <if test="formImg == null or formImg == ''">form_img,</if>
+            <if test="form.formImg != null and form.formImg != ''">form_img,</if>
+            <if test="form.formImg == null or form.formImg == ''">form_img,</if>
+            user_id,
         </trim>
         <trim prefix="values(" suffix=")" suffixOverrides=",">
-            <if test="formName != null and formName != ''">#{formName},</if>
-            <if test="formName == null or formName == ''">"未命名表单名",</if>
-            <if test="formTitle != null and formTitle != ''">#{formTitle},</if>
-            <if test="formTitle == null or formTitle == ''">"未命名标题",</if>
-            <if test="formDesc != null and formDesc != ''">#{formDesc},</if>
-            #{formCreateTime},
-            #{formUpdateTime},
-            <if test="formTag != null and formTag != null">#{formTag},</if>
-            #{formOpen},
-            <if test="formUrl != null and formUrl != null">#{formUrl},</if>
-            #{formViewCount},
-            <if test="formImg != null and formImg != ''">#{formImg},</if>
-            <if test="formImg == null or formImg == ''">"-----------",</if>
+            <if test="form.formName != null and form.formName != ''">#{form.formName},</if>
+            <if test="form.formName == null or form.formName == ''">"未命名表单名",</if>
+            <if test="form.formTitle != null and form.formTitle != ''">#{form.formTitle},</if>
+            <if test="form.formTitle == null or form.formTitle == ''">"未命名标题",</if>
+            <if test="form.formDesc != null and form.formDesc != ''">#{form.formDesc},</if>
+            #{form.formCreateTime},
+            #{form.formUpdateTime},
+            <if test="form.formTag != null and form.formTag != null">#{form.formTag},</if>
+            #{form.formOpen},
+            <if test="form.formUrl != null and form.formUrl != null">#{form.formUrl},</if>
+            #{form.formViewCount},
+            <if test="form.formImg != null and form.formImg != ''">#{form.formImg},</if>
+            <if test="form.formImg == null or form.formImg == ''">"localhost:8080/img/default_img.jpg",</if>
+            #{user.userId}
         </trim>
-        <selectKey keyProperty="formId" keyColumn="form_id" order="AFTER" resultType="int">
+        <selectKey keyProperty="form.formId" keyColumn="form_id" order="AFTER" resultType="int">
             select LAST_INSERT_ID()
         </selectKey>
     </insert>
@@ -66,7 +63,7 @@
                 <if test="item.templateTitle == null or item.templateTitle == ''">"未定义组件名",</if>
                 <if test="item.templateTitle != null and item.templateTitle != ''">#{item.templateTitle},</if>
                 <if test="item.templateContent == null or item.templateContent == ''">
-                    (SELECT template_content_default FROM template WHERE template_id = #{item.templateId}),
+                    (SELECT template_conten t_default FROM template WHERE template_id = #{item.templateId}),
                 </if>
                 <if test="item.templateContent != null and item.templateContent != ''">#{item.templateContent},</if>
                 <!--<if test="item.templateCount == 0">${index+1},</if>-->
@@ -131,17 +128,16 @@
         <collection property="templateList" ofType="com.example.jinshuju.pojo.Template"
                     column="form_id" select="getTemplatesByFormId"/>
     </resultMap>
-    <select id="getFormsByUserId" resultMap="FormResultMap" parameterType="int">
+    <select id="getFormsByUserIdAndCreateTime" resultMap="FormResultMap" parameterType="int">
         SELECT f.*,
                ft.form_type
         FROM form f,
              form_form_type fft,
-             form_type ft,
-             user_form uf
-        WHERE uf.user_id = #{userId}
-          AND f.form_id = uf.form_id
+             form_type ft
+        WHERE f.user_id = #{userId}
           AND f.form_id = fft.form_id
           AND fft.form_type_id = ft.id
+        ORDER BY f.form_create_time DESC
     </select>
     <resultMap id="TemplateResultMap" type="com.example.jinshuju.pojo.Template">
         <id property="templateId" column="template_id"/>
@@ -225,5 +221,61 @@
         <if test="keyWord != null">
             AND find_in_set(#{keyWord},form_name)
         </if>
+    </select>
+    <resultMap id="FormDataResultMap" type="com.example.jinshuju.pojo.Form">
+        <id property="formId" column="form_id"/>
+        <result property="formName" column="form_name"/>
+        <result property="formDesc" column="form_desc"/>
+        <result property="formTag" column="form_tag"/>
+        <result property="formUrl" column="form_url"/>
+        <result property="formViewCount" column="form_view_count"/>
+        <result property="formImg" column="form_img"/>
+        <result property="formType" column="form_type"/>
+    </resultMap>
+    <select id="getFilledFormsByUserId" resultMap="FormDataResultMap" parameterType="int">
+        SELECT DISTINCT f.*,
+                        ft.form_type
+        FROM form f,
+             form_form_type fft,
+             form_type ft,
+             `data` d
+        WHERE f.form_id = fft.form_id
+          AND fft.form_type_id = ft.id
+          AND d.user_id = #{userId}
+          AND f.form_id = d.form_id
+          AND f.form_id NOT IN (
+            SELECT form_id
+            FROM (
+                     SELECT form_id
+                     FROM form
+                     WHERE user_id = #{userId}
+                 ) AS h
+        )
+    </select>
+    <select id="getFormsByUserIdAndDataAddTime" resultMap="FormResultMap" parameterType="int">
+        SELECT DISTINCT f.*,
+                        ft.form_type,
+                        MAX(d.data_update_time) AS data_update_time
+        FROM form f,
+             form_form_type fft,
+             form_type ft,
+             `data` d
+        WHERE f.user_id = #{userId}
+          AND f.form_id = fft.form_id
+          AND fft.form_type_id = ft.id
+          AND d.form_id = f.form_id
+        GROUP BY form_id
+        UNION
+        SELECT f.*,
+               ft.form_type,
+               "0000-00-00 00:00:00" AS data_update_time
+        FROM form f,
+             form_form_type fft,
+             form_type ft
+        WHERE f.user_id = #{userId}
+          AND f.form_id = fft.form_id
+          AND fft.form_type_id = ft.id
+          AND f.form_id NOT IN (SELECT form_id FROM (SELECT form_id FROM `data` GROUP BY form_id) AS h)
+        ORDER BY data_update_time DESC
     </select>
 </mapper>
