@@ -17,4 +17,9 @@ public interface Constants {
         int ONE_MONTH = 60 * 60 * 24 * 30;
         int ONE_YEAR = 60 * 60 * 24 * 365;
     }
+
+    interface FileType {
+        String FILE_TYPE_XLS = "xls";
+        String FILE_TYPE_XLSX = "xlsx";
+    }
 }

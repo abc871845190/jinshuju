@@ -46,7 +46,16 @@ class JinshujuApplicationTests {
     }
 
     @Test
-    public void testToken() {
+    public void testExcel() {
+        String fileName = "C:\\Users\\huangsongzhang\\Desktop\\未命名报名_20201103203506.xlsx";
+        //调用工具类
+//        List<Map<Integer,String>> data = EasyExcelUtils.syncRead(fileName,0,0);
+//        for (Iterator it = data.iterator(); it.hasNext();){
+//            Map<Integer,String> obj = (Map<Integer, String>) it.next();
+//            log.info(String.valueOf(obj));
+//        }
+//        log.info(data.toString());
 
+        log.info(String.valueOf("未命名报名_20201103203506.xlsx".lastIndexOf(".")));
     }
 }

@@ -1,7 +1,9 @@
 package com.example.jinshuju.service;
 
 import com.example.jinshuju.pojo.Data;
+import com.example.jinshuju.pojo.User;
 import com.example.jinshuju.utils.ResultUtils.Result;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface DataService {
 
@@ -60,4 +62,14 @@ public interface DataService {
      * @return
      */
     Result updateData(Data data);
+
+    /**
+     * 上传excel 解析
+     *
+     * @param excelFile
+     * @param formId
+     * @param user
+     * @return
+     */
+    Result uploadExcel(MultipartFile excelFile, int formId, User user);
 }
