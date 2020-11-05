@@ -68,6 +68,7 @@ public class DataController {
         return dataService.updateData(data);
     }
 
+    @ApiOperation(value = "导入excel文件 --excel头字段必须有原表单设置的所有字段，最好一对一对应--", response = Result.class)
     @PostMapping("/uploadExcel")
     public Result uploadExcel(@RequestParam("excelFile") MultipartFile excelFile,
                               @RequestParam("formId") int formId,

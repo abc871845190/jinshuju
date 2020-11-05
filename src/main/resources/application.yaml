@@ -1,6 +1,6 @@
 mybatis:
   #mybatis扫描xml
-  mapper-locations: classpath:com.example.jinshuju.mapper/*.xml
+  mapper-locations: classpath:mapper/*.xml
   #配置映射类所在包
   type-aliases-package: classpath:com.example.jinshuju.pojo
   #打印sql

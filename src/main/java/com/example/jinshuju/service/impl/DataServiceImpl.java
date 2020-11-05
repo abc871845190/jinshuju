@@ -1,10 +1,11 @@
 package com.example.jinshuju.service.impl;
 
 import com.example.jinshuju.mapper.DataMapper;
-import com.example.jinshuju.pojo.Data;
-import com.example.jinshuju.pojo.User;
+import com.example.jinshuju.mapper.FormMapper;
+import com.example.jinshuju.pojo.*;
 import com.example.jinshuju.service.DataService;
 import com.example.jinshuju.utils.Constants;
+import com.example.jinshuju.utils.EasyExcelUtils.EasyExcelUtils;
 import com.example.jinshuju.utils.ResultUtils.Result;
 import com.example.jinshuju.utils.ResultUtils.ResultEnum;
 import com.example.jinshuju.utils.ResultUtils.ResultUtils;
@@ -13,8 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.List;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -22,6 +26,9 @@ public class DataServiceImpl implements DataService {
 
     @Autowired(required = false)
     DataMapper dataMapper;
+
+    @Autowired(required = false)
+    FormMapper formMapper;
 
     @Override
     public Result insertData(Data data) {
@@ -96,6 +103,11 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public Result uploadExcel(MultipartFile excelFile, int formId, User user) {
+        log.info("-------开始uploadExcel-------");
+        //记录当前时间
+        Instant start = Instant.now();
+        //后台通过表单id获取整个表单的字段信息
+        List<Template> templateList = formMapper.getTemplatesByFormId(formId);
         //判空
         if (!excelFile.isEmpty()) {
             //文件不为空
@@ -108,11 +120,59 @@ public class DataServiceImpl implements DataService {
             String fileType = fileName.substring(fileName.lastIndexOf(".") + 1);
             //log.info(fileType);  --xlsx
             if (fileType.equals(Constants.FileType.FILE_TYPE_XLS) || fileType.equals(Constants.FileType.FILE_TYPE_XLSX)) {
-                //TODO:解析文件
+                log.info("上传的文件为xls或xlsx");
+                //创建data实体list类
+                List<Data> dataList = new ArrayList<>();
+                //解析文件内容
+                try {
+                    log.info("-------开始解析excel文件内容-------");
+                    //easyExcel框架解析 ---同步无模型读
+                    List<Map<Integer, String>> excelData = EasyExcelUtils.syncRead(excelFile, 0, 1);
+                    //开始循环
+                    for (Map<Integer, String> map : excelData) {
+                        //一个map对应一个data实体类
+                        //创建一个新的data类 和 data_details类
+                        Data newData = new Data();
+                        List<DataDetails> dataDetailsList = new ArrayList<>();
+                        //keyset()获取map集合的key
+                        for (Integer i : map.keySet()) {
+                            //map的每个键值对对应是data_details的实体类
+                            //创建一个新的data_details
+                            //log.info("遍历中key-value   ==>   "+i+"-"+map.get(i));
+                            if (i > 1) {
+                                //跳过第一列-序号
+                                DataDetails dataDetails = new DataDetails();
+                                //设置绑定id
+                                //dataDetails.setFormTemplateId(templateList.get(i).getFormTemplateId());
+                                //设置单个内容
+                                dataDetails.setDataContent(map.get(i));
+                                //添加到list里面
+                                dataDetailsList.add(dataDetails);
+                            }
+                        }
+                        //填补data数据
+                        newData.setDataWriteTime(0);
+                        newData.setDataCreateTime(new Timestamp(System.currentTimeMillis()));
+                        newData.setDataUpdateTime(new Timestamp(System.currentTimeMillis()));
+                        //设置新data类的data_detail_list类
+                        newData.setDataDetailsList(dataDetailsList);
+                        //将单个data类添加到list里面
+                        dataList.add(newData);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                log.info("-------解析excel完毕-------");
+                log.info("打印整个list<Data>信息中   ==>   " + dataList.toString());
+                //TODO:批量添加data类到数据库里面
+                Instant end = Instant.now();
+                log.info("-------uploadExcel结束--------耗时：" + Duration.between(start, end).getSeconds());
+                return ResultUtils.success(ResultEnum.SUCCESS.getMsg(),dataList);
             } else {
-                return ResultUtils.fail("上传文件类型为xls或xlsx，而不是"+fileType);
+                log.info("上传的文件不为xls或xlsx");
+                return ResultUtils.fail("上传文件类型为xls或xlsx，而不是" + fileType);
             }
         }
-        return ResultUtils.fail("上传的文件为空");
+        return ResultUtils.success();
     }
 }

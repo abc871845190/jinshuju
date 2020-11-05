@@ -113,7 +113,6 @@ public class UserServiceImpl implements UserService {
     private String createRefreshToken(HttpServletResponse response, User foundUser, Timestamp lastTime) {
         //删除一下原来的refreshToken
         int userid = foundUser.getUserId();
-        //log.info("userid is   ==>   " + String.valueOf(userid));
         tokenMapper.deleteRefreshTokenById(userid);
         //生成token,自定1小时过期
         String token = JwtUtils.createJWT(ClaimsUtils.UserToClaims(foundUser), Constants.TimeValue.ONE_HOUR * 2 * 1000);
@@ -150,39 +149,44 @@ public class UserServiceImpl implements UserService {
             log.info("realuser is null");
             //报错证明token已经过期或者没有该token
             String token = (String) redisUtils.get(Constants.User.KEY_TOKEN + tokenKey);
-            //log.info("token is   ==>   " + token);
-            UserRefreshToken userRefreshToken = tokenMapper.getRefreshTokenByToken(token);
-            //到数据库拿refreshToken看是否存在，
-            if (userRefreshToken == null) {
-                //TODO:提示用户登录
-                log.info("userRefreshToken is null");
-                return null;
-            }
-            //存在即还没过期，
-            //不存在就是没登录，
-            try {
-                //有效，就创建新的refreshToken，和新的Token
-                //解析refreshToken，
-                String refreshToken = userRefreshToken.getRefreshToken();
-                //log.info("refreshToken is   ==>   " + refreshToken);
-                Claims claims = JwtUtils.parseJWT(refreshToken);
-                String userid = claims.getId();
-                //log.info("refreshToken userid   ==>   " + userid);
-                User user = userMapper.findOneById(Integer.parseInt(userid));
-                //获取之前的createdtime
-                Timestamp lasttime = tokenMapper.getCreateTimeById(Integer.parseInt(userid));
-                //删除原来的refreshToken
-                tokenMapper.deleteRefreshTokenById(Integer.parseInt(userid));
-                //创建新的refreshToken
-                String newTokenKey = createRefreshToken(response, user, lasttime);
-                //log.info("new TokenKey is   ==>   " + newTokenKey);
-                //返回token
-                return parseByToken(newTokenKey);
-            } catch (Exception e1) {
-                //报错，即refreshToken过期
-                //TODO:提示用户登陆
-                e1.printStackTrace();
-                log.info("refreshToken is expiration");
+            if (!TextUtils.isEmpty(token)) {
+                log.info("token is   ==>   " + token);
+                UserRefreshToken userRefreshToken = tokenMapper.getRefreshTokenByToken(token);
+                //到数据库拿refreshToken看是否存在，
+                if (userRefreshToken == null) {
+                    //TODO:提示用户登录
+                    log.info("userRefreshToken is null");
+                    return null;
+                }
+                //存在即还没过期，
+                //不存在就是没登录，
+                try {
+                    //有效，就创建新的refreshToken，和新的Token
+                    //解析refreshToken，
+                    String refreshToken = userRefreshToken.getRefreshToken();
+                    //log.info("refreshToken is   ==>   " + refreshToken);
+                    Claims claims = JwtUtils.parseJWT(refreshToken);
+                    String userid = claims.getId();
+                    //log.info("refreshToken userid   ==>   " + userid);
+                    User user = userMapper.findOneById(Integer.parseInt(userid));
+                    //获取之前的createdtime
+                    Timestamp lasttime = tokenMapper.getCreateTimeById(Integer.parseInt(userid));
+                    //删除原来的refreshToken
+                    tokenMapper.deleteRefreshTokenById(Integer.parseInt(userid));
+                    //创建新的refreshToken
+                    String newTokenKey = createRefreshToken(response, user, lasttime);
+                    //log.info("new TokenKey is   ==>   " + newTokenKey);
+                    //返回token
+                    return parseByToken(newTokenKey);
+                } catch (Exception e1) {
+                    //报错，即refreshToken过期
+                    //TODO:提示用户登陆
+                    e1.printStackTrace();
+                    log.info("refreshToken is expiration");
+                    return null;
+                }
+            } else {
+                log.info("token is expiration or null");
                 return null;
             }
         }

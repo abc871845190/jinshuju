@@ -28,6 +28,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 "/swagger-ui.html/**",
                 "/**/*.html",
                 "/**/*.js",
+                "/**/*.jpg",
                 "/**/*.vue",
                 "/**/*.css");
     }

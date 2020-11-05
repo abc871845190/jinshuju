@@ -1,11 +1,14 @@
 package com.example.jinshuju.mapper;
 
 import com.example.jinshuju.pojo.Form;
+import com.example.jinshuju.pojo.Template;
 import com.example.jinshuju.pojo.User;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+@Mapper
 public interface FormMapper {
 
     /**
@@ -62,6 +65,14 @@ public interface FormMapper {
      * @return
      */
     Form getFormByFormId(int formId);
+
+    /**
+     * 根据表单id 获取表单字段list
+     *
+     * @param formId
+     * @return
+     */
+    List<Template> getTemplatesByFormId(int formId);
 
     /**
      * 根据表单id修改表单名

@@ -1,5 +1,6 @@
 package com.example.jinshuju;
 
+import com.example.jinshuju.utils.EasyExcelUtils.EasyExcelUtils;
 import com.example.jinshuju.utils.RedisUtils;
 import com.example.jinshuju.utils.TextUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -9,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.List;
+import java.util.Map;
 
 @SpringBootTest
 @Slf4j
@@ -56,6 +60,16 @@ class JinshujuApplicationTests {
 //        }
 //        log.info(data.toString());
 
-        log.info(String.valueOf("未命名报名_20201103203506.xlsx".lastIndexOf(".")));
+       // log.info(String.valueOf("未命名报名_20201103203506.xlsx".lastIndexOf(".")));
+
+        List<Map<Integer,String>> data = EasyExcelUtils.syncRead(fileName,0,0);
+        for (Map<Integer,String> map : data){
+            for (Integer i : map.keySet()){
+                if (i>1){
+                    log.info(map.get(i));
+                }
+
+            }
+        }
     }
 }
