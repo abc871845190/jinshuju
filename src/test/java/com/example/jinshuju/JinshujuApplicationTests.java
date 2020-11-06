@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -71,5 +72,10 @@ class JinshujuApplicationTests {
 
             }
         }
+    }
+
+    @Test
+    public void testDate(){
+        log.info(String.valueOf(new Timestamp(System.currentTimeMillis())));
     }
 }
