@@ -40,6 +40,8 @@ spring:
   jackson:
     #时间格式化
     date-format: yyyy-MM-dd HH:mm:ss
+    #指定时区
+    time-zone: GMT+8
   mail:
     #邮箱配置
     #邮箱编码

@@ -17,6 +17,23 @@
             (#{dataId},#{item.formTemplateId},#{item.dataContent})
         </foreach>
     </insert>
+    <!--  useGeneratedKeys: 批量插入多个含有主键id的数据，结束返回多个主键id keyProperty: 主键id属性名 -->
+    <insert id="insertExcelData" useGeneratedKeys="true" keyProperty="dataId">
+        insert into data(form_id, user_id, data_create_time, data_update_time, data_write_time)
+        values
+        <foreach collection="dataList" separator="," item="item" index="index">
+            (#{item.form.formId}, #{item.user.userId}, #{item.dataCreateTime},#{item.dataUpdateTime},#{item.dataWriteTime})
+        </foreach>
+    </insert>
+    <!--  双重循环，插入list<list<>>类型数据  -->
+    <insert id="insertExcelDataDetails">
+        insert into data_details(data_id, form_template_id, data_content) values
+        <foreach collection="dataList" item="data" separator=",">
+            <foreach collection="data.dataDetailsList" item="dataDetails" separator=",">
+                (#{data.dataId},#{dataDetails.formTemplateId},#{dataDetails.dataContent})
+            </foreach>
+        </foreach>
+    </insert>
     <update id="updateDataTime" parameterType="com.example.jinshuju.pojo.Data">
         update data
         set data_update_time = #{dataUpdateTime}

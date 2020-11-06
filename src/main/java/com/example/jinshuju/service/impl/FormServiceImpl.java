@@ -110,6 +110,7 @@ public class FormServiceImpl implements FormService {
             if (form == null) {
                 return ResultUtils.fail("提取表单失败");
             }
+            log.info(form.toString());
             return ResultUtils.success("成功", form);
         }
         return ResultUtils.fail("表单id不存在");

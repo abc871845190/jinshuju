@@ -79,4 +79,19 @@ public interface DataMapper {
      * @return
      */
     Boolean deleteDataDetailsByDataId(int dataId);
+
+    /**
+     * 批量新建数据项
+     * @param dataList
+     * @return
+     */
+    Boolean insertExcelData(List<Data> dataList);
+
+    /**
+     * 批量新建数据项详细
+     *
+     * @param dataList
+     * @return
+     */
+    Boolean insertExcelDataDetails(List<Data> dataList);
 }

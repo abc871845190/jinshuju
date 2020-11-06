@@ -139,11 +139,11 @@ public class DataServiceImpl implements DataService {
                             //map的每个键值对对应是data_details的实体类
                             //创建一个新的data_details
                             //log.info("遍历中key-value   ==>   "+i+"-"+map.get(i));
-                            if (i > 1) {
+                            if (i > 0) {
                                 //跳过第一列-序号
                                 DataDetails dataDetails = new DataDetails();
                                 //设置绑定id
-                                //dataDetails.setFormTemplateId(templateList.get(i).getFormTemplateId());
+                                dataDetails.setFormTemplateId(templateList.get(i - 1).getFormTemplateId());
                                 //设置单个内容
                                 dataDetails.setDataContent(map.get(i));
                                 //添加到list里面
@@ -151,6 +151,10 @@ public class DataServiceImpl implements DataService {
                             }
                         }
                         //填补data数据
+                        Form form = new Form();
+                        form.setFormId(formId);
+                        newData.setForm(form);
+                        newData.setUser(user);
                         newData.setDataWriteTime(0);
                         newData.setDataCreateTime(new Timestamp(System.currentTimeMillis()));
                         newData.setDataUpdateTime(new Timestamp(System.currentTimeMillis()));
@@ -165,9 +169,12 @@ public class DataServiceImpl implements DataService {
                 log.info("-------解析excel完毕-------");
                 log.info("打印整个list<Data>信息中   ==>   " + dataList.toString());
                 //TODO:批量添加data类到数据库里面
+                //test测试
+                dataMapper.insertExcelData(dataList);
+                dataMapper.insertExcelDataDetails(dataList);
                 Instant end = Instant.now();
                 log.info("-------uploadExcel结束--------耗时：" + Duration.between(start, end).getSeconds());
-                return ResultUtils.success(ResultEnum.SUCCESS.getMsg(),dataList);
+                return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), dataList);
             } else {
                 log.info("上传的文件不为xls或xlsx");
                 return ResultUtils.fail("上传文件类型为xls或xlsx，而不是" + fileType);
