@@ -109,6 +109,12 @@
             <artifactId>easyexcel</artifactId>
             <version>2.2.6</version>
         </dependency>
+        <!--   ZXing二维码生成     -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.4.1</version>
+        </dependency>
     </dependencies>
 
     <build>

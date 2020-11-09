@@ -4,6 +4,8 @@ import com.example.jinshuju.pojo.Form;
 import com.example.jinshuju.pojo.User;
 import com.example.jinshuju.utils.ResultUtils.Result;
 
+import javax.servlet.http.HttpServletResponse;
+
 public interface FormService {
     /**
      * 创建表单
@@ -122,4 +124,6 @@ public interface FormService {
      */
     Result getFilledForms(User user);
 
+    Result getOpenFormUrl(int formId);
+    void createQRCode(int formId, HttpServletResponse response);
 }

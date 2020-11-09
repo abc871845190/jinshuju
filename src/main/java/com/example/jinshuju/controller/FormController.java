@@ -172,4 +172,14 @@ public class FormController {
     public Result getFilledForms(HttpServletRequest request, HttpServletResponse response) {
         return formService.getFilledForms(userService.checkUserLogin(request, response));
     }
+
+    @GetMapping("/getOpenFormUrl/{formId}")
+    public Result getOpenFormUrl(@PathVariable("formId") int formId){
+        return formService.getOpenFormUrl(formId);
+    }
+
+    @GetMapping("/createQRCode/{formId}")
+    public void createQRCodeByUrl(HttpServletResponse response,@PathVariable("formId") int formId){
+        formService.createQRCode(formId, response);
+    }
 }

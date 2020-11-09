@@ -21,5 +21,11 @@ public interface Constants {
     interface FileType {
         String FILE_TYPE_XLS = "xls";
         String FILE_TYPE_XLSX = "xlsx";
+        String FILE_TYPE_IMG = "img";
+        String FILE_TYPE_PNG = "png";
+    }
+
+    interface Encode{
+        String UTF8 = "utf-8";
     }
 }

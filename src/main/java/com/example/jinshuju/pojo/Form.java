@@ -20,4 +20,6 @@ public class Form {
     private String formImg;
     private String formType;
     private List<Template> templateList;
+    private java.sql.Timestamp formStopTime;
+    private String formQRCode;
 }

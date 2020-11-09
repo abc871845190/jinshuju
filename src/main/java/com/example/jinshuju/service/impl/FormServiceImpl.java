@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -47,6 +48,10 @@ public class FormServiceImpl implements FormService {
         if (formMapper.insertForm(user, form)) {
             //插入成功，原form实例添加id，获取id
             int formId = form.getFormId();
+            //生成相应公开访问填写的url 以及二维码
+            String formUrl = "http://localhost:8080/FormController/"+String.valueOf(formId);
+            form.setFormUrl(formUrl);
+            //TODO:生成二维码
             //更新form的类别表
             //log.info(form.toString());
             //判断form type属性是否为空
@@ -273,5 +278,15 @@ public class FormServiceImpl implements FormService {
         //通过id获取我在data表所填写过的记录，不包括自己的表单
         List<Form> formList = formMapper.getFilledFormsByUserId(user.getUserId());
         return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), formList);
+    }
+
+    @Override
+    public Result getOpenFormUrl(int formId) {
+        return null;
+    }
+
+    @Override
+    public void createQRCode(int formId, HttpServletResponse response) {
+
     }
 }
