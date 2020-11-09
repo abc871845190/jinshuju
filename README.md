@@ -40,3 +40,6 @@
 ###参数汇总
 sql-url:jdbc:mysql://localhost:3306/jinshuju?autoReconnect=true&characterEncoding=utf-8&testOnBorrow=true&serverTimezone=Asia/Shanghai&useAffectedRows=true
 redis:host: 127.0.0.1 password: 123456 port: 6379
+
+##更新日志
+2020-11-09  : 创建表单整合生成二维码功能

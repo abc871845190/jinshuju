@@ -3,8 +3,10 @@ package com.example.jinshuju.service;
 import com.example.jinshuju.pojo.Form;
 import com.example.jinshuju.pojo.User;
 import com.example.jinshuju.utils.ResultUtils.Result;
+import com.google.zxing.WriterException;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public interface FormService {
     /**
@@ -13,7 +15,7 @@ public interface FormService {
      * @param form
      * @return
      */
-    Result createForm(User user, Form form);
+    Result createForm(User user, Form form) throws IOException, WriterException;
 
     /**
      * 查找用户的表单,按两种排序方式
@@ -38,7 +40,7 @@ public interface FormService {
      * @param formId
      * @return
      */
-    Result copyForm(User user, int formId);
+    Result copyForm(User user, int formId) throws IOException, WriterException;
 
     /**
      * 删除表单

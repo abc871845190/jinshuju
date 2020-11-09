@@ -1,9 +1,11 @@
 package com.example.jinshuju;
 
 import com.example.jinshuju.utils.EasyExcelUtils.EasyExcelUtils;
+import com.example.jinshuju.utils.QRCodeUtils;
 import com.example.jinshuju.utils.RedisUtils;
 import com.example.jinshuju.utils.TextUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.zxing.WriterException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +13,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @SpringBootTest
 @Slf4j
@@ -77,5 +81,29 @@ class JinshujuApplicationTests {
     @Test
     public void testDate(){
         log.info(String.valueOf(new Timestamp(System.currentTimeMillis())));
+    }
+
+    @Test
+    public void testUUID(){
+        log.info(String.valueOf(UUID.randomUUID()));
+    }
+
+    @Test
+    public void testQRCode(){
+        try {
+            String filePath = QRCodeUtils.createImage("https://www.baidu.com");
+            log.info(filePath);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testPath(){
+        //获取项目classes/static的地址
+        //String path = ClassUtils.getDefaultClassLoader().getResource("static").getPath();
+        //log.info(path);
     }
 }

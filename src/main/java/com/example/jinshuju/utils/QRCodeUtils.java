@@ -4,20 +4,24 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageConfig;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Hashtable;
 
 /**
  * ZXing 二维码工具类
  */
 public class QRCodeUtils {
-    // 二维码颜色==黑色
-    private static final int BLACK = 0xFF000000;
-    // 二维码颜色==白色
-    private static final int WHITE = 0xFFFFFFFF;
+    /**
+     * 默认存储二维码路径
+     */
+    private static final String FILE_PATH = "D:\\eclipse for ee\\jinshuju\\src\\main\\resources\\static\\img\\QRCode";
     /**
      * 二维码尺寸
      */
@@ -26,11 +30,10 @@ public class QRCodeUtils {
     /**
      * 生成二维码图片流
      *
-     * @param content
-     * @param needCompress
-     * @return
+     * @param content  二维码内容
+     * @return 返回文件存储路径
      */
-    public static BufferedImage createImage(String content, boolean needCompress) throws WriterException {
+    public static String createImage(String content) throws WriterException, IOException {
         Hashtable<EncodeHintType, Object> hints = new Hashtable<>();
         //设置二维码字符编码
         hints.put(EncodeHintType.CHARACTER_SET, Constants.Encode.UTF8);
@@ -41,19 +44,19 @@ public class QRCodeUtils {
 
         //开始生成二维码
         BitMatrix bitMatrix = new MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, QRCODE_SIZE, QRCODE_SIZE, hints);
-        //获取二维码宽高
-        int codeWidth = bitMatrix.getWidth();
-        int codeHeight = bitMatrix.getHeight();
-        //将二维码放入缓存流
-        BufferedImage image = new BufferedImage(codeWidth, codeHeight, BufferedImage.TYPE_INT_RGB);
-        for (int x = 0; x < codeWidth; x++) {
-            for (int y = 0; y < codeHeight; y++) {
-                //循环将二维码导入图片
-                image.setRGB(x, y, bitMatrix.get(x, y) ? BLACK : WHITE);
-            }
+
+        MatrixToImageConfig matrixToImageConfig = new MatrixToImageConfig();
+        BufferedImage image = MatrixToImageWriter.toBufferedImage(bitMatrix, matrixToImageConfig);
+        //生成图片文件
+        //判断文件夹是否存在，不存在就创建文件夹
+        File file = new File(FILE_PATH);
+        if (!file.exists()) {
+            file.mkdirs();
         }
-        return image;
+        //生成随机图片名字
+        String fileName = UUIDUtils.getUUID() + "." + Constants.FileType.FILE_TYPE_JPG;
+        //存到服务器本地指定文件夹内
+        ImageIO.write(image,Constants.FileType.FILE_TYPE_JPG,new File(FILE_PATH+File.separator+fileName));
+        return "\\img\\QRCode"+File.separator+fileName;
     }
-
-
 }

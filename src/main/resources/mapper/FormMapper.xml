@@ -92,11 +92,13 @@
         update form
         <set>
             <if test="formName == null or formName == ''">form_name = "未命名表单名",</if>
-            <if test="formName != null or formName != ''">form_name = #{formName},</if>
+            <if test="formName != null and formName != ''">form_name = #{formName},</if>
             <if test="formTitle == null or formTitle == ''">form_title = "未命名标题",</if>
-            <if test="formTitle != null or formTitle != ''">form_title = #{formTitle},</if>
-            <if test="formDesc != null or formDesc != ''">form_desc = #{formDesc},</if>
-            <if test="formImg != null or formImg != ''">form_desc = #{formImg},</if>
+            <if test="formTitle != null and formTitle != ''">form_title = #{formTitle},</if>
+            <if test="formDesc != null and formDesc != ''">form_desc = #{formDesc},</if>
+            <if test="formImg != null and formImg != ''">form_desc = #{formImg},</if>
+            <if test="formQRCode != null and formQRCode != ''">form_QRCode = #{formQRCode},</if>
+            <if test="formUrl != null and formUrl != ''">form_url = #{formUrl},</if>
             form_update_time = #{formUpdateTime}
         </set>
         where form_id = #{formId}

@@ -6,6 +6,7 @@ import com.example.jinshuju.service.FormService;
 import com.example.jinshuju.service.UserService;
 import com.example.jinshuju.utils.ResultUtils.Result;
 import com.example.jinshuju.utils.ResultUtils.ResultUtils;
+import com.google.zxing.WriterException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/FormController")
@@ -35,7 +37,7 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @PostMapping("/form")
-    public Result createForm(@RequestBody Form form, HttpServletRequest request, HttpServletResponse response) {
+    public Result createForm(@RequestBody Form form, HttpServletRequest request, HttpServletResponse response) throws IOException, WriterException {
         //log.info(form.toString());
         User user = userService.checkUserLogin(request, response);
         if (user != null) {
@@ -78,7 +80,7 @@ public class FormController {
     @PostMapping("/copy/{formId}")
     public Result copyForm(@PathVariable("formId") int formId,
                            HttpServletRequest request,
-                           HttpServletResponse response) {
+                           HttpServletResponse response) throws IOException, WriterException {
         User user = userService.checkUserLogin(request, response);
         if (user != null) {
             return formService.copyForm(user, formId);

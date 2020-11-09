@@ -7,15 +7,18 @@ import com.example.jinshuju.pojo.Template;
 import com.example.jinshuju.pojo.User;
 import com.example.jinshuju.service.FormService;
 import com.example.jinshuju.service.UserService;
+import com.example.jinshuju.utils.QRCodeUtils;
 import com.example.jinshuju.utils.ResultUtils.Result;
 import com.example.jinshuju.utils.ResultUtils.ResultEnum;
 import com.example.jinshuju.utils.ResultUtils.ResultUtils;
 import com.example.jinshuju.utils.TextUtils;
+import com.google.zxing.WriterException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -33,7 +36,7 @@ public class FormServiceImpl implements FormService {
     UserService userService;
 
     @Override
-    public Result createForm(User user, Form form) {
+    public Result createForm(User user, Form form) throws IOException, WriterException {
         //填补数据
         form.setFormCreateTime(new Timestamp(System.currentTimeMillis()));
         form.setFormUpdateTime(new Timestamp(System.currentTimeMillis()));
@@ -44,16 +47,19 @@ public class FormServiceImpl implements FormService {
         return doCreateForm(user, form);
     }
 
-    private Result doCreateForm(User user, Form form) {
+    private Result doCreateForm(User user, Form form) throws IOException, WriterException {
         if (formMapper.insertForm(user, form)) {
             //插入成功，原form实例添加id，获取id
             int formId = form.getFormId();
             //生成相应公开访问填写的url 以及二维码
-            String formUrl = "http://localhost:8080/FormController/"+String.valueOf(formId);
+            String formUrl = "http://localhost:8080/FormController/" + String.valueOf(formId);
             form.setFormUrl(formUrl);
-            //TODO:生成二维码
+            String QRCodePath = QRCodeUtils.createImage(formUrl);
+            log.info(QRCodePath);
+            form.setFormQRCode(QRCodePath);
+            //更新表单url和二维码数据
+            formMapper.updateFormById(form);
             //更新form的类别表
-            //log.info(form.toString());
             //判断form type属性是否为空
             if (!TextUtils.isEmpty(form.getFormType())) {
                 //插入
@@ -122,7 +128,7 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
-    public Result copyForm(User user, int formId) {
+    public Result copyForm(User user, int formId) throws IOException, WriterException {
         //判0
         if (formId == 0) {
             return ResultUtils.fail("表单id为0");
