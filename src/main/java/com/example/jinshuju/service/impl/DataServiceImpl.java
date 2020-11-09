@@ -169,7 +169,7 @@ public class DataServiceImpl implements DataService {
                 log.info("-------解析excel完毕-------");
                 log.info("打印整个list<Data>信息中   ==>   " + dataList.toString());
                 //TODO:批量添加data类到数据库里面
-                //test测试
+                //test测试 代入数据库
                 dataMapper.insertExcelData(dataList);
                 dataMapper.insertExcelDataDetails(dataList);
                 Instant end = Instant.now();
@@ -180,6 +180,6 @@ public class DataServiceImpl implements DataService {
                 return ResultUtils.fail("上传文件类型为xls或xlsx，而不是" + fileType);
             }
         }
-        return ResultUtils.success();
+        return ResultUtils.fail("上传文件为空");
     }
 }

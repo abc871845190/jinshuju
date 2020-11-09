@@ -27,10 +27,14 @@
     导入excel解析excel并插入到数据库（easyExcel框架）
     
 ##尚未优化/未完成功能
-数据库：表单添加截止日期
-表单：公开模版界面url和记录表单浏览量处理（redis+spring aop+spring schedule），公开模版页面填写url，添加表单自动生成公开填写连接
-数据：添加表单数据之前判断是否过了截止日期和是否能够公开填写，封装是否公开填写，设定公开填写截止日期
-后期：灵活运用redis缓存存储数据，整个更新用put接口，局部更新用patch接口，处理405，500，400等报错返回信息处理，
+一、数据库：表单添加截止日期
+二、表单：公开模版界面url和记录表单浏览量处理（redis+spring aop+spring schedule），公开模版页面填写url，添加表单自动生成公开填写连接
+三、数据：添加表单数据之前判断是否过了截止日期和是否能够公开填写，封装是否公开填写，设定公开填写截止日期，单表单数据分析提取
+四、后期：灵活运用redis缓存存储数据，整个更新用put接口，局部更新用patch接口，处理405，500，400等报错返回信息处理，
 给表单添加是否只能填写一次功能
 
 ###后续完成汇总
+
+###参数汇总
+sql-url:jdbc:mysql://localhost:3306/jinshuju?autoReconnect=true&characterEncoding=utf-8&testOnBorrow=true&serverTimezone=Asia/Shanghai&useAffectedRows=true
+redis:host: 127.0.0.1 password: 123456 port: 6379
