@@ -160,4 +160,36 @@ public interface FormMapper {
      * @return
      */
     List<Form> getFilledFormsByUserId(int userId);
+
+    /**
+     * 获取表单收藏标识
+     *
+     * @param formId
+     * @return
+     */
+    int getFormFavourById(int formId);
+
+    /**
+     * 更新表单收藏
+     *
+     * @param formId
+     * @param formFavour
+     * @return
+     */
+    Boolean updateFormFavourById(@Param("formId") int formId, @Param("formFavour") int formFavour);
+
+    /**
+     * 通过formId 获取表单公开url
+     *
+     * @param formId
+     * @return
+     */
+    String getFormUrlById(int formId);
+
+    /**
+     * 通过formId 获取表单二维码地址
+     * @param formId
+     * @return
+     */
+    String getFormQRCodeById(int formId);
 }

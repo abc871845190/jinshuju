@@ -42,6 +42,7 @@ public class FormServiceImpl implements FormService {
         form.setFormUpdateTime(new Timestamp(System.currentTimeMillis()));
         form.setFormOpen(0);
         form.setFormViewCount(0);
+        form.setFormIsFavour(0);
         //插入form，获取id
         //log.info(form.toString());
         return doCreateForm(user, form);
@@ -288,11 +289,35 @@ public class FormServiceImpl implements FormService {
 
     @Override
     public Result getOpenFormUrl(int formId) {
-        return null;
+        //判断formId是否存在
+        if (formMapper.checkFormById(formId)){
+            return ResultUtils.success(ResultEnum.SUCCESS.getMsg(),formMapper.getFormUrlById(formId));
+        }
+        return ResultUtils.fail("表单不存在");
     }
 
     @Override
     public void createQRCode(int formId, HttpServletResponse response) {
+        if (formMapper.checkFormById(formId)){
+            String QRcodePath = formMapper.getFormQRCodeById(formId);
 
+        }
+    }
+
+    @Override
+    public Result updateFormFavour(int formId) {
+        //判断formid是否存在
+        if (formMapper.checkFormById(formId)) {
+            //数据库拿标识int
+            int flag = formMapper.getFormFavourById(formId);
+            if (flag == 0) {
+                formMapper.updateFormFavourById(formId, flag + 1);
+                return ResultUtils.success("收藏成功");
+            } else {
+                formMapper.updateFormFavourById(formId, flag - 1);
+                return ResultUtils.success("取消收藏成功");
+            }
+        }
+        return ResultUtils.fail("表单不存在");
     }
 }

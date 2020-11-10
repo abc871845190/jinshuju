@@ -22,4 +22,5 @@ public class Form {
     private List<Template> templateList;
     private java.sql.Timestamp formStopTime;
     private String formQRCode;
+    private int formIsFavour;
 }

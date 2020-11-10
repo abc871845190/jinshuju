@@ -175,6 +175,11 @@ public class FormController {
         return formService.getFilledForms(userService.checkUserLogin(request, response));
     }
 
+    @ApiOperation(value = "获取公开模块的url地址", response = Result.class)
+    @ApiResponses({
+            @ApiResponse(code = 1, message = "成功"),
+            @ApiResponse(code = 2, message = "失败")
+    })
     @GetMapping("/getOpenFormUrl/{formId}")
     public Result getOpenFormUrl(@PathVariable("formId") int formId){
         return formService.getOpenFormUrl(formId);
@@ -183,5 +188,15 @@ public class FormController {
     @GetMapping("/createQRCode/{formId}")
     public void createQRCodeByUrl(HttpServletResponse response,@PathVariable("formId") int formId){
         formService.createQRCode(formId, response);
+    }
+
+    @ApiOperation(value = "收藏表单和取消收藏表单", response = Result.class)
+    @ApiResponses({
+            @ApiResponse(code = 1, message = "成功"),
+            @ApiResponse(code = 2, message = "失败")
+    })
+    @PutMapping("/updateFavour/{formId}")
+    public Result updateFavour(@PathVariable("formId") int formId){
+        return formService.updateFormFavour(formId);
     }
 }

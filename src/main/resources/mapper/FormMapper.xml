@@ -20,6 +20,7 @@
             <if test="form.formImg != null and form.formImg != ''">form_img,</if>
             <if test="form.formImg == null or form.formImg == ''">form_img,</if>
             user_id,
+            form_isFavour,
         </trim>
         <trim prefix="values(" suffix=")" suffixOverrides=",">
             <if test="form.formName != null and form.formName != ''">#{form.formName},</if>
@@ -35,7 +36,8 @@
             #{form.formViewCount},
             <if test="form.formImg != null and form.formImg != ''">#{form.formImg},</if>
             <if test="form.formImg == null or form.formImg == ''">"localhost:8080/img/default_img.jpg",</if>
-            #{user.userId}
+            #{user.userId},
+            #{form.formIsFavour},
         </trim>
         <selectKey keyProperty="form.formId" keyColumn="form_id" order="AFTER" resultType="int">
             select LAST_INSERT_ID()
@@ -101,6 +103,11 @@
             <if test="formUrl != null and formUrl != ''">form_url = #{formUrl},</if>
             form_update_time = #{formUpdateTime}
         </set>
+        where form_id = #{formId}
+    </update>
+    <update id="updateFormFavourById">
+        update form
+        set form_isFavour = #{formFavour}
         where form_id = #{formId}
     </update>
     <delete id="deleteFormById" parameterType="int">
@@ -279,5 +286,20 @@
           AND fft.form_type_id = ft.id
           AND f.form_id NOT IN (SELECT form_id FROM (SELECT form_id FROM `data` GROUP BY form_id) AS h)
         ORDER BY data_update_time DESC
+    </select>
+    <select id="getFormFavourById" resultType="java.lang.Integer" parameterType="int">
+        select form_isFavour
+        from form
+        where form_id = #{formId}
+    </select>
+    <select id="getFormUrlById" resultType="java.lang.String" parameterType="int">
+        select form_url
+        from form
+        where form_id = #{formId}
+    </select>
+    <select id="getFormQRCodeById" resultType="java.lang.String" parameterType="int">
+        select form_QRCode
+        from form
+        where form_id = #{formId}
     </select>
 </mapper>

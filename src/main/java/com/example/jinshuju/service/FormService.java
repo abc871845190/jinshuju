@@ -126,6 +126,27 @@ public interface FormService {
      */
     Result getFilledForms(User user);
 
+    /**
+     * 获取表单公开地址
+     *
+     * @param formId
+     * @return
+     */
     Result getOpenFormUrl(int formId);
+
+    /**
+     * 生成表单填写二维码
+     *
+     * @param formId
+     * @param response
+     */
     void createQRCode(int formId, HttpServletResponse response);
+
+    /**
+     * 表单收藏
+     *
+     * @param formId
+     * @return
+     */
+    Result updateFormFavour(int formId);
 }
