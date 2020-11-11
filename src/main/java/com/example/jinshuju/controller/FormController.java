@@ -199,4 +199,15 @@ public class FormController {
     public Result updateFavour(@PathVariable("formId") int formId){
         return formService.updateFormFavour(formId);
     }
+
+    @ApiOperation(value = "获取所有用户收藏表单", response = Result.class)
+    @ApiResponses({
+            @ApiResponse(code = 1, message = "成功"),
+            @ApiResponse(code = 2, message = "失败")
+    })
+    @GetMapping("/getFavourForms")
+    public Result getFavourForms(HttpServletRequest request,HttpServletResponse response){
+        User user = userService.checkUserLogin(request,response);
+        return formService.getFavourFroms(user);
+    }
 }

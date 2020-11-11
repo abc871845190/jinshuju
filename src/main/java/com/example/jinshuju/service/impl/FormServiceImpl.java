@@ -290,15 +290,15 @@ public class FormServiceImpl implements FormService {
     @Override
     public Result getOpenFormUrl(int formId) {
         //判断formId是否存在
-        if (formMapper.checkFormById(formId)){
-            return ResultUtils.success(ResultEnum.SUCCESS.getMsg(),formMapper.getFormUrlById(formId));
+        if (formMapper.checkFormById(formId)) {
+            return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), formMapper.getFormUrlById(formId));
         }
         return ResultUtils.fail("表单不存在");
     }
 
     @Override
     public void createQRCode(int formId, HttpServletResponse response) {
-        if (formMapper.checkFormById(formId)){
+        if (formMapper.checkFormById(formId)) {
             String QRcodePath = formMapper.getFormQRCodeById(formId);
 
         }
@@ -319,5 +319,15 @@ public class FormServiceImpl implements FormService {
             }
         }
         return ResultUtils.fail("表单不存在");
+    }
+
+    @Override
+    public Result getFavourFroms(User user) {
+        if (user == null) {
+            return ResultUtils.fail("还没有登录");
+        }
+
+        List<Form> formList = formMapper.getFavourFormsByUserId(user.getUserId());
+        return ResultUtils.success(ResultEnum.SUCCESS.getMsg(),formList);
     }
 }

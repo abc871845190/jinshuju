@@ -149,4 +149,12 @@ public interface FormService {
      * @return
      */
     Result updateFormFavour(int formId);
+
+    /**
+     * 获取用户所有收藏表单
+     *
+     * @param user
+     * @return
+     */
+    Result getFavourFroms(User user);
 }

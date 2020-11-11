@@ -188,8 +188,17 @@ public interface FormMapper {
 
     /**
      * 通过formId 获取表单二维码地址
+     *
      * @param formId
      * @return
      */
     String getFormQRCodeById(int formId);
+
+    /**
+     * 通过userid 获取所有收藏的表单
+     *
+     * @param userId
+     * @return
+     */
+    List<Form> getFavourFormsByUserId(int userId);
 }

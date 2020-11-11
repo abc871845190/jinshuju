@@ -302,4 +302,18 @@
         from form
         where form_id = #{formId}
     </select>
+    <select id="getFavourFormsByUserId" resultMap="FormDataResultMap" parameterType="int">
+        SELECT DISTINCT
+            f.*,
+            ft.form_type
+        FROM
+            form f,
+            form_form_type fft,
+            form_type ft
+        WHERE
+            f.form_id = fft.form_id
+          AND fft.form_type_id = ft.id
+          AND f.user_id = #{userId}
+          AND f.form_isFavour = 1
+    </select>
 </mapper>
