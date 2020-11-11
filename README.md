@@ -1,7 +1,6 @@
 # 简介
 金数据后端项目
-#更新日期
-2020-11-09 09:35:48
+
 ## 使用框架
 1、swagger2 查看接口和测试接口  
 2、lombok 框架插件  
@@ -11,8 +10,6 @@
 6、Java Web Token 令牌工具  
 7、阿里的excel解析框架 easyExcel  
 8、aop 切面拦截  
-
-##测试环境
 
 ## 项目操作
 0、浏览所有的模版列表  
@@ -35,9 +32,8 @@
 四、后期：灵活运用redis缓存存储数据，整个更新用put接口，局部更新用patch接口，处理405，500，400等报错返回信息处理，
 给表单添加是否只能填写一次功能  
 
-###后续完成汇总
 
-###参数汇总
+##参数汇总
 sql-url:jdbc:mysql://localhost:3306/jinshuju?autoReconnect=true&characterEncoding=utf-8&testOnBorrow=true&serverTimezone=Asia/Shanghai&useAffectedRows=true  
 redis:host: 127.0.0.1 password: 123456 port: 6379
 
