@@ -223,5 +223,13 @@ public class FormController {
         return ResultUtils.success();
     }
 
-
+    @ApiOperation(value = "获取该表单所有组件字段信息", response = Result.class)
+    @ApiResponses({
+            @ApiResponse(code = 1, message = "成功"),
+            @ApiResponse(code = 2, message = "失败")
+    })
+    @GetMapping("/getTemplates/{formId}")
+    public Result getTemplates(@PathVariable("formId") int formId){
+        return formService.getTemplates(formId);
+    }
 }

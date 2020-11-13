@@ -134,18 +134,26 @@
         <result property="formViewCount" column="form_view_count"/>
         <result property="formImg" column="form_img"/>
         <result property="formType" column="form_type"/>
+        <result property="formIsFavour" column="form_isFavour"/>
         <collection property="templateList" ofType="com.example.jinshuju.pojo.Template"
                     column="form_id" select="getTemplatesByFormId"/>
     </resultMap>
-    <select id="getFormsByUserIdAndCreateTime" resultMap="FormResultMap" parameterType="int">
-        SELECT f.*,
-               ft.form_type
+    <resultMap id="getFormsResultMap" type="com.example.jinshuju.pojo.Form">
+        <id property="formId" column="form_id"/>
+        <result property="formName" column="form_name"/>
+        <result property="formCreateTime" column="form_create_time"/>
+        <result property="formIsFavour" column="form_isFavour"/>
+        <result property="formDataCount" column="form_data_count"/>
+    </resultMap>
+    <select id="getFormsByUserIdAndCreateTime" resultMap="getFormsResultMap" parameterType="int">
+        SELECT DISTINCT f.form_id,
+                        f.form_name,
+                        f.form_create_time,
+                        f.form_isFavour,
+                        (SELECT COUNT(data_id) FROM DATA WHERE form_id = f.form_id) AS form_data_count
         FROM form f,
-             form_form_type fft,
-             form_type ft
+             `data` d
         WHERE f.user_id = #{userId}
-          AND f.form_id = fft.form_id
-          AND fft.form_type_id = ft.id
         ORDER BY f.form_create_time DESC
     </select>
     <resultMap id="TemplateResultMap" type="com.example.jinshuju.pojo.Template">
@@ -261,29 +269,27 @@
                  ) AS h
         )
     </select>
-    <select id="getFormsByUserIdAndDataAddTime" resultMap="FormResultMap" parameterType="int">
-        SELECT DISTINCT f.*,
-                        ft.form_type,
-                        MAX(d.data_update_time) AS data_update_time
+    <select id="getFormsByUserIdAndDataAddTime" resultMap="getFormsResultMap" parameterType="int">
+        SELECT DISTINCT f.form_id,
+                        f.form_name,
+                        f.form_isFavour,
+                        f.form_create_time,
+                        (SELECT COUNT(data_id) FROM DATA WHERE form_id = f.form_id) AS form_data_count,
+                        MAX(d.data_update_time)                                     AS data_update_time
         FROM form f,
-             form_form_type fft,
-             form_type ft,
              `data` d
         WHERE f.user_id = #{userId}
-          AND f.form_id = fft.form_id
-          AND fft.form_type_id = ft.id
           AND d.form_id = f.form_id
         GROUP BY form_id
         UNION
-        SELECT f.*,
-               ft.form_type,
-               "0000-00-00 00:00:00" AS data_update_time
-        FROM form f,
-             form_form_type fft,
-             form_type ft
+        SELECT f.form_id,
+               f.form_name,
+               f.form_isFavour,
+               f.form_create_time,
+               (SELECT COUNT(data_id) FROM DATA WHERE form_id = f.form_id) AS form_data_count,
+               "0000-00-00 00:00:00"                                       AS data_update_time
+        FROM form f
         WHERE f.user_id = #{userId}
-          AND f.form_id = fft.form_id
-          AND fft.form_type_id = ft.id
           AND f.form_id NOT IN (SELECT form_id FROM (SELECT form_id FROM `data` GROUP BY form_id) AS h)
         ORDER BY data_update_time DESC
     </select>
@@ -303,15 +309,12 @@
         where form_id = #{formId}
     </select>
     <select id="getFavourFormsByUserId" resultMap="FormDataResultMap" parameterType="int">
-        SELECT DISTINCT
-            f.*,
-            ft.form_type
-        FROM
-            form f,
-            form_form_type fft,
-            form_type ft
-        WHERE
-            f.form_id = fft.form_id
+        SELECT DISTINCT f.*,
+                        ft.form_type
+        FROM form f,
+             form_form_type fft,
+             form_type ft
+        WHERE f.form_id = fft.form_id
           AND fft.form_type_id = ft.id
           AND f.user_id = #{userId}
           AND f.form_isFavour = 1

@@ -300,7 +300,7 @@ public class FormServiceImpl implements FormService {
     public void createQRCode(int formId, HttpServletResponse response) {
         if (formMapper.checkFormById(formId)) {
             String QRcodePath = formMapper.getFormQRCodeById(formId);
-
+            //TODO:....
         }
     }
 
@@ -326,8 +326,17 @@ public class FormServiceImpl implements FormService {
         if (user == null) {
             return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
         }
-
         List<Form> formList = formMapper.getFavourFormsByUserId(user.getUserId());
-        return ResultUtils.success(ResultEnum.SUCCESS.getMsg(),formList);
+        return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), formList);
+    }
+
+    @Override
+    public Result getTemplates(int formId) {
+        //判断id
+        if (formMapper.checkFormById(formId)) {
+            List<Template> templateList = formMapper.getTemplatesByFormId(formId);
+            return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), templateList);
+        }
+        return ResultUtils.fail("表单不存在");
     }
 }

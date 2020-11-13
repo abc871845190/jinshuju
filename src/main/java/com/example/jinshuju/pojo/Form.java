@@ -23,4 +23,5 @@ public class Form {
     private java.sql.Timestamp formStopTime;
     private String formQRCode;
     private int formIsFavour;
+    private int formDataCount; //表单数据填写量
 }

@@ -157,4 +157,12 @@ public interface FormService {
      * @return
      */
     Result getFavourFroms(User user);
+
+    /**
+     * 获取表单所有组件字段信息
+     *
+     * @param formId
+     * @return
+     */
+    Result getTemplates(int formId);
 }
