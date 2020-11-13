@@ -280,7 +280,7 @@ public class FormServiceImpl implements FormService {
     @Override
     public Result getFilledForms(User user) {
         if (user == null) {
-            return ResultUtils.fail("获取用户失败，请登录");
+            return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
         }
         //通过id获取我在data表所填写过的记录，不包括自己的表单
         List<Form> formList = formMapper.getFilledFormsByUserId(user.getUserId());
@@ -324,7 +324,7 @@ public class FormServiceImpl implements FormService {
     @Override
     public Result getFavourFroms(User user) {
         if (user == null) {
-            return ResultUtils.fail("还没有登录");
+            return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
         }
 
         List<Form> formList = formMapper.getFavourFormsByUserId(user.getUserId());

@@ -7,6 +7,7 @@ import com.example.jinshuju.pojo.UserRefreshToken;
 import com.example.jinshuju.service.UserService;
 import com.example.jinshuju.utils.*;
 import com.example.jinshuju.utils.ResultUtils.Result;
+import com.example.jinshuju.utils.ResultUtils.ResultEnum;
 import com.example.jinshuju.utils.ResultUtils.ResultUtils;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -142,6 +143,7 @@ public class UserServiceImpl implements UserService {
     public User checkUserLogin(HttpServletRequest request, HttpServletResponse response) {
         //拿cookies的md5token
         String tokenKey = CookiesUtils.getCookieValue(request, Constants.User.COOKIES_TOKEN);
+//        String tokenKey = request.getHeader("token");
         //log.info("tokenKey   ==>   " + tokenKey);
         //把cookies的md5token在redis里面拿数据
         User realuser = parseByToken(tokenKey);
@@ -154,7 +156,7 @@ public class UserServiceImpl implements UserService {
                 UserRefreshToken userRefreshToken = tokenMapper.getRefreshTokenByToken(token);
                 //到数据库拿refreshToken看是否存在，
                 if (userRefreshToken == null) {
-                    //TODO:提示用户登录
+                    //提示用户登录
                     log.info("userRefreshToken is null");
                     return null;
                 }
@@ -194,12 +196,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result getUserInfo(int userid) {
-        User user1 = userMapper.findOneById(userid);
-        if (user1 == null) {
-            return ResultUtils.fail("用户不存在");
-        }
-        return ResultUtils.success().setData(user1);
+    public Result getUserInfo(User user) {
+        User user1 = userMapper.findOneById(user.getUserId());
+        return ResultUtils.success(ResultEnum.SUCCESS.getMsg(),user);
     }
 
     @Override

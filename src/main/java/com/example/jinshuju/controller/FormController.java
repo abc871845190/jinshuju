@@ -5,6 +5,7 @@ import com.example.jinshuju.pojo.User;
 import com.example.jinshuju.service.FormService;
 import com.example.jinshuju.service.UserService;
 import com.example.jinshuju.utils.ResultUtils.Result;
+import com.example.jinshuju.utils.ResultUtils.ResultEnum;
 import com.example.jinshuju.utils.ResultUtils.ResultUtils;
 import com.google.zxing.WriterException;
 import io.swagger.annotations.Api;
@@ -43,7 +44,7 @@ public class FormController {
         if (user != null) {
             return formService.createForm(user, form);
         }
-        return ResultUtils.fail("还没登陆呢插什么表单");
+        return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
     }
 
     @ApiOperation(value = "查找用户表单+表单排序", response = Result.class)
@@ -59,7 +60,7 @@ public class FormController {
         if (user != null) {
             return formService.getForms(user, flag);
         }
-        return ResultUtils.fail("还没登陆呢，怎么查表单");
+        return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
     }
 
     @ApiOperation(value = "查找用户单个表单", response = Result.class)
@@ -85,7 +86,7 @@ public class FormController {
         if (user != null) {
             return formService.copyForm(user, formId);
         }
-        return ResultUtils.fail("还没登陆呢，怎么复制");
+        return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
     }
 
     @ApiOperation(value = "删除表单", response = Result.class)
@@ -103,7 +104,7 @@ public class FormController {
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
     })
-    @PutMapping("/updateName/{formId}/{formName}")
+    @PatchMapping("/updateName/{formId}/{formName}")
     public Result updateFormName(@PathVariable("formName") String formName,
                                  @PathVariable("formId") int formId) {
         return formService.updateFormName(formId, formName);
@@ -114,13 +115,13 @@ public class FormController {
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
     })
-    @PutMapping("/updateTag/{formId}/{formTag}")
+    @PatchMapping("/updateTag/{formId}/{formTag}")
     public Result updateFormTag(@PathVariable("formTag") String formTag,
                                 @PathVariable("formId") int formId) {
         return formService.updateFormTag(formId, formTag);
     }
 
-    @ApiOperation(value = "修改表单,要附带id", response = Result.class)
+    @ApiOperation(value = "修改表单,要附带表单id", response = Result.class)
     @ApiResponses({
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
@@ -135,7 +136,7 @@ public class FormController {
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
     })
-    @PutMapping("/updateOpen/{formId}")
+    @PatchMapping("/updateOpen/{formId}")
     public Result updateFormOpen(@PathVariable("formId") int formId) {
         return formService.updateFormOpen(formId);
     }
@@ -195,7 +196,7 @@ public class FormController {
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
     })
-    @PutMapping("/updateFavour/{formId}")
+    @PatchMapping("/updateFavour/{formId}")
     public Result updateFavour(@PathVariable("formId") int formId){
         return formService.updateFormFavour(formId);
     }
@@ -210,4 +211,17 @@ public class FormController {
         User user = userService.checkUserLogin(request,response);
         return formService.getFavourFroms(user);
     }
+
+    @ApiOperation(value = "公开模版界面填写专用url", response = Result.class)
+    @ApiResponses({
+            @ApiResponse(code = 1, message = "成功"),
+            @ApiResponse(code = 2, message = "失败")
+    })
+    @GetMapping("/{formId}")
+    public Result getOpenForm(@PathVariable("formId")int formId){
+        //TODO:返回公开模版填写需要的信息
+        return ResultUtils.success();
+    }
+
+
 }

@@ -1,13 +1,19 @@
 package com.example.jinshuju.filter;
 
+import com.alibaba.fastjson.JSON;
 import com.example.jinshuju.pojo.User;
 import com.example.jinshuju.service.UserService;
+import com.example.jinshuju.utils.ResultUtils.ResultEnum;
+import com.example.jinshuju.utils.ResultUtils.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * 登陆拦截
@@ -35,11 +41,29 @@ public class LoginFilter extends HandlerInterceptorAdapter {
             //已经登陆了
             log.info("已经登陆了");
             return true;
+        }else{
+            String jsonStr = JSON.toJSONString(ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg()));
+            returnJson(response,jsonStr);
+            return false;
         }
-        log.info("还没登陆呢");
-        //重定向
-        //request.getRequestDispatcher("/RootController/returnMsg/please login").forward(request,response);
-        return false;
+    }
+
+    /**
+     * 返回json
+     * @param response
+     * @param jsonStr
+     */
+    private void returnJson(HttpServletResponse response, String jsonStr) throws IOException {
+        PrintWriter writer = null;
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=utf-8");
+        try {
+            writer = response.getWriter();
+            writer.print(jsonStr);
+        } finally {
+            if (writer != null)
+                writer.close();
+        }
     }
 
     /**

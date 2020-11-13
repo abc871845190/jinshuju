@@ -73,4 +73,17 @@ public class ResultUtils {
         return r;
     }
 
+    /**
+     * 失败并返回自定义信息和自定义code
+     *
+     * @param code
+     * @param message
+     * @return
+     */
+    public static Result fail(int code, String message) {
+        Result r = new Result();
+        r.setCode(code);
+        r.setMsg(message);
+        return r;
+    }
 }

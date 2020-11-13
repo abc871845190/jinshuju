@@ -41,10 +41,9 @@ public interface UserService {
     /**
      * 查看用户信息
      *
-     * @param userid
      * @return
      */
-    Result getUserInfo(int userid);
+    Result getUserInfo(User user);
 
     /**
      * 检查用户邮箱是否存在

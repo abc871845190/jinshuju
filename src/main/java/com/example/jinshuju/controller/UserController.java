@@ -5,6 +5,7 @@ import com.example.jinshuju.service.AsyncService;
 import com.example.jinshuju.service.UserService;
 import com.example.jinshuju.utils.RedisUtils;
 import com.example.jinshuju.utils.ResultUtils.Result;
+import com.example.jinshuju.utils.ResultUtils.ResultEnum;
 import com.example.jinshuju.utils.ResultUtils.ResultUtils;
 import com.example.jinshuju.utils.TextUtils;
 import io.swagger.annotations.*;
@@ -77,9 +78,13 @@ public class UserController {
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
     })
-    @GetMapping("/getUser/{userid}")
-    public Result getUser(@PathVariable int userid) {
-        return userService.getUserInfo(userid);
+    @GetMapping("/User")
+    public Result getUser(HttpServletRequest request,HttpServletResponse response) {
+        User user = userService.checkUserLogin(request,response);
+        if (user == null){
+            return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(),ResultEnum.USER_NOT_LOGIN.getMsg());
+        }
+        return userService.getUserInfo(user);
     }
 
     /**
@@ -100,7 +105,7 @@ public class UserController {
             @ApiImplicitParam(paramType = "query", name = "oriPsw", value = "原密码", required = true, dataType = "String", example = "123456"),
             @ApiImplicitParam(paramType = "query", name = "newPsw", value = "新密码", required = true, dataType = "String", example = "1234567")
     })
-    @PutMapping("/updatePsw")
+    @PatchMapping("/updatePsw")
     public Result updatePsw(@RequestBody Map<String, Object> map) {
         int userid = (int) map.get("userid");
         String originPsw = (String) map.get("oriPsw");
@@ -120,7 +125,7 @@ public class UserController {
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
     })
-    @PutMapping("/updateEmail")
+    @PatchMapping("/updateEmail")
     public Result updateEmail(@RequestBody User user) {
         return userService.updateEmail(user);
     }
@@ -130,7 +135,7 @@ public class UserController {
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
     })
-    @PutMapping("/updateTelephone")
+    @PatchMapping("/updateTelephone")
     public Result updateTelephone(@RequestBody User user) {
         return userService.updateTelephone(user);
     }

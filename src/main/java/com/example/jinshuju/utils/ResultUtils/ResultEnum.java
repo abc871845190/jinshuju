@@ -9,7 +9,8 @@ public enum ResultEnum {
     SUCCESS(1,"成功"),
     ERROR(0,"错误"),
     USER_EXISTS(10,"用户已存在"),
-    USER_NOT_EXISTS(11,"用户不存在"),;
+    USER_NOT_EXISTS(11,"用户不存在"),
+    USER_NOT_LOGIN(900,"用户没有登陆");
 
     private int code;
     private String msg;
