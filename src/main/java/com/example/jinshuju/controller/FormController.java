@@ -39,7 +39,7 @@ public class FormController {
     })
     @PostMapping("/form")
     public Result createForm(@RequestBody Form form, HttpServletRequest request, HttpServletResponse response) throws IOException, WriterException {
-        //log.info(form.toString());
+        log.info(form.toString());
         User user = userService.checkUserLogin(request, response);
         if (user != null) {
             return formService.createForm(user, form);

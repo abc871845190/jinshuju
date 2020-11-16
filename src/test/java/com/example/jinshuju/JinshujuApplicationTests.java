@@ -1,5 +1,6 @@
 package com.example.jinshuju;
 
+import com.example.jinshuju.utils.Constants;
 import com.example.jinshuju.utils.EasyExcelUtils.EasyExcelUtils;
 import com.example.jinshuju.utils.QRCodeUtils;
 import com.example.jinshuju.utils.RedisUtils;
@@ -105,5 +106,11 @@ class JinshujuApplicationTests {
         //获取项目classes/static的地址
         //String path = ClassUtils.getDefaultClassLoader().getResource("static").getPath();
         //log.info(path);
+    }
+
+    @Test
+    public void testToken(){
+        String token = (String) redisUtils.get(Constants.User.KEY_TOKEN + "e72bf996f505e5cf73211f8164cf2c1a");
+        log.info(token);
     }
 }

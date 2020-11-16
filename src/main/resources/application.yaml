@@ -4,8 +4,8 @@ mybatis:
   #配置映射类所在包
   type-aliases-package: classpath:com.example.jinshuju.pojo
   #打印sql
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 server:
   #访问端口号
   port: 8080

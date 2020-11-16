@@ -21,6 +21,7 @@
     </resultMap>
 
     <resultMap id="UserDataMap" type="com.example.jinshuju.pojo.User">
+        <id property="userId" column="user_id"/>
         <result property="userName" column="user_name"/>
         <result property="userEmail" column="user_email"/>
         <result property="userTelephone" column="user_telephone"/>

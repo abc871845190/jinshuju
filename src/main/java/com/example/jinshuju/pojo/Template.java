@@ -15,4 +15,5 @@ public class Template {
   private String templateDefault;
   //和form绑定的id
   private int formTemplateId;
+  private String templateType;
 }

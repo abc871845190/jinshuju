@@ -142,17 +142,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public User checkUserLogin(HttpServletRequest request, HttpServletResponse response) {
         //拿cookies的md5token
-        String tokenKey = CookiesUtils.getCookieValue(request, Constants.User.COOKIES_TOKEN);
-//        String tokenKey = request.getHeader("token");
+        // String tokenKey = CookiesUtils.getCookieValue(request, Constants.User.COOKIES_TOKEN);
+        //跨域拿请求头的token
+        String tokenKey = request.getHeader("token");
         //log.info("tokenKey   ==>   " + tokenKey);
-        //把cookies的md5token在redis里面拿数据
+        //把md5token在redis里面拿数据
         User realuser = parseByToken(tokenKey);
         if (realuser == null) {
             log.info("realuser is null");
             //报错证明token已经过期或者没有该token
             String token = (String) redisUtils.get(Constants.User.KEY_TOKEN + tokenKey);
             if (!TextUtils.isEmpty(token)) {
-                log.info("token is   ==>   " + token);
+                //log.info("token is   ==>   " + token);
                 UserRefreshToken userRefreshToken = tokenMapper.getRefreshTokenByToken(token);
                 //到数据库拿refreshToken看是否存在，
                 if (userRefreshToken == null) {
@@ -176,13 +177,13 @@ public class UserServiceImpl implements UserService {
                     //删除原来的refreshToken
                     tokenMapper.deleteRefreshTokenById(Integer.parseInt(userid));
                     //创建新的refreshToken
+                    //log.info(user.toString());
                     String newTokenKey = createRefreshToken(response, user, lasttime);
                     //log.info("new TokenKey is   ==>   " + newTokenKey);
                     //返回token
                     return parseByToken(newTokenKey);
                 } catch (Exception e1) {
                     //报错，即refreshToken过期
-                    //TODO:提示用户登陆
                     e1.printStackTrace();
                     log.info("refreshToken is expiration");
                     return null;
@@ -198,7 +199,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result getUserInfo(User user) {
         User user1 = userMapper.findOneById(user.getUserId());
-        return ResultUtils.success(ResultEnum.SUCCESS.getMsg(),user);
+        return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), user);
     }
 
     @Override
@@ -314,6 +315,12 @@ public class UserServiceImpl implements UserService {
         return ResultUtils.success("成功。", code);
     }
 
+    /**
+     * 根据前端token到redis拿真token
+     *
+     * @param tokenKey
+     * @return
+     */
     private User parseByToken(String tokenKey) {
         String token = (String) redisUtils.get(Constants.User.KEY_TOKEN + tokenKey);
         //log.info("redis-token   ==>   " + token);
