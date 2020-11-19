@@ -182,12 +182,12 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @GetMapping("/getOpenFormUrl/{formId}")
-    public Result getOpenFormUrl(@PathVariable("formId") int formId){
+    public Result getOpenFormUrl(@PathVariable("formId") int formId) {
         return formService.getOpenFormUrl(formId);
     }
 
     @GetMapping("/createQRCode/{formId}")
-    public void createQRCodeByUrl(HttpServletResponse response,@PathVariable("formId") int formId){
+    public void createQRCodeByUrl(HttpServletResponse response, @PathVariable("formId") int formId) {
         formService.createQRCode(formId, response);
     }
 
@@ -197,7 +197,7 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @PatchMapping("/updateFavour/{formId}")
-    public Result updateFavour(@PathVariable("formId") int formId){
+    public Result updateFavour(@PathVariable("formId") int formId) {
         return formService.updateFormFavour(formId);
     }
 
@@ -207,8 +207,8 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @GetMapping("/getFavourForms")
-    public Result getFavourForms(HttpServletRequest request,HttpServletResponse response){
-        User user = userService.checkUserLogin(request,response);
+    public Result getFavourForms(HttpServletRequest request, HttpServletResponse response) {
+        User user = userService.checkUserLogin(request, response);
         return formService.getFavourFroms(user);
     }
 
@@ -218,7 +218,7 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @GetMapping("/{formId}")
-    public Result getOpenForm(@PathVariable("formId")int formId){
+    public Result getOpenForm(@PathVariable("formId") int formId) {
         //TODO:返回公开模版填写需要的信息
         return ResultUtils.success();
     }
@@ -229,7 +229,17 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @GetMapping("/getTemplates/{formId}")
-    public Result getTemplates(@PathVariable("formId") int formId){
+    public Result getTemplates(@PathVariable("formId") int formId) {
         return formService.getTemplates(formId);
+    }
+
+    @ApiOperation(value = "表单发布为模版和取消发布为模版", response = Result.class)
+    @ApiResponses({
+            @ApiResponse(code = 1, message = "成功"),
+            @ApiResponse(code = 2, message = "失败")
+    })
+    @PatchMapping("/getTemplates/{formId}")
+    public Result updateIssure(@PathVariable("formId") int formId) {
+        return formService.updateFormIssure(formId);
     }
 }

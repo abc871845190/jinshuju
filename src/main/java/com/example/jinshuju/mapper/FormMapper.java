@@ -201,4 +201,20 @@ public interface FormMapper {
      * @return
      */
     List<Form> getFavourFormsByUserId(int userId);
+
+    /**
+     * 获取表单发布标识
+     *
+     * @param formId
+     * @return
+     */
+    int getFormIssureById(int formId);
+
+    /**
+     * 通过表单id更新发布标识
+     *
+     * @param formId
+     * @param i
+     */
+    Boolean updateFormIssureById(@Param("formId") int formId,@Param("formIssure") int formIssure);
 }

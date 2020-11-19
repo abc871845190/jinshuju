@@ -122,7 +122,7 @@ public class UserServiceImpl implements UserService {
         String tokenKey = DigestUtils.md5DigestAsHex(token.getBytes());
         //log.info("create md5 token   ==>   " + tokenKey);
         //保存token到redis
-        redisUtils.set(Constants.User.KEY_TOKEN + tokenKey, token, Constants.TimeValue.ONE_HOUR * 2);
+        redisUtils.set(Constants.User.KEY_TOKEN + tokenKey, token, Constants.TimeValue.ONE_WEEK);
         //把tokenKey写到cookie里面
         CookiesUtils.setCookies(response, Constants.User.COOKIES_TOKEN, tokenKey, "/");
         //生成refreshToken
@@ -293,7 +293,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result logout(HttpServletRequest request, HttpServletResponse response) {
         //拿请求的cookies的md5token
-        String tokenKey = CookiesUtils.getCookieValue(request, Constants.User.COOKIES_TOKEN);
+        //String tokenKey = CookiesUtils.getCookieValue(request, Constants.User.COOKIES_TOKEN);
+        //跨域拿请求头的token
+        String tokenKey = request.getHeader("token");
         //判空
         if (TextUtils.isEmpty(tokenKey)) {
             return ResultUtils.fail("token为空");

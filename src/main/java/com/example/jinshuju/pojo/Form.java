@@ -24,4 +24,7 @@ public class Form {
     private String formQRCode;
     private int formIsFavour;
     private int formDataCount; //表单数据填写量
+    private java.sql.Timestamp formDataUpdateTime; //最新一次填写数据的时间
+    private int formDataCountByUser; //单用户数据填写量
+    private int formIsIssure; //表单是否发布为模版
 }

@@ -21,6 +21,7 @@
             <if test="form.formImg == null or form.formImg == ''">form_img,</if>
             user_id,
             form_isFavour,
+            form_isIssure,
         </trim>
         <trim prefix="values(" suffix=")" suffixOverrides=",">
             <if test="form.formName != null and form.formName != ''">#{form.formName},</if>
@@ -38,6 +39,7 @@
             <if test="form.formImg == null or form.formImg == ''">"localhost:8080/img/default_img.jpg",</if>
             #{user.userId},
             #{form.formIsFavour},
+            #{form.formIsIssure},
         </trim>
         <selectKey keyProperty="form.formId" keyColumn="form_id" order="AFTER" resultType="int">
             select LAST_INSERT_ID()
@@ -112,6 +114,9 @@
         update form
         set form_isFavour = #{formFavour}
         where form_id = #{formId}
+    </update>
+    <update id="updateFormIssureById">
+        update form set form_isIssure = #{formIssure} where form_id = #{formId}
     </update>
     <delete id="deleteFormById" parameterType="int">
         delete
@@ -215,7 +220,7 @@
         form_form_type fft,
         form_type ft
         WHERE
-        f.form_open = 1
+        f.form_isIssure = 1
         AND f.form_id = fft.form_id
         AND fft.form_type_id = ft.id
         <if test="formTagArray != null">
@@ -233,7 +238,7 @@
         select count(*)
         from form
         where
-        form_open = 1
+        form_isIssure = 1
         <if test="formTagArray != null">
             and
             <foreach collection="formTagArray" index="index" item="item" open="(" close=")" separator="and">
@@ -251,12 +256,23 @@
         <result property="formTag" column="form_tag"/>
         <result property="formUrl" column="form_url"/>
         <result property="formViewCount" column="form_view_count"/>
-        <result property="formImg" column="form_img"/>
         <result property="formType" column="form_type"/>
+        <result property="formDataCountByUser" column="form_data_fill_count"/>
+        <result property="formDataUpdateTime" column="form_data_update_time"/>
     </resultMap>
     <select id="getFilledFormsByUserId" resultMap="FormDataResultMap" parameterType="int">
-        SELECT DISTINCT f.*,
-                        ft.form_type
+        SELECT DISTINCT f.form_id,
+                        f.form_name,
+                        f.form_desc,
+                        f.form_tag,
+                        f.form_url,
+                        f.form_view_count,
+                        ft.form_type,
+                        (SELECT COUNT(data_id)
+                         FROM `data`
+                         WHERE user_id = #{userId}
+                           AND form_id = f.form_id) AS form_data_fill_count,
+                        MAX(d.data_create_time)     AS form_data_update_time
         FROM form f,
              form_form_type fft,
              form_type ft,
@@ -265,14 +281,8 @@
           AND fft.form_type_id = ft.id
           AND d.user_id = #{userId}
           AND f.form_id = d.form_id
-          AND f.form_id NOT IN (
-            SELECT form_id
-            FROM (
-                     SELECT form_id
-                     FROM form
-                     WHERE user_id = #{userId}
-                 ) AS h
-        )
+          AND f.form_id NOT IN (SELECT form_id FROM (SELECT form_id FROM form WHERE user_id = #{userId}) AS h)
+        GROUP BY f.form_id
     </select>
     <select id="getFormsByUserIdAndDataAddTime" resultMap="getFormsResultMap" parameterType="int">
         SELECT DISTINCT f.form_id,
@@ -313,7 +323,7 @@
         from form
         where form_id = #{formId}
     </select>
-    <select id="getFavourFormsByUserId" resultMap="FormDataResultMap" parameterType="int">
+    <select id="getFavourFormsByUserId" resultMap="FormResultMap" parameterType="int">
         SELECT DISTINCT f.*,
                         ft.form_type
         FROM form f,
@@ -323,5 +333,10 @@
           AND fft.form_type_id = ft.id
           AND f.user_id = #{userId}
           AND f.form_isFavour = 1
+    </select>
+    <select id="getFormIssureById" resultType="java.lang.Integer" parameterType="int">
+        select form_isIssure
+        from form
+        where form_id = #{formId}
     </select>
 </mapper>

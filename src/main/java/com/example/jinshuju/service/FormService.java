@@ -165,4 +165,12 @@ public interface FormService {
      * @return
      */
     Result getTemplates(int formId);
+
+    /**
+     * 表单公布为模版和取消公布为模版
+     *
+     * @param formId
+     * @return
+     */
+    Result updateFormIssure(int formId);
 }

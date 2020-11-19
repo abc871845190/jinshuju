@@ -43,6 +43,7 @@ public class FormServiceImpl implements FormService {
         form.setFormOpen(0);
         form.setFormViewCount(0);
         form.setFormIsFavour(0);
+        form.setFormIsIssure(0);
         //插入form，获取id
         //log.info(form.toString());
         return doCreateForm(user, form);
@@ -336,6 +337,23 @@ public class FormServiceImpl implements FormService {
         if (formMapper.checkFormById(formId)) {
             List<Template> templateList = formMapper.getTemplatesByFormId(formId);
             return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), templateList);
+        }
+        return ResultUtils.fail("表单不存在");
+    }
+
+    @Override
+    public Result updateFormIssure(int formId) {
+        //判断formid是否存在
+        if (formMapper.checkFormById(formId)) {
+            //数据库拿标识int
+            int flag = formMapper.getFormIssureById(formId);
+            if (flag == 0) {
+                formMapper.updateFormIssureById(formId, flag + 1);
+                return ResultUtils.success("发布成功");
+            } else {
+                formMapper.updateFormIssureById(formId, flag - 1);
+                return ResultUtils.success("取消发布成功");
+            }
         }
         return ResultUtils.fail("表单不存在");
     }
