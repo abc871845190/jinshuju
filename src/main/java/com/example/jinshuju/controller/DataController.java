@@ -76,4 +76,10 @@ public class DataController {
                               HttpServletResponse response) {
         return dataService.uploadExcel(excelFile, formId, userService.checkUserLogin(request, response));
     }
+
+    @ApiOperation(value = "批量删除data    id为String类型", response = Result.class)
+    @DeleteMapping("/deleteBatch")
+    public Result deleteBatch(@RequestParam(name = "id",defaultValue = "") String idList){
+        return dataService.deleteBatch(idList);
+    }
 }

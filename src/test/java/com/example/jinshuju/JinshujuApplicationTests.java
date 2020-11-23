@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -112,5 +113,16 @@ class JinshujuApplicationTests {
     public void testToken(){
         String token = (String) redisUtils.get(Constants.User.KEY_TOKEN + "e72bf996f505e5cf73211f8164cf2c1a");
         log.info(token);
+    }
+
+    @Test
+    public void testText(){
+        String idList = "1,2,3,4,5,6";
+        String[] idListByString = idList.split(",");
+
+        int[] array = Arrays.asList(idListByString).stream().mapToInt(Integer::parseInt).toArray();
+        for (int i : array){
+            log.info(String.valueOf(i));
+        }
     }
 }

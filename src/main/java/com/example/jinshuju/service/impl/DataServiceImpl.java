@@ -9,6 +9,7 @@ import com.example.jinshuju.utils.EasyExcelUtils.EasyExcelUtils;
 import com.example.jinshuju.utils.ResultUtils.Result;
 import com.example.jinshuju.utils.ResultUtils.ResultEnum;
 import com.example.jinshuju.utils.ResultUtils.ResultUtils;
+import com.example.jinshuju.utils.TextUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -181,5 +182,20 @@ public class DataServiceImpl implements DataService {
             }
         }
         return ResultUtils.fail("上传文件为空");
+    }
+
+    @Override
+    public Result deleteBatch(String idList) {
+        //判空
+        if (TextUtils.isEmpty(idList)){
+            return ResultUtils.fail("数据项id为空");
+        }
+        //解析字符串
+        String[] idListByString = idList.split(",");
+        //String数组转化为int数组
+        int[] array = Arrays.asList(idListByString).stream().mapToInt(Integer::parseInt).toArray();
+        //批量删除
+        dataMapper.deleteBatch(array);
+        return ResultUtils.success();
     }
 }

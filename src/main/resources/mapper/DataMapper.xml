@@ -22,7 +22,8 @@
         insert into data(form_id, user_id, data_create_time, data_update_time, data_write_time)
         values
         <foreach collection="dataList" separator="," item="item" index="index">
-            (#{item.form.formId}, #{item.user.userId}, #{item.dataCreateTime},#{item.dataUpdateTime},#{item.dataWriteTime})
+            (#{item.form.formId}, #{item.user.userId},
+            #{item.dataCreateTime},#{item.dataUpdateTime},#{item.dataWriteTime})
         </foreach>
     </insert>
     <!--  双重循环，插入list<list<>>类型数据  -->
@@ -53,6 +54,15 @@
         delete
         from data_details
         where data_id = #{dataId}
+    </delete>
+    <delete id="deleteBatch">
+        delete from
+        data
+        where
+        data_id IN
+        <foreach collection="idList" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
     </delete>
     <resultMap id="DataResultMap" type="com.example.jinshuju.pojo.Data">
         <id property="dataId" column="data_id"/>

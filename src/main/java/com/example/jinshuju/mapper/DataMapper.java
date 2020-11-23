@@ -82,6 +82,7 @@ public interface DataMapper {
 
     /**
      * 批量新建数据项
+     *
      * @param dataList
      * @return
      */
@@ -94,4 +95,12 @@ public interface DataMapper {
      * @return
      */
     Boolean insertExcelDataDetails(List<Data> dataList);
+
+    /**
+     * 批量删除数据项
+     *
+     * @param idList
+     * @return
+     */
+    Boolean deleteBatch(int[] idList);
 }

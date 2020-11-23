@@ -72,4 +72,12 @@ public interface DataService {
      * @return
      */
     Result uploadExcel(MultipartFile excelFile, int formId, User user);
+
+    /**
+     * 批量删除数据项
+     *
+     * @param idList String类型拼接id
+     * @return
+     */
+    Result deleteBatch(String idList);
 }
