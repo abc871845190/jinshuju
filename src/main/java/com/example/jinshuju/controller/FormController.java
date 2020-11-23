@@ -193,8 +193,9 @@ public class FormController {
 
     @ApiOperation(value = "收藏表单和取消收藏表单", response = Result.class)
     @ApiResponses({
-            @ApiResponse(code = 1, message = "成功"),
-            @ApiResponse(code = 2, message = "失败")
+            @ApiResponse(code = 20, message = "收藏成功"),
+            @ApiResponse(code = 21, message = "取消收藏成功"),
+            @ApiResponse(code = 1, message = "失败")
     })
     @PatchMapping("/updateFavour/{formId}")
     public Result updateFavour(@PathVariable("formId") int formId) {

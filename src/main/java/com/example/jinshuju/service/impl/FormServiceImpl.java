@@ -313,10 +313,14 @@ public class FormServiceImpl implements FormService {
             int flag = formMapper.getFormFavourById(formId);
             if (flag == 0) {
                 formMapper.updateFormFavourById(formId, flag + 1);
-                return ResultUtils.success("收藏成功");
+                return ResultUtils.success(
+                        ResultEnum.FORM_IS_FAVOUR.getCode(),
+                        ResultEnum.FORM_IS_FAVOUR.getMsg());
             } else {
                 formMapper.updateFormFavourById(formId, flag - 1);
-                return ResultUtils.success("取消收藏成功");
+                return ResultUtils.success(
+                        ResultEnum.FORM_IS_NOT_FAVOUR.getCode(),
+                        ResultEnum.FORM_IS_NOT_FAVOUR.getMsg());
             }
         }
         return ResultUtils.fail("表单不存在");

@@ -10,7 +10,9 @@ public enum ResultEnum {
     ERROR(0,"错误"),
     USER_EXISTS(10,"用户已存在"),
     USER_NOT_EXISTS(11,"用户不存在"),
-    USER_NOT_LOGIN(900,"用户没有登陆");
+    USER_NOT_LOGIN(900,"用户没有登陆"),
+    FORM_IS_NOT_FAVOUR(21,"取消收藏成功"),
+    FORM_IS_FAVOUR(20,"收藏成功");
 
     private int code;
     private String msg;
