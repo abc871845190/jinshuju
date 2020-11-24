@@ -38,6 +38,10 @@ public class FormServiceImpl implements FormService {
     @Override
     public Result createForm(User user, Form form) throws IOException, WriterException {
         //填补数据
+        form.setFormName("未命名");
+        form.setFormTitle("未命名标题");
+        form.setFormDesc("描述");
+        form.setFormImg("null");
         form.setFormCreateTime(new Timestamp(System.currentTimeMillis()));
         form.setFormUpdateTime(new Timestamp(System.currentTimeMillis()));
         form.setFormOpen(0);
@@ -57,7 +61,7 @@ public class FormServiceImpl implements FormService {
             String formUrl = "http://localhost:8080/FormController/" + String.valueOf(formId);
             form.setFormUrl(formUrl);
             String QRCodePath = QRCodeUtils.createImage(formUrl);
-            log.info(QRCodePath);
+//            log.info(QRCodePath);
             form.setFormQRCode(QRCodePath);
             //更新表单url和二维码数据
             formMapper.updateFormById(form);
@@ -66,7 +70,7 @@ public class FormServiceImpl implements FormService {
             if (!TextUtils.isEmpty(form.getFormType())) {
                 //插入
                 if (formMapper.saveFormType(form)) {
-                    return insertTemplateList(form);
+                    return insertTemplateList(form, 0);
                 } else {
                     deleteForm(formId);
                     return ResultUtils.fail("插入类别表失败");
@@ -75,21 +79,28 @@ public class FormServiceImpl implements FormService {
                 deleteForm(formId);
                 return ResultUtils.fail("表单类别为空");
             }
-
         } else {
             return ResultUtils.fail("插入表单失败");
         }
     }
 
-    private Result insertTemplateList(Form form) {
+    private Result insertTemplateList(Form form, int flag) {
         //批量插入表单组件关系表
         List<Template> templateList = form.getTemplateList();
-        if (templateList.isEmpty()) {
-            //0组件表单
-            return ResultUtils.fail("插入表单成功");
+        if (templateList == null) {
+            //表单没有组件-不插入组件
+            if (flag == 0) {
+                return ResultUtils.success("插入表单成功！", form);
+            } else {
+                return ResultUtils.success("插入表单成功！");
+            }
         } else {
-            //插入
-            return formMapper.insertTemplate(form) > 0 ? ResultUtils.success("插入表单成功！") : ResultUtils.fail("插入组件失败");
+            //插入组件
+            if (flag == 0) {
+                return formMapper.insertTemplate(form) > 0 ? ResultUtils.success("插入表单成功！", form) : ResultUtils.fail("插入组件失败");
+            } else {
+                return formMapper.insertTemplate(form) > 0 ? ResultUtils.success("插入表单成功！") : ResultUtils.fail("插入组件失败");
+            }
         }
     }
 
@@ -123,7 +134,7 @@ public class FormServiceImpl implements FormService {
             if (form == null) {
                 return ResultUtils.fail("提取表单失败");
             }
-            log.info(form.toString());
+            //log.info(form.toString());
             return ResultUtils.success("成功", form);
         }
         return ResultUtils.fail("表单id不存在");
@@ -198,7 +209,7 @@ public class FormServiceImpl implements FormService {
 
     @Override
     public Result updateForm(Form form) {
-        //必填的数据有 id,name = title,desc,updatetime,formimg,template
+        //必填的数据有 id,name = title,desc,formimg,templatelist
         //填补数据
         form.setFormUpdateTime(new Timestamp(System.currentTimeMillis()));
         //如果表单数据一模一样，照样运行一次插入更新操作，不会中途停止。
@@ -208,7 +219,7 @@ public class FormServiceImpl implements FormService {
         int formId = form.getFormId();
         formMapper.deleteTemplateList(formId);
         //插入新的组件list
-        return insertTemplateList(form);
+        return insertTemplateList(form, 1);
     }
 
     @Override
