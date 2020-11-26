@@ -59,7 +59,8 @@
         template_content,
         template_count,
         template_default,
-        template_type
+        template_type,
+        template_icon
         ) values
         <foreach collection="templateList" item="item" index="index" separator=",">
             <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -68,15 +69,16 @@
                 <if test="item.templateTitle == null or item.templateTitle == ''">"未定义组件名",</if>
                 <if test="item.templateTitle != null and item.templateTitle != ''">#{item.templateTitle},</if>
                 <if test="item.templateContent == null or item.templateContent == ''">
-                    (SELECT template_conten t_default FROM template WHERE template_id = #{item.templateId}),
+                    (SELECT template_content_default FROM template WHERE template_id = #{item.templateId}),
                 </if>
                 <if test="item.templateContent != null and item.templateContent != ''">#{item.templateContent},</if>
-                <!--<if test="item.templateCount == 0">${index+1},</if>-->
-                <if test="item.templateCount != 0">#{item.templateCount},</if>
+                #{item.templateCount},
                 <if test="item.templateDefault == null or item.templateDefault == ''">"null",</if>
                 <if test="item.templateDefault != null and item.templateDefault != ''">#{item.templateDefault},</if>
                 <if test="item.templateType == null or item.templateType == ''">"normal",</if>
-                <if test="item.templateType != null and item.templateType != null">#{item.templateType},</if>
+                <if test="item.templateType != null and item.templateType != ''">#{item.templateType},</if>
+                <if test="item.templateIcon == null or item.templateIcon == ''">null</if>
+                <if test="item.templateIcon != null and item.templateIcon != ''">#{item.templateIcon}</if>
             </trim>
         </foreach>
     </insert>
@@ -116,7 +118,9 @@
         where form_id = #{formId}
     </update>
     <update id="updateFormIssureById">
-        update form set form_isIssure = #{formIssure} where form_id = #{formId}
+        update form
+        set form_isIssure = #{formIssure}
+        where form_id = #{formId}
     </update>
     <delete id="deleteFormById" parameterType="int">
         delete
@@ -175,6 +179,7 @@
         <result property="templateDefault" column="template_default"/>
         <result property="formTemplateId" column="form_template_id"/>
         <result property="templateType" column="template_type"/>
+        <result property="templateIcon" column="template_icon"/>
     </resultMap>
     <select id="getTemplatesByFormId" parameterType="int" resultMap="TemplateResultMap">
         SELECT ft.form_template_id,
@@ -185,7 +190,8 @@
                ft.template_content,
                ft.template_type,
                t.template_name,
-               t.template_desc
+               t.template_desc,
+               ft.template_icon
         FROM form_template ft,
              template t
         WHERE form_id = #{formId}
@@ -323,15 +329,15 @@
         from form
         where form_id = #{formId}
     </select>
-    <select id="getFavourFormsByUserId" resultMap="FormResultMap" parameterType="int">
-        SELECT DISTINCT f.*,
-                        ft.form_type
+    <select id="getFavourFormsByUserId" resultMap="getFormsResultMap" parameterType="int">
+        SELECT DISTINCT f.form_id,
+                        f.form_name,
+                        f.form_create_time,
+                        f.form_isFavour,
+                        (SELECT COUNT(data_id) FROM DATA WHERE form_id = f.form_id) AS form_data_count
         FROM form f,
-             form_form_type fft,
-             form_type ft
-        WHERE f.form_id = fft.form_id
-          AND fft.form_type_id = ft.id
-          AND f.user_id = #{userId}
+             `data` d
+        WHERE f.user_id = #{userId}
           AND f.form_isFavour = 1
     </select>
     <select id="getFormIssureById" resultType="java.lang.Integer" parameterType="int">

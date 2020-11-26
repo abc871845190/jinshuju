@@ -58,7 +58,7 @@ public class FormServiceImpl implements FormService {
             //插入成功，原form实例添加id，获取id
             int formId = form.getFormId();
             //生成相应公开访问填写的url 以及二维码
-            String formUrl = "http://localhost:8080/FormController/" + String.valueOf(formId);
+            String formUrl = "/f/" + String.valueOf(formId);
             form.setFormUrl(formUrl);
             String QRCodePath = QRCodeUtils.createImage(formUrl);
 //            log.info(QRCodePath);
@@ -87,7 +87,7 @@ public class FormServiceImpl implements FormService {
     private Result insertTemplateList(Form form, int flag) {
         //批量插入表单组件关系表
         List<Template> templateList = form.getTemplateList();
-        if (templateList == null) {
+        if (templateList == null || templateList.size() == 0) {
             //表单没有组件-不插入组件
             if (flag == 0) {
                 return ResultUtils.success("插入表单成功！", form);
@@ -181,9 +181,9 @@ public class FormServiceImpl implements FormService {
         }
         if (checkFormId(formId)) {
             Boolean flag = formMapper.updateFormNameById(formId, formName);
-            return flag == true ? ResultUtils.success("修改表单名成功") : ResultUtils.fail("表单名重复");
+            return flag == true ? ResultUtils.success(ResultEnum.FORM_NAME_CHANGE.getCode(), ResultEnum.FORM_NAME_CHANGE.getMsg()) : ResultUtils.fail(ResultEnum.FORM_NAME_REPEAT.getCode(), ResultEnum.FORM_NAME_REPEAT.getMsg());
         }
-        return ResultUtils.fail("表单id不存在");
+        return ResultUtils.fail(ResultEnum.FORM_ENTRY.getCode(), ResultEnum.FORM_ENTRY.getMsg());
     }
 
     @Override

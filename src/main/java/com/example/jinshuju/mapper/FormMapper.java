@@ -214,7 +214,8 @@ public interface FormMapper {
      * 通过表单id更新发布标识
      *
      * @param formId
-     * @param i
+     * @param formIssure
+     * @return
      */
-    Boolean updateFormIssureById(@Param("formId") int formId,@Param("formIssure") int formIssure);
+    Boolean updateFormIssureById(@Param("formId") int formId, @Param("formIssure") int formIssure);
 }

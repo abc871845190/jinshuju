@@ -33,6 +33,7 @@ class JinshujuApplicationTests {
 
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Test
     public void test() throws JsonProcessingException {
 //        User user = new User();
@@ -124,5 +125,11 @@ class JinshujuApplicationTests {
         for (int i : array){
             log.info(String.valueOf(i));
         }
+    }
+
+    @Test
+    public void testSecret(){
+        String pw = "123456";
+        log.info(bCryptPasswordEncoder.encode(pw));
     }
 }

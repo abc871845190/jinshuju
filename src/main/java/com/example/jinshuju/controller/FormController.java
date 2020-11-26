@@ -95,7 +95,7 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @DeleteMapping("/form/{formId}")
-    public Result deleteForm(@PathVariable("forId") int formId) {
+    public Result deleteForm(@PathVariable("formId") int formId) {
         return formService.deleteForm(formId);
     }
 
@@ -128,6 +128,7 @@ public class FormController {
     })
     @PutMapping("/updateForm")
     public Result updateForm(@RequestBody Form form) {
+        //log.info(form.toString());
         return formService.updateForm(form);
     }
 
@@ -202,7 +203,7 @@ public class FormController {
         return formService.updateFormFavour(formId);
     }
 
-    @ApiOperation(value = "获取所有用户收藏表单", response = Result.class)
+    @ApiOperation(value = "获取用户所有收藏表单", response = Result.class)
     @ApiResponses({
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")

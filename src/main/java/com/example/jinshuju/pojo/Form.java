@@ -19,7 +19,7 @@ public class Form {
     private int formViewCount;
     private String formImg;
     private String formType;
-    private List<Template> templateList;
+    private List<Template> templateList; //组件集合
     private java.sql.Timestamp formStopTime;
     private String formQRCode;
     private int formIsFavour;

@@ -13,7 +13,7 @@ public class Template {
   private String templateContentDefault;
   private int templateCount;
   private String templateDefault;
-  //和form绑定的id
-  private int formTemplateId;
-  private String templateType;
+  private int formTemplateId; //和form绑定的id
+  private String templateType; //组件构成内容类别
+  private String templateIcon; //组件icon
 }
