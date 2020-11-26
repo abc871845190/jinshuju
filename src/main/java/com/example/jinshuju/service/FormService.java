@@ -173,4 +173,12 @@ public interface FormService {
      * @return
      */
     Result updateFormIssure(int formId);
+
+    /**
+     * 获取发布表单信息
+     *
+     * @param formId
+     * @return
+     */
+    Result getOpenForm(int formId);
 }

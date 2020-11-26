@@ -214,17 +214,6 @@ public class FormController {
         return formService.getFavourFroms(user);
     }
 
-    @ApiOperation(value = "公开模版界面填写专用url", response = Result.class)
-    @ApiResponses({
-            @ApiResponse(code = 1, message = "成功"),
-            @ApiResponse(code = 2, message = "失败")
-    })
-    @GetMapping("/{formId}")
-    public Result getOpenForm(@PathVariable("formId") int formId) {
-        //TODO:返回公开模版填写需要的信息
-        return ResultUtils.success();
-    }
-
     @ApiOperation(value = "获取该表单所有组件字段信息", response = Result.class)
     @ApiResponses({
             @ApiResponse(code = 1, message = "成功"),
@@ -243,5 +232,11 @@ public class FormController {
     @PatchMapping("/getTemplates/{formId}")
     public Result updateIssure(@PathVariable("formId") int formId) {
         return formService.updateFormIssure(formId);
+    }
+
+    @ApiOperation(value = "获取发布表单", response = Result.class)
+    @GetMapping("/getOpenForm/{formId}")
+    public Result getOpenForm(@PathVariable("formId") int formId){
+        return formService.getOpenForm(formId);
     }
 }

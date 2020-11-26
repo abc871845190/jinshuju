@@ -16,7 +16,12 @@ public enum ResultEnum {
     FORM_NAME_REPEAT(22,"表单名重复"),
     FORM_NAME_ENTRY(23,"表单名为空"),
     FORM_NAME_CHANGE(24,"表单名修改成功"),
-    FORM_ENTRY(25,"表单不存在");
+    FORM_ENTRY(25,"表单不存在"),
+    FORM_NOT_OPEN(26,"表单未发布"),
+    FORM_IS_ISSURE(27,"表单发布为模版成功"),
+    FORM_IS_NOT_ISSURE(28,"取消表单发布为模版成功"),
+    FORM_IS_OPEN(29,"表单发布填写成功"),
+    FORM_IS_NOT_OPEN(30,"取消表单发布填写成功");
 
 
     private int code;

@@ -101,7 +101,7 @@ public interface FormMapper {
     Boolean updateFormTagById(@Param("formId") int formId, @Param("formTag") String formTag);
 
     /**
-     * 根据表单id获取公开填写信息
+     * 根据表单id获取发布标识
      *
      * @param formId
      * @return

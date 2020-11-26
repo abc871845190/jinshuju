@@ -236,10 +236,10 @@ public class FormServiceImpl implements FormService {
             int flag = formMapper.getFormOpenById(formId);
             if (flag == 0) {
                 formMapper.updateFormOpenById(formId, flag + 1);
-                return ResultUtils.success("该表单已公开填写");
+                return ResultUtils.success(ResultEnum.FORM_IS_OPEN.getCode(), ResultEnum.FORM_IS_OPEN.getMsg());
             } else {
                 formMapper.updateFormOpenById(formId, flag - 1);
-                return ResultUtils.success("该表单已关闭公开填写");
+                return ResultUtils.success(ResultEnum.FORM_IS_NOT_OPEN.getCode(), ResultEnum.FORM_IS_NOT_OPEN.getMsg());
             }
         }
         return ResultUtils.fail("表单id不存在");
@@ -364,12 +364,29 @@ public class FormServiceImpl implements FormService {
             int flag = formMapper.getFormIssureById(formId);
             if (flag == 0) {
                 formMapper.updateFormIssureById(formId, flag + 1);
-                return ResultUtils.success("发布成功");
+                return ResultUtils.success(ResultEnum.FORM_IS_ISSURE.getCode(), ResultEnum.FORM_IS_ISSURE.getMsg());
             } else {
                 formMapper.updateFormIssureById(formId, flag - 1);
-                return ResultUtils.success("取消发布成功");
+                return ResultUtils.success(ResultEnum.FORM_IS_NOT_ISSURE.getCode(), ResultEnum.FORM_IS_NOT_ISSURE.getMsg());
             }
         }
-        return ResultUtils.fail("表单不存在");
+        return ResultUtils.fail(ResultEnum.FORM_ENTRY.getCode(),ResultEnum.FORM_ENTRY.getMsg());
+    }
+
+    @Override
+    public Result getOpenForm(int formId) {
+        //判断formId是否存在
+        if (formMapper.checkFormById(formId)){
+            //判断是否公开
+            int flag = formMapper.getFormOpenById(formId);
+            if (flag == 0){
+                //未公开
+                return ResultUtils.fail(ResultEnum.FORM_NOT_OPEN.getCode(), ResultEnum.FORM_NOT_OPEN.getMsg());
+            }else{
+                //已公开表单 返回表单信息
+                return ResultUtils.success(ResultEnum.SUCCESS.getMsg(),formMapper.getFormByFormId(formId));
+            }
+        }
+        return ResultUtils.fail(ResultEnum.FORM_ENTRY.getCode(),ResultEnum.FORM_ENTRY.getMsg());
     }
 }

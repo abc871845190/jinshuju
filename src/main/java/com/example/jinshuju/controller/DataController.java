@@ -1,6 +1,7 @@
 package com.example.jinshuju.controller;
 
 import com.example.jinshuju.pojo.Data;
+import com.example.jinshuju.pojo.User;
 import com.example.jinshuju.service.DataService;
 import com.example.jinshuju.service.UserService;
 import com.example.jinshuju.utils.ResultUtils.Result;
@@ -28,7 +29,15 @@ public class DataController {
 
     @ApiOperation(value = "添加表单数据", response = Result.class)
     @PostMapping("/Data")
-    public Result insertData(@RequestBody Data data) {
+    public Result insertData(@RequestBody Data data,HttpServletRequest request,HttpServletResponse response) {
+        User user = userService.checkUserLogin(request,response);
+        if (user!= null){
+            //登陆了就放id
+            data.setUser(user);
+        }else{
+            //没登陆就放0
+            data.getUser().setUserId(0);
+        }
         return dataService.insertData(data);
     }
 
