@@ -35,12 +35,19 @@ public interface FormMapper {
     Boolean deleteFormById(int formId);
 
     /**
-     * 插入组件关系
+     * 插入组件关系，没有自带id
      *
-     * @param form
+     * @param templateList
      * @return
      */
-    int insertTemplate(Form form);
+    Boolean insertNewTemplate(@Param("templateList") List<Template> templateList, @Param("formId") int formId);
+
+    /**
+     * 插入自带id的组件list
+     *
+     * @return
+     */
+    Boolean insertOldTemplate(@Param("templateList") List<Template> templateList, @Param("formId") int formId);
 
     /**
      * 根据用户id获取用户所有表单信息，按表单创建时间(默认)
@@ -218,4 +225,12 @@ public interface FormMapper {
      * @return
      */
     Boolean updateFormIssureById(@Param("formId") int formId, @Param("formIssure") int formIssure);
+
+    /**
+     * 删除整个组件
+     *
+     * @param oldFormTemplateId 与表单绑定的formid
+     * @return
+     */
+    boolean deleteTemplateById(int oldFormTemplateId);
 }

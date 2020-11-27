@@ -103,4 +103,20 @@ public interface DataMapper {
      * @return
      */
     Boolean deleteBatch(int[] idList);
+
+    /**
+     * 删除表单数据
+     *
+     * @param formId
+     * @return
+     */
+    Boolean deleteDataByFormId(int formId);
+
+    /**
+     * 删除绑定组件表单id下的详细数据项
+     *
+     * @param oldFormTemplateId
+     * @return
+     */
+    boolean deleteDataDetailsByFormTemplateId(int oldFormTemplateId);
 }

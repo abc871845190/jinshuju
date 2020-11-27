@@ -36,6 +36,7 @@ public class DataController {
             data.setUser(user);
         }else{
             //没登陆就放0
+            data.setUser(new User());
             data.getUser().setUserId(0);
         }
         return dataService.insertData(data);

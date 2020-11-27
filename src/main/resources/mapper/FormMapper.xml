@@ -51,7 +51,7 @@
         values (#{formId},
                 (select id from form_type where form_type = #{formType}))
     </insert>
-    <insert id="insertTemplate" parameterType="com.example.jinshuju.pojo.Form">
+    <insert id="insertNewTemplate">
         insert into form_template (
         form_id,
         template_id,
@@ -64,6 +64,39 @@
         ) values
         <foreach collection="templateList" item="item" index="index" separator=",">
             <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{formId},
+                #{item.templateId},
+                <if test="item.templateTitle == null or item.templateTitle == ''">"未定义组件名",</if>
+                <if test="item.templateTitle != null and item.templateTitle != ''">#{item.templateTitle},</if>
+                <if test="item.templateContent == null or item.templateContent == ''">
+                    (SELECT template_content_default FROM template WHERE template_id = #{item.templateId}),
+                </if>
+                <if test="item.templateContent != null and item.templateContent != ''">#{item.templateContent},</if>
+                #{item.templateCount},
+                <if test="item.templateDefault == null or item.templateDefault == ''">"null",</if>
+                <if test="item.templateDefault != null and item.templateDefault != ''">#{item.templateDefault},</if>
+                <if test="item.templateType == null or item.templateType == ''">"normal",</if>
+                <if test="item.templateType != null and item.templateType != ''">#{item.templateType},</if>
+                <if test="item.templateIcon == null or item.templateIcon == ''">null</if>
+                <if test="item.templateIcon != null and item.templateIcon != ''">#{item.templateIcon}</if>
+            </trim>
+        </foreach>
+    </insert>
+    <insert id="insertOldTemplate">
+        insert into form_template (
+        form_template_id,
+        form_id,
+        template_id,
+        template_title,
+        template_content,
+        template_count,
+        template_default,
+        template_type,
+        template_icon
+        ) values
+        <foreach collection="templateList" item="item" index="index" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{item.formTemplateId}
                 #{formId},
                 #{item.templateId},
                 <if test="item.templateTitle == null or item.templateTitle == ''">"未定义组件名",</if>
@@ -131,6 +164,11 @@
         delete
         from form_template
         where form_id = #{formId}
+    </delete>
+    <delete id="deleteTemplateById">
+        delete
+        from form_template
+        where form_template_id = #{oldFormTemplateId}
     </delete>
 
     <resultMap id="FormResultMap" type="com.example.jinshuju.pojo.Form">

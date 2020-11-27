@@ -1,5 +1,6 @@
 package com.example.jinshuju.service.impl;
 
+import com.example.jinshuju.mapper.DataMapper;
 import com.example.jinshuju.mapper.FormMapper;
 import com.example.jinshuju.mapper.UserMapper;
 import com.example.jinshuju.pojo.Form;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,6 +36,9 @@ public class FormServiceImpl implements FormService {
 
     @Autowired(required = false)
     UserService userService;
+
+    @Autowired(required = false)
+    DataMapper dataMapper;
 
     @Override
     public Result createForm(User user, Form form) throws IOException, WriterException {
@@ -85,8 +90,12 @@ public class FormServiceImpl implements FormService {
     }
 
     private Result insertTemplateList(Form form, int flag) {
+        int formId = form.getFormId();
         //批量插入表单组件关系表
         List<Template> templateList = form.getTemplateList();
+        //
+        List<Template> haveOldTemplateList = new ArrayList<>();
+        List<Template> havaNewTemplateList = new ArrayList<>();
         if (templateList == null || templateList.size() == 0) {
             //表单没有组件-不插入组件
             if (flag == 0) {
@@ -95,11 +104,44 @@ public class FormServiceImpl implements FormService {
                 return ResultUtils.success("插入表单成功！");
             }
         } else {
+            //拆分 by formTemplateId
+            for (Template template : templateList) {
+                if (template.getFormTemplateId() != 0) {
+                    //不等于0 为旧的template
+                    haveOldTemplateList.add(template);
+                } else {
+                    //等于0 为新的template
+                    havaNewTemplateList.add(template);
+                }
+            }
             //插入组件
             if (flag == 0) {
-                return formMapper.insertTemplate(form) > 0 ? ResultUtils.success("插入表单成功！", form) : ResultUtils.fail("插入组件失败");
+                //判断旧的是否有组件
+                if (haveOldTemplateList != null && haveOldTemplateList.size() != 0){
+                    //先插入旧的
+                    formMapper.insertOldTemplate(haveOldTemplateList, formId);
+                }
+
+                //判断是否有新的组件  插入新的组件
+                if (havaNewTemplateList == null || havaNewTemplateList.size() == 0) {
+                    return ResultUtils.success("插入表单成功", form);
+                } else {
+                    formMapper.insertNewTemplate(havaNewTemplateList, formId);
+                    return ResultUtils.success("插入表单成功", form);
+                }
             } else {
-                return formMapper.insertTemplate(form) > 0 ? ResultUtils.success("插入表单成功！") : ResultUtils.fail("插入组件失败");
+                //判断旧的是否有组件
+                if (haveOldTemplateList != null && haveOldTemplateList.size() != 0){
+                    //先插入旧的
+                    formMapper.insertOldTemplate(haveOldTemplateList, formId);
+                }
+                //判断是否有新的组件  插入新的组件
+                if (havaNewTemplateList == null || havaNewTemplateList.size() == 0) {
+                    return ResultUtils.success("插入表单成功");
+                } else {
+                    formMapper.insertNewTemplate(havaNewTemplateList, formId);
+                    return ResultUtils.success("插入表单成功");
+                }
             }
         }
     }
@@ -215,8 +257,43 @@ public class FormServiceImpl implements FormService {
         //如果表单数据一模一样，照样运行一次插入更新操作，不会中途停止。
         //先更新form表字段所更改的内容
         formMapper.updateFormById(form);
-        //删除与form绑定的组件
+        //获取表单id
         int formId = form.getFormId();
+        //如果表单有数据
+        //1、获取原来组件list
+        List<Template> templateList = formMapper.getTemplatesByFormId(formId);
+        //2、对比新组件list和原来组件list
+        //新组件list
+        List<Template> newTemplateList = form.getTemplateList();
+        //遍历
+        boolean flag = false;
+        for (Template oldTemplate : templateList) {
+            for (Template newTemplate : newTemplateList) {
+                //（1）如果有formTemplateId 循环遍历查找原来组件list是否有这个id 即判断是否为0
+                if (newTemplate.getFormTemplateId() == 0) {
+                    //（2）如果没有formTemplateId 即为新的组件 没有动作
+                } else {
+                    // 有就是先对比是否删减旧的组件
+                    if (oldTemplate.getFormTemplateId() == newTemplate.getFormTemplateId()) {
+                        //对比一样的话 即新的组件有旧的组件 设置标识
+                        flag = true;
+                        //跳出循环
+                        break;
+                    }
+                }
+            }
+            if (!flag) {
+                //删除该template以及绑定的所有数据项
+                //1、删除该id所有数据项
+                int oldFormTemplateId = oldTemplate.getFormTemplateId();
+                dataMapper.deleteDataDetailsByFormTemplateId(oldFormTemplateId);
+                //2、删除整个template
+//                formMapper.deleteTemplateById(oldFormTemplateId);
+            } else {
+                flag = false;
+            }
+        }
+        //删除与form绑定的组件
         formMapper.deleteTemplateList(formId);
         //插入新的组件list
         return insertTemplateList(form, 1);
@@ -370,23 +447,23 @@ public class FormServiceImpl implements FormService {
                 return ResultUtils.success(ResultEnum.FORM_IS_NOT_ISSURE.getCode(), ResultEnum.FORM_IS_NOT_ISSURE.getMsg());
             }
         }
-        return ResultUtils.fail(ResultEnum.FORM_ENTRY.getCode(),ResultEnum.FORM_ENTRY.getMsg());
+        return ResultUtils.fail(ResultEnum.FORM_ENTRY.getCode(), ResultEnum.FORM_ENTRY.getMsg());
     }
 
     @Override
     public Result getOpenForm(int formId) {
         //判断formId是否存在
-        if (formMapper.checkFormById(formId)){
+        if (formMapper.checkFormById(formId)) {
             //判断是否公开
             int flag = formMapper.getFormOpenById(formId);
-            if (flag == 0){
+            if (flag == 0) {
                 //未公开
                 return ResultUtils.fail(ResultEnum.FORM_NOT_OPEN.getCode(), ResultEnum.FORM_NOT_OPEN.getMsg());
-            }else{
+            } else {
                 //已公开表单 返回表单信息
-                return ResultUtils.success(ResultEnum.SUCCESS.getMsg(),formMapper.getFormByFormId(formId));
+                return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), formMapper.getFormByFormId(formId));
             }
         }
-        return ResultUtils.fail(ResultEnum.FORM_ENTRY.getCode(),ResultEnum.FORM_ENTRY.getMsg());
+        return ResultUtils.fail(ResultEnum.FORM_ENTRY.getCode(), ResultEnum.FORM_ENTRY.getMsg());
     }
 }

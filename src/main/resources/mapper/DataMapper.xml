@@ -64,6 +64,16 @@
             #{item}
         </foreach>
     </delete>
+    <delete id="deleteDataByFormId" parameterType="int">
+        delete
+        from data
+        where form_id = #{formId}
+    </delete>
+    <delete id="deleteDataDetailsByFormTemplateId">
+        delete
+        from data_details
+        where form_template_id = #{oldFormTemplateId}
+    </delete>
     <resultMap id="DataResultMap" type="com.example.jinshuju.pojo.Data">
         <id property="dataId" column="data_id"/>
         <result property="dataCreateTime" column="data_create_time"/>
