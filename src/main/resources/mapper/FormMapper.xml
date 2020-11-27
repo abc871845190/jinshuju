@@ -96,7 +96,7 @@
         ) values
         <foreach collection="templateList" item="item" index="index" separator=",">
             <trim prefix="(" suffix=")" suffixOverrides=",">
-                #{item.formTemplateId}
+                #{item.formTemplateId},
                 #{formId},
                 #{item.templateId},
                 <if test="item.templateTitle == null or item.templateTitle == ''">"未定义组件名",</if>

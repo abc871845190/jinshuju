@@ -8,6 +8,7 @@ import com.google.zxing.client.j2se.MatrixToImageConfig;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -30,7 +31,7 @@ public class QRCodeUtils {
     /**
      * 生成二维码图片流
      *
-     * @param content  二维码内容
+     * @param content 二维码内容
      * @return 返回文件存储路径
      */
     public static String createImage(String content) throws WriterException, IOException {
@@ -56,7 +57,7 @@ public class QRCodeUtils {
         //生成随机图片名字
         String fileName = UUIDUtils.getUUID() + "." + Constants.FileType.FILE_TYPE_JPG;
         //存到服务器本地指定文件夹内
-        ImageIO.write(image,Constants.FileType.FILE_TYPE_JPG,new File(FILE_PATH+File.separator+fileName));
-        return FILE_PATH+File.separator+fileName;
+        ImageIO.write(image, Constants.FileType.FILE_TYPE_JPG, new File(FILE_PATH + File.separator + fileName));
+        return FILE_PATH + File.separator + fileName;
     }
 }

@@ -28,4 +28,8 @@ public interface Constants {
     interface Encode{
         String UTF8 = "utf-8";
     }
+
+    interface FilePath{
+        String FILE_IMG_HEAD = "D:\\eclipse for ee\\jinshuju\\src\\main\\resources\\static\\img\\head";
+    }
 }

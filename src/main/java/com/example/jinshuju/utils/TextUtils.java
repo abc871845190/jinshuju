@@ -32,4 +32,21 @@ public class TextUtils {
     public static String[] splitString(String targetString, String regex) {
         return targetString.split(regex);
     }
+
+    /**
+     * 分割json数组字符串  生成分割完之后的数组
+     *
+     * @param targetString 目标字符串
+     * @param regex 分隔符
+     * @return
+     */
+    public static String[] splitJsonString(String targetString, String regex) {
+        String subTargetString = targetString.substring(1, targetString.length() - 1);
+        String[] targetStringArray = subTargetString.split(regex);
+        for (String item : targetStringArray) {
+            String newItem = item.substring(1, item.length() - 1);
+            item = newItem;
+        }
+        return targetStringArray;
+    }
 }

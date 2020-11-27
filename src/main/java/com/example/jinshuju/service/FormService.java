@@ -4,6 +4,7 @@ import com.example.jinshuju.pojo.Form;
 import com.example.jinshuju.pojo.User;
 import com.example.jinshuju.utils.ResultUtils.Result;
 import com.google.zxing.WriterException;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -181,4 +182,12 @@ public interface FormService {
      * @return
      */
     Result getOpenForm(int formId);
+
+    /**
+     * 上传图片
+     *
+     * @param file
+     * @return
+     */
+    Result uploadImg(MultipartFile file);
 }

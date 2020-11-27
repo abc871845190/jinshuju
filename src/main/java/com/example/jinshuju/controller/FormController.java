@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -238,5 +239,10 @@ public class FormController {
     @GetMapping("/getOpenForm/{formId}")
     public Result getOpenForm(@PathVariable("formId") int formId){
         return formService.getOpenForm(formId);
+    }
+
+    @PostMapping("/uploadImg")
+    public Result uploadImg(@RequestParam("file") MultipartFile file){
+        return formService.uploadImg(file);
     }
 }

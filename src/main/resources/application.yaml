@@ -67,7 +67,7 @@ spring:
   servlet:
     multipart:
       #上传单个文件总最大值
-      max-file-size: 1MB
+      max-file-size: 5MB
       #上传文件最大值
-      max-request-size: 1MB
+      max-request-size: 5MB
       enabled: true

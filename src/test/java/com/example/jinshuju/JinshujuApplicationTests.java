@@ -48,9 +48,9 @@ class JinshujuApplicationTests {
 //        om.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS,false);
 //        log.info(om.writeValueAsString(user));
 
-        String test  = null;
-        String[] result = TextUtils.splitString(test,",");
-        for (String i:result){
+        String test = null;
+        String[] result = TextUtils.splitString(test, ",");
+        for (String i : result) {
             log.info(i);
         }
         log.info(String.valueOf(result.length));
@@ -68,12 +68,12 @@ class JinshujuApplicationTests {
 //        }
 //        log.info(data.toString());
 
-       // log.info(String.valueOf("未命名报名_20201103203506.xlsx".lastIndexOf(".")));
+        // log.info(String.valueOf("未命名报名_20201103203506.xlsx".lastIndexOf(".")));
 
-        List<Map<Integer,String>> data = EasyExcelUtils.syncRead(fileName,0,0);
-        for (Map<Integer,String> map : data){
-            for (Integer i : map.keySet()){
-                if (i>1){
+        List<Map<Integer, String>> data = EasyExcelUtils.syncRead(fileName, 0, 0);
+        for (Map<Integer, String> map : data) {
+            for (Integer i : map.keySet()) {
+                if (i > 1) {
                     log.info(map.get(i));
                 }
 
@@ -82,17 +82,17 @@ class JinshujuApplicationTests {
     }
 
     @Test
-    public void testDate(){
+    public void testDate() {
         log.info(String.valueOf(new Timestamp(System.currentTimeMillis())));
     }
 
     @Test
-    public void testUUID(){
+    public void testUUID() {
         log.info(String.valueOf(UUID.randomUUID()));
     }
 
     @Test
-    public void testQRCode(){
+    public void testQRCode() {
         try {
             String filePath = QRCodeUtils.createImage("https://www.baidu.com");
             log.info(filePath);
@@ -104,32 +104,42 @@ class JinshujuApplicationTests {
     }
 
     @Test
-    public void testPath(){
+    public void testPath() {
         //获取项目classes/static的地址
         //String path = ClassUtils.getDefaultClassLoader().getResource("static").getPath();
         //log.info(path);
     }
 
     @Test
-    public void testToken(){
+    public void testToken() {
         String token = (String) redisUtils.get(Constants.User.KEY_TOKEN + "e72bf996f505e5cf73211f8164cf2c1a");
         log.info(token);
     }
 
     @Test
-    public void testText(){
+    public void testText() {
         String idList = "1,2,3,4,5,6";
         String[] idListByString = idList.split(",");
 
         int[] array = Arrays.asList(idListByString).stream().mapToInt(Integer::parseInt).toArray();
-        for (int i : array){
+        for (int i : array) {
             log.info(String.valueOf(i));
         }
     }
 
     @Test
-    public void testSecret(){
+    public void testSecret() {
         String pw = "123456";
         log.info(bCryptPasswordEncoder.encode(pw));
+    }
+
+    @Test
+    public void testArray() {
+        String s = "[\"asd\"]";
+        String[] a = TextUtils.splitJsonString(s,",");
+//        String[] a = TextUtils.splitString(s,",");
+        for (String x : a){
+            log.info(x);
+        }
     }
 }

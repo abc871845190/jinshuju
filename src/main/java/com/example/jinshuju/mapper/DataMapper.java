@@ -2,6 +2,7 @@ package com.example.jinshuju.mapper;
 
 import com.example.jinshuju.pojo.Data;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -119,4 +120,38 @@ public interface DataMapper {
      * @return
      */
     boolean deleteDataDetailsByFormTemplateId(int oldFormTemplateId);
+
+
+    /**
+     * 插入list的data
+     *
+     * @param dataList
+     */
+    boolean insertDataList(List<Data> dataList);
+
+    /**
+     * 插入list的datadetails
+     *
+     * @param dataList
+     * @return
+     */
+    boolean insertDataDetailsList(List<Data> dataList);
+
+    /**
+     * 替换data—content的值
+     *
+     * @param oldDataContent  旧
+     * @param newDataContent  新
+     * @param formTemplateId 绑定的组件id
+     */
+    boolean updateDataContentByReplace(@Param("oldDataContent") String oldDataContent, @Param("newDataContent") String newDataContent, @Param("formTemplateId") int formTemplateId);
+
+    /**
+     * 删除绑定组件id下的某个内容
+     *
+     * @param oldContent
+     * @param formTemplateId
+     * @return
+     */
+    boolean deleteDataDetailsContentByContent(@Param("oldContent") String oldContent, @Param("formTemplateId") int formTemplateId);
 }

@@ -22,7 +22,7 @@
         insert into data(form_id, user_id, data_create_time, data_update_time, data_write_time)
         values
         <foreach collection="dataList" separator="," item="item" index="index">
-            (#{item.form.formId}, #{item.user.userId},
+            (#{item.form.formId},#{item.user.userId},
             #{item.dataCreateTime},#{item.dataUpdateTime},#{item.dataWriteTime})
         </foreach>
     </insert>
@@ -35,10 +35,32 @@
             </foreach>
         </foreach>
     </insert>
+    <insert id="insertDataList">
+        insert into data(data_id, form_id, user_id, data_create_time, data_update_time, data_write_time)
+        VALUES
+        <foreach collection="dataList" item="item" separator="," index="index">
+            (#{item.dataId},#{item.form.formId},#{item.user.userId},
+            #{item.dataCreateTime},#{item.dataUpdateTime},#{item.dataWriteTime})
+        </foreach>
+    </insert>
+    <insert id="insertDataDetailsList">
+        insert into data_details(data_id, form_template_id, data_content)
+        values
+        <foreach collection="dataList" item="data" index="index" separator=",">
+            <foreach collection="data.dataDetailsList" item="dataDetails" separator=",">
+                (#{data.dataId},#{dataDetails.formTemplateId},#{dataDetails.dataContent})
+            </foreach>
+        </foreach>
+    </insert>
     <update id="updateDataTime" parameterType="com.example.jinshuju.pojo.Data">
         update data
         set data_update_time = #{dataUpdateTime}
         where data_id = #{dataId}
+    </update>
+    <update id="updateDataContentByReplace">
+        UPDATE data_details
+        SET data_content = REPLACE(data_content, #{oldDataContent}, #{subNewContent})
+        WHERE form_template_id = #{formTemplateId}
     </update>
     <delete id="deleteAllDataByFormId" parameterType="int">
         DELETE
@@ -74,9 +96,16 @@
         from data_details
         where form_template_id = #{oldFormTemplateId}
     </delete>
+    <delete id="deleteDataDetailsContentByContent">
+        delete
+        from data_details
+        where form_template_id = #{formTemplateId}
+          and data_content = #{oldContent}
+    </delete>
     <resultMap id="DataResultMap" type="com.example.jinshuju.pojo.Data">
         <id property="dataId" column="data_id"/>
         <result property="dataCreateTime" column="data_create_time"/>
+        <result property="dataUpdateTime" column="data_update_time"/>
         <association property="user" javaType="com.example.jinshuju.pojo.User"
                      resultMap="com.example.jinshuju.mapper.UserMapper.UserDataMap"/>
         <collection property="dataDetailsList" select="getDataDetailsByDataId"
@@ -85,6 +114,8 @@
     <select id="getAllDataByFormId" resultMap="DataResultMap" parameterType="int">
         SELECT d.data_id,
                d.data_create_time,
+               d.data_update_time,
+               u.user_id,
                u.user_name,
                u.user_telephone,
                u.user_email,
