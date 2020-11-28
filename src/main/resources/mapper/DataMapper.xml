@@ -62,6 +62,22 @@
         SET data_content = REPLACE(data_content, #{oldDataContent}, #{subNewContent})
         WHERE form_template_id = #{formTemplateId}
     </update>
+    <update id="updateDataDetailsList">
+        UPDATE data_details
+        SET data_content = (
+        CASE
+        <foreach collection="dataList" item="data" index="i">
+            <foreach collection="data.dataDetailsList" item="dataDetail" index="j">
+                WHEN data_id = #{data.dataId} AND form_template_id = #{detaDetail.formTemplateId}
+            </foreach>
+        </foreach>
+        END
+        )
+        WHERE data_id IN
+        <foreach collection="dataList" item="data" index="i" separator="," open="(" close=")">
+            #{data.dataId}
+        </foreach>
+    </update>
     <delete id="deleteAllDataByFormId" parameterType="int">
         DELETE
         from `data`
@@ -95,12 +111,6 @@
         delete
         from data_details
         where form_template_id = #{oldFormTemplateId}
-    </delete>
-    <delete id="deleteDataDetailsContentByContent">
-        delete
-        from data_details
-        where form_template_id = #{formTemplateId}
-          and data_content = #{oldContent}
     </delete>
     <resultMap id="DataResultMap" type="com.example.jinshuju.pojo.Data">
         <id property="dataId" column="data_id"/>

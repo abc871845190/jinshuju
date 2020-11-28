@@ -3,10 +3,7 @@ package com.example.jinshuju.service.impl;
 import com.example.jinshuju.mapper.DataMapper;
 import com.example.jinshuju.mapper.FormMapper;
 import com.example.jinshuju.mapper.UserMapper;
-import com.example.jinshuju.pojo.Data;
-import com.example.jinshuju.pojo.Form;
-import com.example.jinshuju.pojo.Template;
-import com.example.jinshuju.pojo.User;
+import com.example.jinshuju.pojo.*;
 import com.example.jinshuju.service.FormService;
 import com.example.jinshuju.service.UserService;
 import com.example.jinshuju.utils.Constants;
@@ -286,8 +283,8 @@ public class FormServiceImpl implements FormService {
         List<Template> templateList = formMapper.getTemplatesByFormId(formId);
         //新组件list
         List<Template> newTemplateList = form.getTemplateList();
-        //删除原组件与新组件不同的组件 新的不管 旧的全删
-        updateOldTemplate(templateList, newTemplateList);
+        //删除原组件与新组件不同的组件 新的不管 旧的全删，更新对应组件修改内容以及数据项内容
+        updateOldTemplate(templateList, newTemplateList, formId);
         //备份原来绑定组件list的数据
         List<Data> dataList = dataMapper.getAllDataByFormId(formId);
 
@@ -303,8 +300,9 @@ public class FormServiceImpl implements FormService {
      *
      * @param templateList
      * @param newTemplateList
+     * @param formId
      */
-    private void updateOldTemplate(List<Template> templateList, List<Template> newTemplateList) {
+    private void updateOldTemplate(List<Template> templateList, List<Template> newTemplateList, int formId) {
         //遍历
         boolean flag = false;
         for (Template oldTemplate : templateList) {
@@ -319,41 +317,25 @@ public class FormServiceImpl implements FormService {
                         //1、拿formTemplateList所有组件content
                         //2、判断是否为空
                         if (oldTemplate.getTemplateContent() != "null" && newTemplate.getTemplateContent() != "null") {
-                            log.info("-----------------oldTemplate.getTemplateContent() != null && newTemplate.getTemplateContent() != null-------------------------");
+                            log.info("--------------------原组件content类型为数组----------------------");
                             //3、拿数据库对应form的所有组件content
                             //4、对比content内容删改
-                            String[] oldContent = TextUtils.splitJsonString(oldTemplate.getTemplateContent(), ",");
-                            String[] newContent = TextUtils.splitJsonString(newTemplate.getTemplateContent(), ",");
+                            String[] oldContentArray = TextUtils.splitJsonString(oldTemplate.getTemplateContent(), ",");
+                            String[] newContentArray = TextUtils.splitJsonString(newTemplate.getTemplateContent(), ",");
                             //5、将删改内容动态修改相应dataDetails的数据项
                             //分三种情况
-                            if (oldContent.length == newContent.length) {
-                                //1、两个数组长度相同
-                                //操作上仅仅修改了原有组件content的内容 没有增删
-                                log.info("------------------1updateDataContentByReplace-------------------");
-                                //updateDataContentByReplace(oldTemplate, oldContent, newContent);
-                            } else if (oldContent.length > newContent.length) {
+                            if (oldContentArray.length == newContentArray.length) {
+                                //以旧的content长度为基准
+                                updateDataContent(formId, oldTemplate, oldContentArray, newContentArray, 0);
+                            } else if (oldContentArray.length > newContentArray.length) {
                                 //2、旧的数组长度比新的多   --删减了组件content
                                 //以新的content长度为基准
-                                for (int i = 0; i < newContent.length; i++) {
-                                    if (!oldContent[i].equals(newContent[i])) {
-                                        //不相等 将选择该项的旧选择转换成新的选项
-                                        String subOldContent = "[\"" + oldContent[i] + "\"]"; //TODO:拼接完整的jsJson数组字符串 然后转换
-                                        String subNewContent = "[\"" + newContent[i] + "\"]";
-                                        log.info("------------------2updateDataContentByReplace-------------------");
-                                        //dataMapper.updateDataContentByReplace(subOldContent, subNewContent, oldTemplate.getFormTemplateId());
-                                    }
-                                }
-                                //把删减的在data-detail中删除
-                                for (int i = newContent.length - 1; i < oldContent.length; i++) {
-                                    String oldContentItem = "[\"" + oldContent[i] + "\"]";
-                                    //删除绑定组件id 下的某个content
-                                    log.info("------------------2deleteDataDetailsContentByContent-------------------");
-                                    //dataMapper.deleteDataDetailsContentByContent(oldContentItem, oldTemplate.getFormTemplateId());
-                                }
-                            } else if (oldContent.length < newContent.length) {
+                                updateDataContent(formId, oldTemplate, oldContentArray, newContentArray, 1);
+
+                            } else if (oldContentArray.length < newContentArray.length) {
                                 //3、旧的数组长度比新的少   --增加了组件content
                                 log.info("------------------3updateDataContentByReplace-------------------");
-                                //updateDataContentByReplace(oldTemplate, oldContent, newContent);
+                                updateDataContent(formId, oldTemplate, oldContentArray, newContentArray, 0);
                             }
                         }
                         //对比一样的话 即新的组件有旧的组件 设置标识
@@ -375,21 +357,97 @@ public class FormServiceImpl implements FormService {
     }
 
     /**
-     * 循环oldContent数组 给不同的content替换 长度以旧的content数组长度为基准
+     * 对原组件的content修改进行数据动态更新，
      *
+     * @param formId
      * @param oldTemplate
-     * @param oldContent
-     * @param newContent
+     * @param oldContentArray
+     * @param newContentArray
+     * @param flag            0为按原组件结构进行匹配 1为按新组件结构进行匹配
      */
-    private void updateDataContentByReplace(Template oldTemplate, String[] oldContent, String[] newContent) {
-        for (int i = 0; i < oldContent.length; i++) {
-            if (!oldContent[i].equals(newContent[i])) {
-                //不相等 将选择该项的旧选择转换成新的选项
-                String subOldContent = "[\"" + oldContent[i] + "\"]";
-                String subNewContent = "[\"" + newContent[i] + "\"]";
-                dataMapper.updateDataContentByReplace(subOldContent, subNewContent, oldTemplate.getFormTemplateId());
+    private void updateDataContent(int formId, Template oldTemplate, String[] oldContentArray, String[] newContentArray, int flag) {
+        //1、两个数组长度相同
+        //操作上仅仅修改了原有组件content的内容 没有增删
+        log.info("------------------新旧组件content元素长度相等-------------------");
+        //获取该列的所有数据项
+        List<Data> dataList = dataMapper.getAllDataByFormId(formId);
+        //对比content是否有更新项
+        for (int i = 0; i < oldContentArray.length; i++) {
+            //记录该更新项的字符串信息
+            String targetNewContentItem = newContentArray[i];
+            //记录旧选项的字符串信息
+            String targetOldContentItem = oldContentArray[i];
+            //开始对比
+            if (!targetOldContentItem.equals(targetNewContentItem)) {
+                //匹配发现有选项被更新
+                //先判断是否填写的数据
+                if (dataList != null && dataList.size() != 0) {
+                    //已经填写过数据
+                    //开始遍历所有数据项
+                    for (Data d : dataList) {
+                        //遍历数据项的所有字段
+                        for (DataDetails dd : d.getDataDetailsList()) {
+                            //匹配相应的字段
+                            if (dd.getFormTemplateId() == oldTemplate.getFormTemplateId()) {
+                                //获取到了对应的字段
+                                //提取里面的数据内容，解析
+                                //数据形式分两种   单选没有‘[]’ 多选有‘[]’
+                                String oldDataContent = dd.getDataContent();
+                                //判空
+                                if (!TextUtils.isEmpty(oldDataContent)) {
+                                    //判断第一个字符有没有‘[’
+                                    if (TextUtils.indexOfStr(oldDataContent, "[", 0)) {
+                                        //多选
+                                        //将数组字符串分割成数组
+                                        String[] oldDataContentArray = TextUtils.splitJsonString(oldDataContent, ",");
+                                        //准备设置新的字符串数组
+                                        List<String> newDataContentList = new ArrayList<>();
+                                        //遍历 对比
+                                        for (String s : oldDataContentArray) {
+                                            //匹配是否有选择该项的数据
+                                            if (s.equals(targetOldContentItem)) {
+                                                //替换
+                                                s = targetNewContentItem;
+                                            }
+                                            //按原顺序添加到list里面
+                                            newDataContentList.add(s);
+                                        }
+                                        String newDataContent = "";
+                                        //循环结束，将list拼接成js数组字符串
+                                        if (newDataContentList.size() != 0) {
+                                            newDataContent += "[";
+                                            //遍历
+                                            for (int j = 0; j < newDataContentList.size(); j++) {
+                                                newDataContent += "\"" + newDataContentList.get(j) + "\"";
+                                                if (j != newDataContentList.size() - 1) {
+                                                    newDataContent += ",";
+                                                }
+                                            }
+                                            newDataContent += "]";
+                                        }
+                                        //拼接完成 替换原来的content数据
+                                        dd.setDataContent(newDataContent);
+                                    } else {
+                                        //单选
+                                        //不用截选 直接配对
+                                        String newDataContent = "";
+                                        if (oldDataContent.equals(targetOldContentItem)) {
+                                            //替换
+                                            newDataContent = targetNewContentItem;
+                                        }
+                                        //设置数据
+                                        dd.setDataContent(newDataContent);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                //没填写过数据 - 无动作
             }
         }
+        //将新的数据update到数据库里面
+        dataMapper.updateDataDetailsList(dataList);
     }
 
     @Override
@@ -584,7 +642,7 @@ public class FormServiceImpl implements FormService {
 
             File newImg = new File(Constants.FilePath.FILE_IMG_HEAD + File.separator + imgName);
             // 如果该文件的上级文件夹不存在，则创建该文件的上级文件夹及其祖辈级文件夹
-            if (newImg.getParentFile().exists()){
+            if (newImg.getParentFile().exists()) {
                 newImg.getParentFile().mkdirs();
             }
             try {
@@ -593,7 +651,7 @@ public class FormServiceImpl implements FormService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return ResultUtils.success("上传成功",imgName);
+            return ResultUtils.success("上传成功", imgName);
         } else {
             return ResultUtils.fail("文件为空");
         }

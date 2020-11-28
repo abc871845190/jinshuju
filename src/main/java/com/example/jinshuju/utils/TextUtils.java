@@ -37,7 +37,7 @@ public class TextUtils {
      * 分割json数组字符串  生成分割完之后的数组
      *
      * @param targetString 目标字符串
-     * @param regex 分隔符
+     * @param regex        分隔符
      * @return
      */
     public static String[] splitJsonString(String targetString, String regex) {
@@ -48,5 +48,28 @@ public class TextUtils {
             item = newItem;
         }
         return targetStringArray;
+    }
+
+    /**
+     * 判断字段是否含有某个字段
+     *
+     * @param targetString
+     * @param subString
+     * @return
+     */
+    public static boolean indexOfStr(String targetString, String subString) {
+        return targetString.contains(subString);
+    }
+
+    /**
+     * 判断字段是否含有某个字段
+     *
+     * @param targetString
+     * @param subString
+     * @param startIndex   开始扫描的位置
+     * @return
+     */
+    public static boolean indexOfStr(String targetString, String subString, int startIndex) {
+        return targetString.indexOf(subString, startIndex) >= 0;
     }
 }

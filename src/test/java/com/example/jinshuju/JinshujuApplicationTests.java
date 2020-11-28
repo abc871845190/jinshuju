@@ -16,10 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @SpringBootTest
 @Slf4j
@@ -135,11 +132,13 @@ class JinshujuApplicationTests {
 
     @Test
     public void testArray() {
-        String s = "[\"asd\"]";
-        String[] a = TextUtils.splitJsonString(s,",");
-//        String[] a = TextUtils.splitString(s,",");
-        for (String x : a){
-            log.info(x);
-        }
+        String s = "asd\"]";
+//        String[] a = TextUtils.splitJsonString(s,",");
+////        String[] a = TextUtils.splitString(s,",");
+//        for (String x : a){
+//            log.info(x);
+//        }
+
+        log.info(String.valueOf(TextUtils.indexOfStr(s,"[",0)));
     }
 }
