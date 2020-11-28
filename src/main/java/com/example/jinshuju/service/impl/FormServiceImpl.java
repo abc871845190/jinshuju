@@ -332,6 +332,7 @@ public class FormServiceImpl implements FormService {
                                 //以新的content长度为基准
                                 updateDataContent(formId, oldTemplate, oldContentArray, newContentArray, 1);
 
+                                //TODO:删除已经选择过该选项的数据详细  分多选[和单选区别修改
                             } else if (oldContentArray.length < newContentArray.length) {
                                 //3、旧的数组长度比新的少   --增加了组件content
                                 log.info("------------------3updateDataContentByReplace-------------------");
@@ -371,8 +372,15 @@ public class FormServiceImpl implements FormService {
         log.info("------------------新旧组件content元素长度相等-------------------");
         //获取该列的所有数据项
         List<Data> dataList = dataMapper.getAllDataByFormId(formId);
+        //判断对比长度类型
+        String[] targetContentArray;
+        if (flag == 0){
+            targetContentArray = oldContentArray;
+        }else{
+            targetContentArray = newContentArray;
+        }
         //对比content是否有更新项
-        for (int i = 0; i < oldContentArray.length; i++) {
+        for (int i = 0; i < targetContentArray.length; i++) {
             //记录该更新项的字符串信息
             String targetNewContentItem = newContentArray[i];
             //记录旧选项的字符串信息
