@@ -1,5 +1,7 @@
 package com.example.jinshuju;
 
+import com.alibaba.fastjson.JSON;
+import com.example.jinshuju.pojo.DataBean;
 import com.example.jinshuju.utils.Constants;
 import com.example.jinshuju.utils.EasyExcelUtils.EasyExcelUtils;
 import com.example.jinshuju.utils.QRCodeUtils;
@@ -16,7 +18,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @SpringBootTest
 @Slf4j
@@ -140,12 +145,27 @@ class JinshujuApplicationTests {
 ////        }
 //
 //        log.info(String.valueOf(TextUtils.indexOfStr(s,"[",0)));
-        List<String> stringList = new ArrayList<>();
-        stringList.add("1");
-        stringList.add("5");
-        String[] array = stringList.toArray(new String[0]);
-        for (String s : array){
-            log.info(s);
+//        List<String> stringList = new ArrayList<>();
+//        stringList.add("1");
+//        stringList.add("5");
+//        String[] array = stringList.toArray(new String[0]);
+//        for (String s : array){
+//            log.info(s);
+//        }
+
+// 多选  ==>  [{key:"0",value:"xx"},{key:"1",value:"xxx"},{key:"2",value:"啊啊啊"}]
+// 单选  ==>  {key:"0",value:"xx"}
+        String checkbox = "[{key:\"0\",value:\"xx\"},{key:\"1\",value:\"xxx\"},{key:\"2\",value:\"啊啊啊\"}]";
+        String radio = "{key:\"0\",value:\"xx\"}";
+
+        List<DataBean> dataBeanList = JSON.parseArray(checkbox,DataBean.class);
+        log.info(dataBeanList.toString());
+        log.info(String.valueOf(dataBeanList.size()));
+        for (DataBean db : dataBeanList){
+            log.info("key = "+db.getKey()+", value = "+db.getValue());
         }
+
+        DataBean db = JSON.parseObject(radio,DataBean.class);
+        log.info("key = "+db.getKey()+", value = "+db.getValue());
     }
 }

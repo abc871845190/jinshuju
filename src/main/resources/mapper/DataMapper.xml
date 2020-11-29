@@ -68,7 +68,8 @@
         CASE
         <foreach collection="dataList" item="data" index="i">
             <foreach collection="data.dataDetailsList" item="dataDetail" index="j">
-                WHEN data_id = #{data.dataId} AND form_template_id = #{dataDetail.formTemplateId} THEN #{dataDetail.dataContent}
+                WHEN data_id = #{data.dataId} AND form_template_id = #{dataDetail.formTemplateId} THEN
+                #{dataDetail.dataContent}
             </foreach>
         </foreach>
         END
@@ -111,6 +112,12 @@
         delete
         from data_details
         where form_template_id = #{oldFormTemplateId}
+    </delete>
+    <delete id="deleteDataDetailsByFormTemplateIdAndContent">
+        DELETE
+        FROM data_details
+        WHERE data_content REGEXP 'key:"' + #{index} + '"'
+          AND form_template_id = #{formTemplateId}
     </delete>
     <resultMap id="DataResultMap" type="com.example.jinshuju.pojo.Data">
         <id property="dataId" column="data_id"/>
@@ -156,5 +163,20 @@
         FROM `data`
         WHERE form_id = #{formId}
           AND TO_DAYS(NOW()) = TO_DAYS(data_update_time)
+    </select>
+
+    <resultMap id="getAllDataByFormTemplateIdResultMap" type="com.example.jinshuju.pojo.Data">
+        <id property="dataId" column="data_id"/>
+        <result property="dataCreateTime" column="data_create_time"/>
+        <result property="dataUpdateTime" column="data_update_time"/>
+        <collection property="dataDetailsList" select="getDataDetailsByDataId"
+                    ofType="com.example.jinshuju.pojo.DataDetails" column="data_id"/>
+    </resultMap>
+    <select id="getAllDataByFormTemplateId" resultMap="getAllDataByFormTemplateIdResultMap" parameterType="int">
+        SELECT d.*
+        FROM `data` AS d,
+             data_details AS dd
+        WHERE dd.form_template_id = #{formTemplateId}
+          AND d.data_id = dd.data_id
     </select>
 </mapper>

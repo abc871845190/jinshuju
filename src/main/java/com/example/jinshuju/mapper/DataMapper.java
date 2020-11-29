@@ -145,4 +145,21 @@ public interface DataMapper {
      * @return
      */
     boolean updateDataDetailsList(@Param("dataList") List<Data> dataList);
+
+    /**
+     * 删除formTemplateId下 key 的数据详细项
+     *
+     * @param formTemplateId
+     * @param index
+     * @return
+     */
+    boolean deleteDataDetailsByFormTemplateIdAndContent(@Param("formTemplateId") int formTemplateId, @Param("index") int index);
+
+    /**
+     * 获取该表单绑定组件id的所有数据项
+     *
+     * @param formTemplateId
+     * @return
+     */
+    List<Data> getAllDataByFormTemplateId(int formTemplateId);
 }

@@ -233,4 +233,13 @@ public interface FormMapper {
      * @return
      */
     boolean deleteTemplateById(int oldFormTemplateId);
+
+
+    /**
+     * 根据表单绑定组件id获取该组件的类型
+     *
+     * @param formTemplateId
+     * @return
+     */
+    int getTemplateTypeByFormTemplateId(int formTemplateId);
 }

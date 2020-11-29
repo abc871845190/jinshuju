@@ -198,4 +198,16 @@ public interface FormService {
      * @return
      */
     Result deleteImg(String fileUrl);
+
+
+    Result updateForm1(Form form);
+
+    /**
+     * 删除组件content内容以及对应数据
+     *
+     * @param formTemplateId
+     * @param mapItem
+     * @return
+     */
+    Result deleteFormContentAndData(int formTemplateId, String targetStr);
 }

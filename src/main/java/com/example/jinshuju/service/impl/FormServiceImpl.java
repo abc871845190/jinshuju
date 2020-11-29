@@ -1,5 +1,6 @@
 package com.example.jinshuju.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.example.jinshuju.mapper.DataMapper;
 import com.example.jinshuju.mapper.FormMapper;
 import com.example.jinshuju.mapper.UserMapper;
@@ -311,7 +312,6 @@ public class FormServiceImpl implements FormService {
                 } else {
                     // 有就是先对比是否删减旧的组件
                     if (oldTemplate.getFormTemplateId() == newTemplate.getFormTemplateId()) {
-
                         //对比一样的话 即新的组件有旧的组件 设置标识
                         flag = true;
                         //跳出循环
@@ -546,5 +546,74 @@ public class FormServiceImpl implements FormService {
     public Result deleteImg(String fileUrl) {
         //拼接
         return FileSystemUtils.deleteRecursively(new File(Constants.FilePath.FILE + fileUrl)) == true ? ResultUtils.success("删除成功") : ResultUtils.fail("删除失败");
+    }
+
+    @Override
+    public Result updateForm1(Form form) {
+
+        //必填的数据有 id,name = title,desc,formimg,templatelist
+        //填补数据
+        form.setFormUpdateTime(new Timestamp(System.currentTimeMillis()));
+        //如果表单数据一模一样，照样运行一次插入更新操作，不会中途停止。
+        //先更新form表字段所更改的内容
+        formMapper.updateFormById(form);
+        //获取表单id
+        int formId = form.getFormId();
+        //获取原来组件list
+        List<Template> templateList = formMapper.getTemplatesByFormId(formId);
+        //新组件list
+        List<Template> newTemplateList = form.getTemplateList();
+        //删除原组件与新组件不同的组件 新的不管 旧的全删，更新对应组件修改内容以及数据项内容
+        updateOldTemplate(templateList, newTemplateList, formId);
+        //备份原来绑定组件list的数据
+        List<Data> dataList = dataMapper.getAllDataByFormId(formId);
+
+        //删除与form绑定的组件
+        formMapper.deleteTemplateList(formId);
+
+        //插入新的组件list
+        return insertTemplateList(form, dataList, 1);
+    }
+
+    @Override
+    public Result deleteFormContentAndData(int formTemplateId, String mapItem) {
+        //判空
+        if (formTemplateId == 0) {
+            return ResultUtils.fail("表单绑定组件id为空");
+        }
+        if (TextUtils.isEmpty(mapItem)) {
+            return ResultUtils.fail("contentItem为空");
+        }
+
+        //将json字符串转变为bean类
+        DataBean dataBean = JSON.parseObject(mapItem, DataBean.class);
+
+        //模拟数据
+        String radio = "{key:\"0\",value:\"xx\"}";
+        String checkbox = "[{key:\"0\",value:\"xx\"},{key:\"1\",value:\"xxx\"},{key:\"2\",value:\"啊啊啊\"}]";
+        //首先判断组件类型
+        int templateType = formMapper.getTemplateTypeByFormTemplateId(formTemplateId);
+
+        if (ArrayUtils.isHaveByInt(templateType, Constants.Array.MultiSelect)) {
+            //组件类型为多选
+            //获取该表单绑定组件id的所有数据项
+            List<Data> dataBeanList = dataMapper.getAllDataByFormTemplateId(formTemplateId);
+            if (dataBeanList != null && dataBeanList.size() != 0) {
+                //有填数据
+                //遍历
+                for (Data d : dataBeanList){
+                    //遍历details
+                    for(DataDetails dd : d.getDataDetailsList()){
+
+                    }
+                }
+            }
+        }
+        if (ArrayUtils.isHaveByInt(templateType, Constants.Array.multipleChoice)) {
+            //组件类型为单选
+            //直接删除绑定该组件的选项key的数据项
+            dataMapper.deleteDataDetailsByFormTemplateIdAndContent(formTemplateId, dataBean.getKey());
+        }
+        return null;
     }
 }

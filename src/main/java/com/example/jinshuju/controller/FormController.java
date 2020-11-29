@@ -44,7 +44,7 @@ public class FormController {
     })
     @PostMapping("/form")
     public Result createForm(@RequestBody Form form, HttpServletRequest request, HttpServletResponse response) throws IOException, WriterException {
-        log.info(form.toString());
+        //log.info(form.toString());
         User user = userService.checkUserLogin(request, response);
         if (user != null) {
             return formService.createForm(user, form);
@@ -254,7 +254,32 @@ public class FormController {
     @ApiOperation(value = "删除单张图片    用于组件图片删除", response = Result.class)
     @DeleteMapping("/deleteImg")
     public Result deleteImg(@RequestParam("fileUrl") String fileUrl) {
-        log.info("fileUrl   ==>   "+fileUrl);
+        log.info("fileUrl   ==>   " + fileUrl);
         return asyncService.deleteImg(fileUrl);
+    }
+
+    @ApiOperation(value = "修改表单,要附带表单id--------------------测试用，万万不要用----------------------------", response = Result.class)
+    @ApiResponses({
+            @ApiResponse(code = 1, message = "成功"),
+            @ApiResponse(code = 2, message = "失败")
+    })
+    @PutMapping("/updateForm1")
+    public Result updateForm1(@RequestBody Form form) {
+        //log.info(form.toString());
+        return formService.updateForm1(form);
+    }
+
+    /**
+     * 删除组件content内容以及对应数据  前端
+     *
+     * 数据库：多选  ==>  [{key:"0",value:"xx"},{key:"1",value:"xxx"},{key:"2",value:"啊啊啊"}]
+     *       单选  ==>  {key:"0",value:"xx"}
+     * @param formTemplateId 绑定表单的组件id
+     * @param mapItem        需要删除的key-value 字符串
+     * @return
+     */
+    public Result deleteFormContentAndData(@RequestParam("formTemplateId") int formTemplateId, String mapItem) {
+        String test = "{key:\"0\",value:\"xx\"}";
+        return formService.deleteFormContentAndData(formTemplateId, test);
     }
 }

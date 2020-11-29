@@ -78,10 +78,10 @@
                 <if test="item.templateDefault != null and item.templateDefault != ''">#{item.templateDefault},</if>
                 <if test="item.templateType == null or item.templateType == ''">"normal",</if>
                 <if test="item.templateType != null and item.templateType != ''">#{item.templateType},</if>
-                <if test="item.templateIcon == null or item.templateIcon == ''">null</if>
-                <if test="item.templateIcon != null and item.templateIcon != ''">#{item.templateIcon}</if>
-                <if test="item.templateImgUrl == null or item.templateImgUrl == ''">null</if>
-                <if test="item.templateImgUrl != null and item.templateImgUrl != ''">#{item.templateImgUrl}</if>
+                <if test="item.templateIcon == null or item.templateIcon == ''">null,</if>
+                <if test="item.templateIcon != null and item.templateIcon != ''">#{item.templateIcon},</if>
+                <if test="item.templateImgUrl == null or item.templateImgUrl == ''">null,</if>
+                <if test="item.templateImgUrl != null and item.templateImgUrl != ''">#{item.templateImgUrl},</if>
             </trim>
         </foreach>
     </insert>
@@ -95,7 +95,8 @@
         template_count,
         template_default,
         template_type,
-        template_icon
+        template_icon,
+        template_img_url
         ) values
         <foreach collection="templateList" item="item" index="index" separator=",">
             <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -113,8 +114,10 @@
                 <if test="item.templateDefault != null and item.templateDefault != ''">#{item.templateDefault},</if>
                 <if test="item.templateType == null or item.templateType == ''">"normal",</if>
                 <if test="item.templateType != null and item.templateType != ''">#{item.templateType},</if>
-                <if test="item.templateIcon == null or item.templateIcon == ''">null</if>
-                <if test="item.templateIcon != null and item.templateIcon != ''">#{item.templateIcon}</if>
+                <if test="item.templateIcon == null or item.templateIcon == ''">null,</if>
+                <if test="item.templateIcon != null and item.templateIcon != ''">#{item.templateIcon},</if>
+                <if test="item.templateImgUrl == null or item.templateImgUrl == ''">null,</if>
+                <if test="item.templateImgUrl != null and item.templateImgUrl != ''">#{item.templateImgUrl},</if>
             </trim>
         </foreach>
     </insert>
@@ -404,5 +407,12 @@
         select form_isIssure
         from form
         where form_id = #{formId}
+    </select>
+    <select id="getTemplateTypeByFormTemplateId" resultType="java.lang.Integer">
+        SELECT t.template_id
+        FROM template AS t,
+             form_template AS ft
+        WHERE t.template_id = ft.template_id
+          AND ft.form_template_id = #{formTemplateId}
     </select>
 </mapper>

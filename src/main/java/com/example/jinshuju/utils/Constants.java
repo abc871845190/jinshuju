@@ -35,4 +35,9 @@ public interface Constants {
         String FILE_IMG = "D:\\eclipse for ee\\jinshuju\\src\\main\\resources\\static\\img";
         String FILE = "D:\\eclipse for ee\\jinshuju\\src\\main\\resources\\static";
     }
+
+    interface Array{
+        int[] MultiSelect = {1,6};  //多选
+        int[] multipleChoice = {0,4,5};  //单选
+    }
 }
