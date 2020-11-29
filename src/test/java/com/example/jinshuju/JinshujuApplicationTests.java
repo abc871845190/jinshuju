@@ -132,13 +132,20 @@ class JinshujuApplicationTests {
 
     @Test
     public void testArray() {
-        String s = "asd\"]";
-//        String[] a = TextUtils.splitJsonString(s,",");
-////        String[] a = TextUtils.splitString(s,",");
-//        for (String x : a){
-//            log.info(x);
-//        }
-
-        log.info(String.valueOf(TextUtils.indexOfStr(s,"[",0)));
+//        String s = "asd\"]";
+////        String[] a = TextUtils.splitJsonString(s,",");
+//////        String[] a = TextUtils.splitString(s,",");
+////        for (String x : a){
+////            log.info(x);
+////        }
+//
+//        log.info(String.valueOf(TextUtils.indexOfStr(s,"[",0)));
+        List<String> stringList = new ArrayList<>();
+        stringList.add("1");
+        stringList.add("5");
+        String[] array = stringList.toArray(new String[0]);
+        for (String s : array){
+            log.info(s);
+        }
     }
 }

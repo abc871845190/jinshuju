@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @EnableAsync
 public class AsyncConfig {
 
-    private static final int corePoolSize = 10;       		// 核心线程数（默认线程数）线程池创建时候初始化的线程数
+    private static final int corePoolSize = 20;       		// 核心线程数（默认线程数）线程池创建时候初始化的线程数
     private static final int maxPoolSize = 100;			    // 最大线程数 线程池最大的线程数，只有在缓冲队列满了之后才会申请超过核心线程数的线程
     private static final int keepAliveTime = 10;			// 允许线程空闲时间（单位：默认为秒）当超过了核心线程之外的线程在空闲时间到达之后会被销毁
     private static final int queueCapacity = 200;			// 缓冲队列数 用来缓冲执行任务的队列

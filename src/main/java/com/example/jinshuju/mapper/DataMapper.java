@@ -2,6 +2,7 @@ package com.example.jinshuju.mapper;
 
 import com.example.jinshuju.pojo.Data;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -143,5 +144,5 @@ public interface DataMapper {
      * @param dataList
      * @return
      */
-    boolean updateDataDetailsList(List<Data> dataList);
+    boolean updateDataDetailsList(@Param("dataList") List<Data> dataList);
 }

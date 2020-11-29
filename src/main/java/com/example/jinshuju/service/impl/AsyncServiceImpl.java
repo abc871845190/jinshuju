@@ -1,7 +1,9 @@
 package com.example.jinshuju.service.impl;
 
 import com.example.jinshuju.service.AsyncService;
+import com.example.jinshuju.service.FormService;
 import com.example.jinshuju.service.MailService;
+import com.example.jinshuju.utils.ResultUtils.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -14,9 +16,19 @@ public class AsyncServiceImpl implements AsyncService {
     @Autowired(required = false)
     MailService mailService;
 
+    @Autowired(required = false)
+    FormService formService;
+
     @Override
     @Async
     public void sendEmail(String subject, String content, String[] toWho) {
         mailService.sendHtmlMail(subject, content, toWho);
     }
+
+    @Override
+    @Async
+    public Result deleteImg(String fileUrl) {
+        return formService.deleteImg(fileUrl);
+    }
+
 }

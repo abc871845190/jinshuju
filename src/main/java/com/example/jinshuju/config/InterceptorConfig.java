@@ -1,9 +1,12 @@
 package com.example.jinshuju.config;
 
 import com.example.jinshuju.filter.LoginFilter;
+import com.example.jinshuju.utils.Constants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;
+
+import java.io.File;
 
 @Configuration
 public class InterceptorConfig implements WebMvcConfigurer {
@@ -37,6 +40,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        //图片
+        registry.addResourceHandler("/img/**").addResourceLocations("file:/" + Constants.FilePath.FILE_IMG + File.separator);
     }
 
     @Bean
@@ -63,5 +68,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 //预检请求的有效期，单位为秒。设置maxage，可以避免每次都发出预检请求
                 .maxAge(3600);
     }
+
 }
 

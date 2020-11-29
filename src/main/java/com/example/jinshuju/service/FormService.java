@@ -190,4 +190,12 @@ public interface FormService {
      * @return
      */
     Result uploadImg(MultipartFile file);
+
+    /**
+     * 删除指定路径的图片
+     *
+     * @param fileUrl
+     * @return
+     */
+    Result deleteImg(String fileUrl);
 }

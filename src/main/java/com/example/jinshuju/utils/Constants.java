@@ -31,5 +31,8 @@ public interface Constants {
 
     interface FilePath{
         String FILE_IMG_HEAD = "D:\\eclipse for ee\\jinshuju\\src\\main\\resources\\static\\img\\head";
+        String FILE_IMG_TEMPLATE = "D:\\eclipse for ee\\jinshuju\\src\\main\\resources\\static\\img\\TemplateImg";
+        String FILE_IMG = "D:\\eclipse for ee\\jinshuju\\src\\main\\resources\\static\\img";
+        String FILE = "D:\\eclipse for ee\\jinshuju\\src\\main\\resources\\static";
     }
 }

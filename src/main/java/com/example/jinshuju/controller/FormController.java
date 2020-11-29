@@ -2,6 +2,7 @@ package com.example.jinshuju.controller;
 
 import com.example.jinshuju.pojo.Form;
 import com.example.jinshuju.pojo.User;
+import com.example.jinshuju.service.AsyncService;
 import com.example.jinshuju.service.FormService;
 import com.example.jinshuju.service.UserService;
 import com.example.jinshuju.utils.ResultUtils.Result;
@@ -32,6 +33,9 @@ public class FormController {
 
     @Autowired(required = false)
     UserService userService;
+
+    @Autowired(required = false)
+    AsyncService asyncService;
 
     @ApiOperation(value = "创建表单", response = Result.class)
     @ApiResponses({
@@ -237,12 +241,20 @@ public class FormController {
 
     @ApiOperation(value = "获取发布表单", response = Result.class)
     @GetMapping("/getOpenForm/{formId}")
-    public Result getOpenForm(@PathVariable("formId") int formId){
+    public Result getOpenForm(@PathVariable("formId") int formId) {
         return formService.getOpenForm(formId);
     }
 
+    @ApiOperation(value = "上传单张图片    用于组件图片上传", response = Result.class)
     @PostMapping("/uploadImg")
-    public Result uploadImg(@RequestParam("file") MultipartFile file){
+    public Result uploadImg(@RequestParam("file") MultipartFile file) {
         return formService.uploadImg(file);
+    }
+
+    @ApiOperation(value = "删除单张图片    用于组件图片删除", response = Result.class)
+    @DeleteMapping("/deleteImg")
+    public Result deleteImg(@RequestParam("fileUrl") String fileUrl) {
+        log.info("fileUrl   ==>   "+fileUrl);
+        return asyncService.deleteImg(fileUrl);
     }
 }

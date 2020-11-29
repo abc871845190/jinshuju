@@ -68,7 +68,7 @@
         CASE
         <foreach collection="dataList" item="data" index="i">
             <foreach collection="data.dataDetailsList" item="dataDetail" index="j">
-                WHEN data_id = #{data.dataId} AND form_template_id = #{detaDetail.formTemplateId}
+                WHEN data_id = #{data.dataId} AND form_template_id = #{dataDetail.formTemplateId} THEN #{dataDetail.dataContent}
             </foreach>
         </foreach>
         END

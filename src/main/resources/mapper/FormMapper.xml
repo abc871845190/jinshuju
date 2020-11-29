@@ -60,7 +60,8 @@
         template_count,
         template_default,
         template_type,
-        template_icon
+        template_icon,
+        template_img_url
         ) values
         <foreach collection="templateList" item="item" index="index" separator=",">
             <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -79,6 +80,8 @@
                 <if test="item.templateType != null and item.templateType != ''">#{item.templateType},</if>
                 <if test="item.templateIcon == null or item.templateIcon == ''">null</if>
                 <if test="item.templateIcon != null and item.templateIcon != ''">#{item.templateIcon}</if>
+                <if test="item.templateImgUrl == null or item.templateImgUrl == ''">null</if>
+                <if test="item.templateImgUrl != null and item.templateImgUrl != ''">#{item.templateImgUrl}</if>
             </trim>
         </foreach>
     </insert>
@@ -229,6 +232,7 @@
         <result property="formTemplateId" column="form_template_id"/>
         <result property="templateType" column="template_type"/>
         <result property="templateIcon" column="template_icon"/>
+        <result property="templateImgUrl" column="template_img_url"/>
     </resultMap>
     <select id="getTemplatesByFormId" parameterType="int" resultMap="TemplateResultMap">
         SELECT ft.form_template_id,
@@ -240,7 +244,8 @@
                ft.template_type,
                t.template_name,
                t.template_desc,
-               ft.template_icon
+               ft.template_icon,
+               ft.template_img_url
         FROM form_template ft,
              template t
         WHERE form_id = #{formId}

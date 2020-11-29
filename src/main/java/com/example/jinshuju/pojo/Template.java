@@ -16,4 +16,5 @@ public class Template {
   private int formTemplateId; //和form绑定的id
   private String templateType; //组件构成内容类别
   private String templateIcon; //组件icon
+  private String templateImgUrl; //存放图片url
 }
