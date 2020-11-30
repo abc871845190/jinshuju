@@ -15,9 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.sql.Timestamp;
 
 /**
@@ -62,7 +64,7 @@ public class UserServiceImpl implements UserService {
         user.setUserCreateTime(new Timestamp(System.currentTimeMillis()));
         user.setUserUpdateTime(new Timestamp(System.currentTimeMillis()));
         user.setUserEmailStatus(0);
-        user.setUserImg("localhost:8080/img/default_img.jpg");
+        user.setUserImg("/img/head/default_img.jpg");
         //用户密码加密
         user.setUserPassword(bCryptPasswordEncoder.encode(user.getUserPassword()));
         //存入数据库
@@ -315,6 +317,14 @@ public class UserServiceImpl implements UserService {
         int code = userMapper.checkUpdateCode(user);
         log.info("code is   ==>   " + String.valueOf(code));
         return ResultUtils.success("成功。", code);
+    }
+
+    @Override
+    public Result uploadHeadImg(MultipartFile file, User user) {
+        int userId = user.getUserId();
+        String imgName = FileUtils.uploadMultipartFile(file, Constants.FilePath.FILE_IMG_HEAD);
+        //TODO:修改数据库  删除原图片
+        return ResultUtils.success("上传成功", File.separator + "img" + File.separator + "head" + File.separator +imgName);
     }
 
     /**

@@ -37,7 +37,7 @@ public interface Constants {
     }
 
     interface Array{
-        int[] MultiSelect = {1,6};  //多选
-        int[] multipleChoice = {0,4,5};  //单选
+        Integer[] MultiSelect = {1,6};  //多选
+        Integer[] multipleChoice = {0,4,5};  //单选
     }
 }

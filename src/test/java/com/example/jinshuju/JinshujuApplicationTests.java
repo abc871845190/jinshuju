@@ -1,12 +1,7 @@
 package com.example.jinshuju;
 
-import com.alibaba.fastjson.JSON;
-import com.example.jinshuju.pojo.DataBean;
-import com.example.jinshuju.utils.Constants;
+import com.example.jinshuju.utils.*;
 import com.example.jinshuju.utils.EasyExcelUtils.EasyExcelUtils;
-import com.example.jinshuju.utils.QRCodeUtils;
-import com.example.jinshuju.utils.RedisUtils;
-import com.example.jinshuju.utils.TextUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.zxing.WriterException;
 import lombok.extern.slf4j.Slf4j;
@@ -155,17 +150,24 @@ class JinshujuApplicationTests {
 
 // 多选  ==>  [{key:"0",value:"xx"},{key:"1",value:"xxx"},{key:"2",value:"啊啊啊"}]
 // 单选  ==>  {key:"0",value:"xx"}
-        String checkbox = "[{key:\"0\",value:\"xx\"},{key:\"1\",value:\"xxx\"},{key:\"2\",value:\"啊啊啊\"}]";
-        String radio = "{key:\"0\",value:\"xx\"}";
+//        String checkbox = "[{key:\"0\",value:\"xx\"},{key:\"1\",value:\"xxx\"},{key:\"2\",value:\"啊啊啊\"}]";
+//        String radio = "{key:\"0\",value:\"xx\"}";
+//
+//        List<DataBean> dataBeanList = JSON.parseArray(checkbox,DataBean.class);
+//        log.info(dataBeanList.toString());
+//        log.info(String.valueOf(dataBeanList.size()));
+//        for (DataBean db : dataBeanList){
+//            log.info("key = "+db.getKey()+", value = "+db.getValue());
+//        }
 
-        List<DataBean> dataBeanList = JSON.parseArray(checkbox,DataBean.class);
-        log.info(dataBeanList.toString());
-        log.info(String.valueOf(dataBeanList.size()));
-        for (DataBean db : dataBeanList){
-            log.info("key = "+db.getKey()+", value = "+db.getValue());
-        }
+//        DataBean db = JSON.parseObject(radio,DataBean.class);
+//        log.info("key = "+db.getKey()+", value = "+db.getValue());
+//
+//        String listTOJson = JSON.toJSONString(dataBeanList);
+//        log.info(listTOJson);
+//        String beanTOJson = JSON.toJSONString(db);
+//        log.info(beanTOJson);
 
-        DataBean db = JSON.parseObject(radio,DataBean.class);
-        log.info("key = "+db.getKey()+", value = "+db.getValue());
+        log.info(String.valueOf(ArrayUtils.isHaveByInt(2, Constants.Array.MultiSelect)));
     }
 }

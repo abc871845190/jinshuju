@@ -78,14 +78,6 @@ public interface FormService {
     Boolean checkFormId(int formId);
 
     /**
-     * 修改表单
-     *
-     * @param form
-     * @return
-     */
-    Result updateForm(Form form);
-
-    /**
      * 某id的表单浏览量+1
      *
      * @param formId
@@ -199,14 +191,19 @@ public interface FormService {
      */
     Result deleteImg(String fileUrl);
 
-
-    Result updateForm1(Form form);
+    /**
+     * 修改表单
+     *
+     * @param form
+     * @return
+     */
+    Result updateForm(Form form);
 
     /**
      * 删除组件content内容以及对应数据
      *
      * @param formTemplateId
-     * @param mapItem
+     * @param targetStr
      * @return
      */
     Result deleteFormContentAndData(int formTemplateId, String targetStr);

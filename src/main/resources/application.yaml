@@ -21,6 +21,9 @@ server:
       timeout: 30m
   tomcat:
     uri-encoding: utf-8
+  max-http-header-size: 10240000
+  undertow:
+    max-http-post-size: 10240000
 spring:
   application:
     #访问根路径

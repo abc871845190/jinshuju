@@ -69,7 +69,8 @@
         <foreach collection="dataList" item="data" index="i">
             <foreach collection="data.dataDetailsList" item="dataDetail" index="j">
                 WHEN data_id = #{data.dataId} AND form_template_id = #{dataDetail.formTemplateId} THEN
-                #{dataDetail.dataContent}
+                <if test="dataDetail.dataContent != null and dataDetail.dataContent != ''">#{dataDetail.dataContent}</if>
+                <if test="dataDetail.dataContent == null or dataDetail.dataContent == ''">"[]"</if>
             </foreach>
         </foreach>
         END
@@ -169,14 +170,21 @@
         <id property="dataId" column="data_id"/>
         <result property="dataCreateTime" column="data_create_time"/>
         <result property="dataUpdateTime" column="data_update_time"/>
-        <collection property="dataDetailsList" select="getDataDetailsByDataId"
-                    ofType="com.example.jinshuju.pojo.DataDetails" column="data_id"/>
+        <collection property="dataDetailsList" select="getDataDetailsByDataIdAndFormTemplateId"
+                    ofType="com.example.jinshuju.pojo.DataDetails"
+                    column="{dataId = data_id,formTemplateId = form_template_id}"/>
     </resultMap>
     <select id="getAllDataByFormTemplateId" resultMap="getAllDataByFormTemplateIdResultMap" parameterType="int">
-        SELECT d.*
+        SELECT d.*, #{formTemplateId} AS form_template_id
         FROM `data` AS d,
              data_details AS dd
         WHERE dd.form_template_id = #{formTemplateId}
           AND d.data_id = dd.data_id
+    </select>
+    <select id="getDataDetailsByDataIdAndFormTemplateId" resultMap="DataDetailsResultMap">
+        select *
+        from data_details
+        where data_id = #{dataId}
+          and form_template_id = #{formTemplateId}
     </select>
 </mapper>

@@ -2,6 +2,8 @@ package com.example.jinshuju.service;
 
 import com.example.jinshuju.pojo.User;
 import com.example.jinshuju.utils.ResultUtils.Result;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -104,4 +106,13 @@ public interface UserService {
     Result logout(HttpServletRequest request, HttpServletResponse response);
 
     Result checkUpdateCode(User user);
+
+    /**
+     * 上传头像 返回路径
+     *
+     * @param file
+     * @param user
+     * @return
+     */
+    Result uploadHeadImg(MultipartFile file, User user);
 }

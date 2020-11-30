@@ -12,6 +12,7 @@ import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,8 +69,8 @@ public class UserController {
     public Result loginUser(@RequestBody User user,
                             HttpServletRequest request,
                             HttpServletResponse response) {
-        response.setHeader("Access-Control-Allow-Origin","*");
-        response.setHeader("Access-Control-Allow-Methods","POST,GET,PUT,DELETE");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "POST,GET,PUT,DELETE");
         return userService.loginUser(user, request, response);
     }
 
@@ -79,10 +80,10 @@ public class UserController {
             @ApiResponse(code = 2, message = "失败")
     })
     @GetMapping("/User")
-    public Result getUser(HttpServletRequest request,HttpServletResponse response) {
-        User user = userService.checkUserLogin(request,response);
-        if (user == null){
-            return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(),ResultEnum.USER_NOT_LOGIN.getMsg());
+    public Result getUser(HttpServletRequest request, HttpServletResponse response) {
+        User user = userService.checkUserLogin(request, response);
+        if (user == null) {
+            return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
         }
         return userService.getUserInfo(user);
     }
@@ -126,7 +127,13 @@ public class UserController {
             @ApiResponse(code = 2, message = "失败")
     })
     @PatchMapping("/updateEmail")
-    public Result updateEmail(@RequestBody User user) {
+    public Result updateEmail(@RequestBody User user, HttpServletRequest request, HttpServletResponse response) {
+        User thisUser = userService.checkUserLogin(request,response);
+        if (thisUser!=null){
+            user.setUserId(thisUser.getUserId());
+        }else {
+            return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
+        }
         return userService.updateEmail(user);
     }
 
@@ -136,7 +143,13 @@ public class UserController {
             @ApiResponse(code = 2, message = "失败")
     })
     @PatchMapping("/updateTelephone")
-    public Result updateTelephone(@RequestBody User user) {
+    public Result updateTelephone(@RequestBody User user,HttpServletRequest request,HttpServletResponse response) {
+        User thisUser = userService.checkUserLogin(request,response);
+        if (thisUser!=null){
+            user.setUserId(thisUser.getUserId());
+        }else {
+            return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
+        }
         return userService.updateTelephone(user);
     }
 
@@ -185,5 +198,16 @@ public class UserController {
     @GetMapping("/logout")
     public Result logout(HttpServletRequest request, HttpServletResponse response) {
         return userService.logout(request, response);
+    }
+
+    @ApiOperation(value = "上传用户头像", response = Result.class)
+    @PostMapping("/uploadHeadImg")
+    public Result uploadHeadImg(@RequestParam("file") MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
+        User user = userService.checkUserLogin(request, response);
+        if (user != null) {
+            return userService.uploadHeadImg(file, user);
+        } else {
+            return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
+        }
     }
 }

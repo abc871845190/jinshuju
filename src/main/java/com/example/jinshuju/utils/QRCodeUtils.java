@@ -58,6 +58,6 @@ public class QRCodeUtils {
         String fileName = UUIDUtils.getUUID() + "." + Constants.FileType.FILE_TYPE_JPG;
         //存到服务器本地指定文件夹内
         ImageIO.write(image, Constants.FileType.FILE_TYPE_JPG, new File(FILE_PATH + File.separator + fileName));
-        return FILE_PATH + File.separator + fileName;
+        return fileName;
     }
 }

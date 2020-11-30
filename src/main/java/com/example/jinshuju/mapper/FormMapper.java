@@ -242,4 +242,20 @@ public interface FormMapper {
      * @return
      */
     int getTemplateTypeByFormTemplateId(int formTemplateId);
+
+    /**
+     * 根据表单绑定组件id获取相应组件的信息
+     *
+     * @param formTemplateId
+     * @return
+     */
+    Template getTemplateByFormTemplateId(int formTemplateId);
+
+    /**
+     * 更新表单绑定组件信息
+     *
+     * @param template
+     * @return
+     */
+    boolean updateTemplate(Template template);
 }

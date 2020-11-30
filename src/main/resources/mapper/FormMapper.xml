@@ -161,6 +161,25 @@
         set form_isIssure = #{formIssure}
         where form_id = #{formId}
     </update>
+    <update id="updateTemplateContent">
+        update form_template
+        set template_content = #{templateContent}
+        where form_template_id = #{formTemplateId}
+    </update>
+    <update id="updateTemplate" parameterType="com.example.jinshuju.pojo.Template">
+        update form_template
+        <set>
+            <if test="templateTitle != null and templateTitle != ''">template_title = #{templateTitle},</if>
+            <if test="templateContent != null and templateContent != ''">template_content = #{templateContent},</if>
+            <if test="templateDefault != null and templateDefault != ''">template_default = #{templateDefault},</if>
+            <if test="templateType != null and templateType != ''">template_type = #{templateType},</if>
+            <if test="templateIcon != null and templateIcon != ''">template_icon = #{templateIcon},</if>
+            <if test="templateImgUrl != null and templateImgUrl != ''">template_img_url = #{templateImgUrl},</if>
+            <if test="templateCount != null and templateCount != ''">template_count = #{templateCount},</if>
+        </set>
+        where form_template_id = #{formTemplateId}
+    </update>
+
     <delete id="deleteFormById" parameterType="int">
         delete
         from form
@@ -414,5 +433,22 @@
              form_template AS ft
         WHERE t.template_id = ft.template_id
           AND ft.form_template_id = #{formTemplateId}
+    </select>
+    <select id="getTemplateByFormTemplateId" resultMap="TemplateResultMap">
+        SELECT ft.form_template_id,
+               ft.template_id,
+               ft.template_title,
+               ft.template_default,
+               ft.template_count,
+               ft.template_content,
+               ft.template_type,
+               t.template_name,
+               t.template_desc,
+               ft.template_icon,
+               ft.template_img_url
+        FROM form_template ft,
+             template t
+        WHERE ft.form_template_id = #{formTemplateId}
+          AND ft.template_id = t.template_id
     </select>
 </mapper>

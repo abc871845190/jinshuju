@@ -126,17 +126,6 @@ public class FormController {
         return formService.updateFormTag(formId, formTag);
     }
 
-    @ApiOperation(value = "修改表单,要附带表单id", response = Result.class)
-    @ApiResponses({
-            @ApiResponse(code = 1, message = "成功"),
-            @ApiResponse(code = 2, message = "失败")
-    })
-    @PutMapping("/updateForm")
-    public Result updateForm(@RequestBody Form form) {
-        //log.info(form.toString());
-        return formService.updateForm(form);
-    }
-
     @ApiOperation(value = "设置表单是否开启填写", response = Result.class)
     @ApiResponses({
             @ApiResponse(code = 1, message = "成功"),
@@ -234,7 +223,7 @@ public class FormController {
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
     })
-    @PatchMapping("/getTemplates/{formId}")
+    @PatchMapping("/updateIssure/{formId}")
     public Result updateIssure(@PathVariable("formId") int formId) {
         return formService.updateFormIssure(formId);
     }
@@ -258,28 +247,29 @@ public class FormController {
         return asyncService.deleteImg(fileUrl);
     }
 
-    @ApiOperation(value = "修改表单,要附带表单id--------------------测试用，万万不要用----------------------------", response = Result.class)
+    @ApiOperation(value = "修改表单,要附带表单id", response = Result.class)
     @ApiResponses({
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
     })
-    @PutMapping("/updateForm1")
-    public Result updateForm1(@RequestBody Form form) {
+    @PutMapping("/updateForm")
+    public Result updateForm(@RequestBody Form form) {
         //log.info(form.toString());
-        return formService.updateForm1(form);
+        return formService.updateForm(form);
     }
 
     /**
      * 删除组件content内容以及对应数据  前端
-     *
+     * <p>
      * 数据库：多选  ==>  [{key:"0",value:"xx"},{key:"1",value:"xxx"},{key:"2",value:"啊啊啊"}]
-     *       单选  ==>  {key:"0",value:"xx"}
+     * 单选  ==>  {key:"0",value:"xx"}
+     *
      * @param formTemplateId 绑定表单的组件id
      * @param mapItem        需要删除的key-value 字符串
      * @return
      */
-    public Result deleteFormContentAndData(@RequestParam("formTemplateId") int formTemplateId, String mapItem) {
-        String test = "{key:\"0\",value:\"xx\"}";
-        return formService.deleteFormContentAndData(formTemplateId, test);
+    @DeleteMapping("/deleteFormContentAndData")
+    public Result deleteFormContentAndData(@RequestParam("formTemplateId") int formTemplateId, @RequestParam("optionKey") String mapItem) {
+        return formService.deleteFormContentAndData(formTemplateId, mapItem);
     }
 }

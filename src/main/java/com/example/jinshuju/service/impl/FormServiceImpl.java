@@ -66,7 +66,7 @@ public class FormServiceImpl implements FormService {
             //生成相应公开访问填写的url 以及二维码
             String formUrl = "/f/" + String.valueOf(formId);
             form.setFormUrl(formUrl);
-            String QRCodePath = QRCodeUtils.createImage(formUrl);
+            String QRCodePath = File.separator+"img"+File.separator+"QRCode"+File.separator+QRCodeUtils.createImage(formUrl);
 //            log.info(QRCodePath);
             form.setFormQRCode(QRCodePath);
             //更新表单url和二维码数据
@@ -266,68 +266,6 @@ public class FormServiceImpl implements FormService {
     @Override
     public Boolean checkFormId(int formId) {
         return formMapper.checkFormById(formId);
-    }
-
-    @Override
-    public Result updateForm(Form form) {
-        //必填的数据有 id,name = title,desc,formimg,templatelist
-        //填补数据
-        form.setFormUpdateTime(new Timestamp(System.currentTimeMillis()));
-        //如果表单数据一模一样，照样运行一次插入更新操作，不会中途停止。
-        //先更新form表字段所更改的内容
-        formMapper.updateFormById(form);
-        //获取表单id
-        int formId = form.getFormId();
-        //获取原来组件list
-        List<Template> templateList = formMapper.getTemplatesByFormId(formId);
-        //新组件list
-        List<Template> newTemplateList = form.getTemplateList();
-        //删除原组件与新组件不同的组件 新的不管 旧的全删，更新对应组件修改内容以及数据项内容
-        updateOldTemplate(templateList, newTemplateList, formId);
-        //备份原来绑定组件list的数据
-        List<Data> dataList = dataMapper.getAllDataByFormId(formId);
-
-        //删除与form绑定的组件
-        formMapper.deleteTemplateList(formId);
-
-        //插入新的组件list
-        return insertTemplateList(form, dataList, 1);
-    }
-
-    /**
-     * 删除原组件与新组件不同的组件 新的不管 旧的全删
-     *
-     * @param templateList
-     * @param newTemplateList
-     * @param formId
-     */
-    private void updateOldTemplate(List<Template> templateList, List<Template> newTemplateList, int formId) {
-        //遍历
-        boolean flag = false;
-        for (Template oldTemplate : templateList) {
-            for (Template newTemplate : newTemplateList) {
-                //（1）如果有formTemplateId 循环遍历查找原来组件list是否有这个id 即判断是否为0
-                if (newTemplate.getFormTemplateId() == 0) {
-                    //（2）如果没有formTemplateId 即为新的组件 没有动作
-                } else {
-                    // 有就是先对比是否删减旧的组件
-                    if (oldTemplate.getFormTemplateId() == newTemplate.getFormTemplateId()) {
-                        //对比一样的话 即新的组件有旧的组件 设置标识
-                        flag = true;
-                        //跳出循环
-                        break;
-                    }
-                }
-            }
-            if (!flag) {
-                //删除该template以及绑定的所有数据项
-                //删除该id所有数据项
-                int oldFormTemplateId = oldTemplate.getFormTemplateId();
-                dataMapper.deleteDataDetailsByFormTemplateId(oldFormTemplateId);
-            } else {
-                flag = false;
-            }
-        }
     }
 
     @Override
@@ -549,7 +487,7 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
-    public Result updateForm1(Form form) {
+    public Result updateForm(Form form) {
 
         //必填的数据有 id,name = title,desc,formimg,templatelist
         //填补数据
@@ -564,7 +502,7 @@ public class FormServiceImpl implements FormService {
         //新组件list
         List<Template> newTemplateList = form.getTemplateList();
         //删除原组件与新组件不同的组件 新的不管 旧的全删，更新对应组件修改内容以及数据项内容
-        updateOldTemplate(templateList, newTemplateList, formId);
+        updateOldTemplate1(templateList, newTemplateList, formId);
         //备份原来绑定组件list的数据
         List<Data> dataList = dataMapper.getAllDataByFormId(formId);
 
@@ -586,34 +524,225 @@ public class FormServiceImpl implements FormService {
         }
 
         //将json字符串转变为bean类
+        //log.info(mapItem);
         DataBean dataBean = JSON.parseObject(mapItem, DataBean.class);
 
         //模拟数据
-        String radio = "{key:\"0\",value:\"xx\"}";
-        String checkbox = "[{key:\"0\",value:\"xx\"},{key:\"1\",value:\"xxx\"},{key:\"2\",value:\"啊啊啊\"}]";
+        //String radio = "{key:\"0\",value:\"xx\"}";
+        //String checkbox = "[{key:\"0\",value:\"xx\"},{key:\"1\",value:\"xxx\"},{key:\"2\",value:\"啊啊啊\"}]";
         //首先判断组件类型
         int templateType = formMapper.getTemplateTypeByFormTemplateId(formTemplateId);
 
         if (ArrayUtils.isHaveByInt(templateType, Constants.Array.MultiSelect)) {
             //组件类型为多选
+            if (templateType == 6) {
+                //图片多选
+                updateTemplate(formTemplateId, dataBean,1);
+            }else{
+                //纯多选
+                updateTemplate(formTemplateId,dataBean,0);
+            }
             //获取该表单绑定组件id的所有数据项
             List<Data> dataBeanList = dataMapper.getAllDataByFormTemplateId(formTemplateId);
             if (dataBeanList != null && dataBeanList.size() != 0) {
                 //有填数据
                 //遍历
-                for (Data d : dataBeanList){
+                for (Data d : dataBeanList) {
                     //遍历details
-                    for(DataDetails dd : d.getDataDetailsList()){
-
+                    for (DataDetails dd : d.getDataDetailsList()) {
+                        //获取content
+                        String dataContent = dd.getDataContent();
+                        if (!TextUtils.isEmpty(dataContent)) {
+                            //解析内容
+                            List<DataBean> newDataContentBeanList = parseDataBean(dataBean, dataContent);
+                            //序列化list
+                            String newDataContent = JSON.toJSONString(newDataContentBeanList);
+                            //设置新的数据进去
+                            dd.setDataContent(newDataContent);
+                        }
                     }
                 }
+                //遍历完成
+                //更新数据库数据
+                dataMapper.updateDataDetailsList(dataBeanList);
             }
+            return ResultUtils.success("删除成功");
         }
         if (ArrayUtils.isHaveByInt(templateType, Constants.Array.multipleChoice)) {
             //组件类型为单选
+            //判断是否为图片单选
+            if (templateType == 5) {
+                updateTemplate(formTemplateId, dataBean,1);
+            }else{
+                //纯单选
+                updateTemplate(formTemplateId,dataBean,0);
+            }
             //直接删除绑定该组件的选项key的数据项
             dataMapper.deleteDataDetailsByFormTemplateIdAndContent(formTemplateId, dataBean.getKey());
+            return ResultUtils.success("删除成功");
         }
-        return null;
+        return ResultUtils.success("删除失败");
+    }
+
+    /**
+     * 删除组件对应的content字段，还有form-img-url相应的链接
+     *
+     * @param formTemplateId
+     * @param dataBean
+     * @param flag 0为纯选择 1为图片选择
+     */
+    private void updateTemplate(int formTemplateId, DataBean dataBean,int flag) {
+        //删除组件content相应的字段
+        Template template = formMapper.getTemplateByFormTemplateId(formTemplateId);
+        //解析
+        List<DataBean> newContentList = parseDataBean(dataBean, template.getTemplateContent());
+        //序列化list
+        String newTemplateContent = JSON.toJSONString(newContentList);
+        //设置数据
+        template.setTemplateContent(newTemplateContent);
+        if (flag == 1){
+            //删除组件图片url相应的字段
+            //解析
+            List<DataBean> newFormImgUrlList = parseDataBean(dataBean, template.getTemplateImgUrl());
+            //序列化list
+            String newFormImgUrl = JSON.toJSONString(newFormImgUrlList);
+            //设置数据
+            template.setTemplateImgUrl(newFormImgUrl);
+        }
+        //更新template
+        formMapper.updateTemplate(template);
+    }
+
+    /**
+     * 删除对应的content内容
+     *
+     * @param dataBean
+     * @param templateContent
+     * @return
+     */
+    private List<DataBean> parseDataBean(DataBean dataBean, String templateContent) {
+
+        List<DataBean> oldContentList = JSON.parseArray(templateContent, DataBean.class);
+        //log.info("------------------------old:"+oldContentList.toString());
+        List<DataBean> newContentList = new ArrayList<>();
+        for (DataBean db : oldContentList) {
+            if (db.getKey() != dataBean.getKey()) {
+                newContentList.add(db);
+            }
+        }
+       // log.info("------------------------new:"+newContentList.toString());
+        return newContentList;
+    }
+
+    /**
+     * 删除原组件与新组件不同的组件 新的不管 旧的全删
+     *
+     * @param templateList
+     * @param newTemplateList
+     * @param formId
+     */
+    private void updateOldTemplate1(List<Template> templateList, List<Template> newTemplateList, int formId) {
+        //遍历
+        boolean flag = false;
+        for (Template oldTemplate : templateList) {
+            for (Template newTemplate : newTemplateList) {
+                //（1）如果有formTemplateId 循环遍历查找原来组件list是否有这个id 即判断是否为0
+                if (newTemplate.getFormTemplateId() == 0) {
+                    //（2）如果没有formTemplateId 即为新的组件 没有动作
+                } else {
+                    // （3）有就是先对比是否删减旧的组件
+                    int oldFormTemplateId = oldTemplate.getFormTemplateId();
+                    int newFormTemplateId = newTemplate.getFormTemplateId();
+                    if (oldFormTemplateId == newFormTemplateId) {
+                        //对比一样的话 即新的组件有旧的组件 设置标识
+                        flag = true;
+                        //-------------------------------------------------------------------------------------------------//
+                        //判断组件的类型
+                        int templateType = formMapper.getTemplateTypeByFormTemplateId(oldFormTemplateId);
+                        if (ArrayUtils.isHaveByInt(templateType, Constants.Array.MultiSelect)) {
+                            //多选
+                            updateDataContent(oldTemplate, newTemplate, oldFormTemplateId, 0);
+                        }
+                        if (ArrayUtils.isHaveByInt(templateType, Constants.Array.multipleChoice)) {
+                            //单选
+                            updateDataContent(oldTemplate, newTemplate, oldFormTemplateId, 1);
+                        }
+                        //-------------------------------------------------------------------------------------------------//
+                        //跳出循环
+                        break;
+                    }
+                }
+            }
+            if (!flag) {
+                //删除该template以及绑定的所有数据项
+                //删除该id所有数据项
+                int oldFormTemplateId = oldTemplate.getFormTemplateId();
+                dataMapper.deleteDataDetailsByFormTemplateId(oldFormTemplateId);
+            } else {
+                flag = false;
+            }
+        }
+    }
+
+    /**
+     * 修改相应数据项内容
+     *
+     * @param oldTemplate
+     * @param newTemplate
+     * @param oldFormTemplateId
+     */
+    private void updateDataContent(Template oldTemplate, Template newTemplate, int oldFormTemplateId, int flag) {
+        List<Data> dataList = dataMapper.getAllDataByFormTemplateId(oldFormTemplateId);
+        if (dataList != null && dataList.size() != 0) {
+            //解析组件content
+            List<DataBean> oldTemplateContent = JSON.parseArray(oldTemplate.getTemplateContent(), DataBean.class);
+            List<DataBean> newTemplateContent = JSON.parseArray(newTemplate.getTemplateContent(), DataBean.class);
+
+            //遍历
+            for (DataBean oldContent : oldTemplateContent) {
+                for (DataBean newContent : newTemplateContent) {
+                    //匹配到一样的key值
+                    if (oldContent.getKey() == newContent.getKey()){
+                        //直接拿新的值和键
+                        int keyValue = newContent.getKey();
+                        String newValue = newContent.getValue();
+                        //匹配数据list
+                        for (Data d : dataList) {
+                            for (DataDetails dd : d.getDataDetailsList()) {
+                                //解析dataContent
+                                String dataContent = dd.getDataContent();
+                                String newDataContent = null;
+                                if (flag == 0) {
+                                    List<DataBean> dataBeanList = JSON.parseArray(dataContent, DataBean.class);
+                                    //遍历
+                                    for (DataBean db : dataBeanList) {
+                                        if (db.getKey() == keyValue) {
+                                            //有该选项，直接覆盖新的值上去
+                                            db.setValue(newValue);
+                                        }
+                                    }
+                                    //序列化list
+                                    newDataContent = JSON.toJSONString(dataBeanList);
+                                } else {
+                                    DataBean db = JSON.parseObject(dataContent, DataBean.class);
+                                    if (db.getKey() == keyValue) {
+                                        //覆盖
+                                        db.setValue(newValue);
+                                    }
+                                    //序列化
+                                    newDataContent = JSON.toJSONString(db);
+                                }
+                                //设置新的dataContent
+                                dd.setDataContent(newDataContent);
+                            }
+                        }
+                    }
+                }
+            }
+            //向数据库更新相关的数据项信息
+            dataMapper.updateDataDetailsList(dataList);
+        } else {
+            //没有数据   无动作
+        }
     }
 }
