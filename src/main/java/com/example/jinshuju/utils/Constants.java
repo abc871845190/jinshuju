@@ -40,4 +40,8 @@ public interface Constants {
         Integer[] MultiSelect = {1,6};  //多选
         Integer[] multipleChoice = {0,4,5};  //单选
     }
+
+    interface Url{
+        String host = "jinshuju.max3.fgnwctvip.com";
+    }
 }

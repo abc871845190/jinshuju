@@ -64,11 +64,11 @@ public class FormServiceImpl implements FormService {
             //插入成功，原form实例添加id，获取id
             int formId = form.getFormId();
             //生成相应公开访问填写的url 以及二维码
-            String formUrl = "/f/" + String.valueOf(formId);
+            String formUrl = Constants.Url.host + "/f/" + String.valueOf(formId);
             form.setFormUrl(formUrl);
-            String QRCodePath = File.separator+"img"+File.separator+"QRCode"+File.separator+QRCodeUtils.createImage(formUrl);
+            String QRCode = "/img/QRCode/"+QRCodeUtils.createImage(formUrl);
 //            log.info(QRCodePath);
-            form.setFormQRCode(QRCodePath);
+            form.setFormQRCode(QRCode);
             //更新表单url和二维码数据
             formMapper.updateFormById(form);
             //更新form的类别表
@@ -119,47 +119,42 @@ public class FormServiceImpl implements FormService {
             //插入组件
             if (flag == 0) {
                 //判断旧的是否有组件
-                if (haveOldTemplateList != null && haveOldTemplateList.size() != 0) {
-                    //先插入旧的
-                    formMapper.insertOldTemplate(haveOldTemplateList, formId);
-                }
-                //判断是否有新的组件  插入新的组件
-                if (haveNewTemplateList == null || haveNewTemplateList.size() == 0) {
-
-                } else {
-                    formMapper.insertNewTemplate(haveNewTemplateList, formId);
-                }
-                //插入备份的组件list的数据
-                if (dataList != null && dataList.size() != 0) {
-                    for (Data d : dataList) {
-                        d.setForm(new Form());
-                        d.getForm().setFormId(formId);
-                    }
-                    dataMapper.insertDataDetailsList(dataList);
-                }
+                insertOldAndNewTemplateList(dataList, formId, haveOldTemplateList, haveNewTemplateList);
                 return ResultUtils.success("插入表单成功", form);
             } else {
-                //判断旧的是否有组件
-                if (haveOldTemplateList != null && haveOldTemplateList.size() != 0) {
-                    //先插入旧的
-                    formMapper.insertOldTemplate(haveOldTemplateList, formId);
-                }
-                //判断是否有新的组件  插入新的组件
-                if (haveNewTemplateList == null || haveNewTemplateList.size() == 0) {
-
-                } else {
-                    formMapper.insertNewTemplate(haveNewTemplateList, formId);
-                }
-                //插入备份的组件list的数据
-                if (dataList != null && dataList.size() != 0) {
-                    for (Data d : dataList) {
-                        d.setForm(new Form());
-                        d.getForm().setFormId(formId);
-                    }
-                    dataMapper.insertDataDetailsList(dataList);
-                }
+                insertOldAndNewTemplateList(dataList, formId, haveOldTemplateList, haveNewTemplateList);
                 return ResultUtils.success("插入表单成功");
             }
+        }
+    }
+
+    /**
+     * 分别将新的组件和旧的组件插入 以及备份的data数据
+     *
+     * @param dataList
+     * @param formId
+     * @param haveOldTemplateList
+     * @param haveNewTemplateList
+     */
+    private void insertOldAndNewTemplateList(List<Data> dataList, int formId, List<Template> haveOldTemplateList, List<Template> haveNewTemplateList) {
+        //判断旧的是否有组件
+        if (haveOldTemplateList.size() != 0) {
+            //先插入旧的
+            formMapper.insertOldTemplate(haveOldTemplateList, formId);
+        }
+        //判断是否有新的组件  插入新的组件
+        if (haveNewTemplateList.size() == 0) {
+
+        } else {
+            formMapper.insertNewTemplate(haveNewTemplateList, formId);
+        }
+        //插入备份的组件list的数据
+        if (dataList != null && dataList.size() != 0) {
+            for (Data d : dataList) {
+                d.setForm(new Form());
+                d.getForm().setFormId(formId);
+            }
+            dataMapper.insertDataDetailsList(dataList);
         }
     }
 
@@ -224,8 +219,11 @@ public class FormServiceImpl implements FormService {
     public Result deleteForm(int formId) {
         //判断id是否存在
         if (formMapper.checkFormById(formId)) {
+            //TODO:删除二维码文件
+
+            //TODO:如果有图片数据  删除图片数据
+
             boolean flag = formMapper.deleteFormById(formId);
-            log.info("delete form boolean is   ==>   " + flag);
             return flag == true ? ResultUtils.success("删除表单成功") : ResultUtils.fail("删除表单失败");
         }
         return ResultUtils.fail("表单id不存在");
@@ -537,10 +535,10 @@ public class FormServiceImpl implements FormService {
             //组件类型为多选
             if (templateType == 6) {
                 //图片多选
-                updateTemplate(formTemplateId, dataBean,1);
-            }else{
+                updateTemplate(formTemplateId, dataBean, 1);
+            } else {
                 //纯多选
-                updateTemplate(formTemplateId,dataBean,0);
+                updateTemplate(formTemplateId, dataBean, 0);
             }
             //获取该表单绑定组件id的所有数据项
             List<Data> dataBeanList = dataMapper.getAllDataByFormTemplateId(formTemplateId);
@@ -572,10 +570,10 @@ public class FormServiceImpl implements FormService {
             //组件类型为单选
             //判断是否为图片单选
             if (templateType == 5) {
-                updateTemplate(formTemplateId, dataBean,1);
-            }else{
+                updateTemplate(formTemplateId, dataBean, 1);
+            } else {
                 //纯单选
-                updateTemplate(formTemplateId,dataBean,0);
+                updateTemplate(formTemplateId, dataBean, 0);
             }
             //直接删除绑定该组件的选项key的数据项
             dataMapper.deleteDataDetailsByFormTemplateIdAndContent(formTemplateId, dataBean.getKey());
@@ -589,9 +587,9 @@ public class FormServiceImpl implements FormService {
      *
      * @param formTemplateId
      * @param dataBean
-     * @param flag 0为纯选择 1为图片选择
+     * @param flag           0为纯选择 1为图片选择
      */
-    private void updateTemplate(int formTemplateId, DataBean dataBean,int flag) {
+    private void updateTemplate(int formTemplateId, DataBean dataBean, int flag) {
         //删除组件content相应的字段
         Template template = formMapper.getTemplateByFormTemplateId(formTemplateId);
         //解析
@@ -600,7 +598,7 @@ public class FormServiceImpl implements FormService {
         String newTemplateContent = JSON.toJSONString(newContentList);
         //设置数据
         template.setTemplateContent(newTemplateContent);
-        if (flag == 1){
+        if (flag == 1) {
             //删除组件图片url相应的字段
             //解析
             List<DataBean> newFormImgUrlList = parseDataBean(dataBean, template.getTemplateImgUrl());
@@ -630,7 +628,7 @@ public class FormServiceImpl implements FormService {
                 newContentList.add(db);
             }
         }
-       // log.info("------------------------new:"+newContentList.toString());
+        // log.info("------------------------new:"+newContentList.toString());
         return newContentList;
     }
 
@@ -702,7 +700,7 @@ public class FormServiceImpl implements FormService {
             for (DataBean oldContent : oldTemplateContent) {
                 for (DataBean newContent : newTemplateContent) {
                     //匹配到一样的key值
-                    if (oldContent.getKey() == newContent.getKey()){
+                    if (oldContent.getKey() == newContent.getKey()) {
                         //直接拿新的值和键
                         int keyValue = newContent.getKey();
                         String newValue = newContent.getValue();

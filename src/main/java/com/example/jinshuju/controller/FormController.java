@@ -268,6 +268,7 @@ public class FormController {
      * @param mapItem        需要删除的key-value 字符串
      * @return
      */
+    @ApiOperation(value = "删除表单组件对应的content以及数据content", response = Result.class)
     @DeleteMapping("/deleteFormContentAndData")
     public Result deleteFormContentAndData(@RequestParam("formTemplateId") int formTemplateId, @RequestParam("optionKey") String mapItem) {
         return formService.deleteFormContentAndData(formTemplateId, mapItem);
