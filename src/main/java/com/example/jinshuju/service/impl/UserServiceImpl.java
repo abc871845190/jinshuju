@@ -201,7 +201,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result getUserInfo(User user) {
         User user1 = userMapper.findOneById(user.getUserId());
-        return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), user);
+        return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), user1);
     }
 
     @Override
