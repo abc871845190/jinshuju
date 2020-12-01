@@ -115,4 +115,13 @@ public interface UserService {
      * @return
      */
     Result uploadHeadImg(MultipartFile file, User user);
+
+    /**
+     * 修改用户名
+     *
+     * @param userName
+     * @param user
+     * @return
+     */
+    Result updateName(String userName, User user);
 }

@@ -351,6 +351,19 @@ public class UserServiceImpl implements UserService {
         return ResultUtils.success("上传成功", "/img/head/"+newImg);
     }
 
+    @Override
+    public Result updateName(String userName, User user) {
+        if (TextUtils.isEmpty(userName)){
+            return ResultUtils.fail("用户名为空");
+        }
+        if (userMapper.checkUserNameByName(userName)){
+            return ResultUtils.fail("用户名已存在");
+        }else{
+            int userId = user.getUserId();
+            return userMapper.updateNameById(userName,userId) == true ? ResultUtils.success("修改成功"):ResultUtils.fail("用户名重复");
+        }
+    }
+
     /**
      * 根据前端token到redis拿真token
      *

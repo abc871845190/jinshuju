@@ -84,6 +84,11 @@
         set user_img = #{img}
         where user_id = #{userId}
     </update>
+    <update id="updateNameById">
+        update user
+        set user_name = #{userName}
+        where userId = #{userId}
+    </update>
     <select id="checkUser" resultType="java.lang.Boolean" parameterType="String">
         select count(1)
         from user

@@ -121,5 +121,14 @@ public interface UserMapper {
      * @param userId
      * @return
      */
-    boolean updateImg(@Param("img") String img,@Param("userId") int userId);
+    boolean updateImg(@Param("img") String img, @Param("userId") int userId);
+
+    /**
+     * 修改用户名
+     *
+     * @param userName
+     * @param userId
+     * @return
+     */
+    boolean updateNameById(@Param("userName") String userName,@Param("userId") int userId);
 }

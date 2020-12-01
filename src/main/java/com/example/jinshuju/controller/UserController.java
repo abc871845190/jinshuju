@@ -210,4 +210,15 @@ public class UserController {
             return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
         }
     }
+
+    @ApiOperation(value = "修改用户名，会检查用户名是否重复", response = Result.class)
+    @PatchMapping("/updateUserName")
+    public Result updateUserName(@RequestParam("userName") String userName,HttpServletRequest request,HttpServletResponse response){
+        User user = userService.checkUserLogin(request, response);
+        if (user != null) {
+            return userService.updateName(userName,user);
+        } else {
+            return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
+        }
+    }
 }
