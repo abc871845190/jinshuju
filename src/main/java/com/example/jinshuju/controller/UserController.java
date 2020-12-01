@@ -13,9 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -202,7 +202,7 @@ public class UserController {
 
     @ApiOperation(value = "上传用户头像", response = Result.class)
     @PostMapping("/uploadHeadImg")
-    public Result uploadHeadImg(@RequestParam("file") MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
+    public Result uploadHeadImg(@RequestParam("file") MultipartFile file, HttpServletRequest request, HttpServletResponse response) throws IOException {
         User user = userService.checkUserLogin(request, response);
         if (user != null) {
             return userService.uploadHeadImg(file, user);

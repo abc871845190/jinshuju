@@ -5,16 +5,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * 跳转控制类
+ * 静态控制类
  */
 @Controller
 @Slf4j
 public class RootController {
     @RequestMapping("/")
     public String returnMsg(){
-        log.info("11111");
+        log.info("to index");
         return "index";
     }
-
-
 }

@@ -105,4 +105,21 @@ public interface UserMapper {
     Boolean checkUserExist(int userId);
 
     int checkUpdateCode(User user);
+
+    /**
+     * 获取用户图片
+     *
+     * @param userId
+     * @return
+     */
+    String getUserImg(int userId);
+
+    /**
+     * 修改用户图片路径
+     *
+     * @param img
+     * @param userId
+     * @return
+     */
+    boolean updateImg(@Param("img") String img,@Param("userId") int userId);
 }

@@ -79,6 +79,11 @@
         set user_telephone = #{userTelephone}
         where user_id = #{userId}
     </update>
+    <update id="updateImg">
+        update user
+        set user_img = #{img}
+        where user_id = #{userId}
+    </update>
     <select id="checkUser" resultType="java.lang.Boolean" parameterType="String">
         select count(1)
         from user
@@ -116,6 +121,11 @@
     </select>
     <select id="checkUserExist" resultType="java.lang.Boolean" parameterType="int">
         select count(1)
+        from user
+        where user_id = #{userId}
+    </select>
+    <select id="getUserImg" resultType="java.lang.String" parameterType="int">
+        select user_img
         from user
         where user_id = #{userId}
     </select>

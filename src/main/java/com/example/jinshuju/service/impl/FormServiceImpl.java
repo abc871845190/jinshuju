@@ -64,9 +64,9 @@ public class FormServiceImpl implements FormService {
             //插入成功，原form实例添加id，获取id
             int formId = form.getFormId();
             //生成相应公开访问填写的url 以及二维码
-            String formUrl = Constants.Url.host + "/f/" + String.valueOf(formId);
+            String formUrl = "/f/" + String.valueOf(formId);
             form.setFormUrl(formUrl);
-            String QRCode = "/img/QRCode/"+QRCodeUtils.createImage(formUrl);
+            String QRCode = "/img/QRCode/" + QRCodeUtils.createImage(Constants.Url.host + "/f/" + formUrl);
 //            log.info(QRCodePath);
             form.setFormQRCode(QRCode);
             //更新表单url和二维码数据
@@ -219,10 +219,38 @@ public class FormServiceImpl implements FormService {
     public Result deleteForm(int formId) {
         //判断id是否存在
         if (formMapper.checkFormById(formId)) {
-            //TODO:删除二维码文件
-
+            //删除二维码文件 /img/QRCode/18fd0786fbf644eb94a7aa8c5c0cefa6.jpg
+            String QRCode = formMapper.getFormQRCodeById(formId);
+            FileUtils.deleteFile(Constants.FilePath.FILE_IMG_QRCODE, QRCode.substring(QRCode.lastIndexOf("/") + 1));
             //TODO:如果有图片数据  删除图片数据
+            List<Template> templateList = formMapper.getTemplatesByFormId(formId);
+            if (templateList != null && templateList.size() != 0) {
+                //有组件
+                for (Template t : templateList) {
+                    if (t.getTemplateId() == 5 || t.getTemplateId() == 6) {
+                        //获取templateImgUrl
+                        String templateImgUrl = formMapper.getTemplateImgUrlByFormTemplateId(t.getFormTemplateId());
+                        if (!TextUtils.isEmpty(templateImgUrl)) {
+                            //解析
+                            List<DataBean> templateImgUrlList = JSON.parseArray(templateImgUrl, DataBean.class);
+                            if (templateImgUrlList.size() != 0) {
+                                for (DataBean db : templateImgUrlList) {
+                                    //http://jinshuju.max3.fgnwctvip.com/img/TemplateImg/d4e4579a888d45ad9943871e24f0e9ed.gif
+                                    String value = db.getValue();
+                                    if (!TextUtils.isEmpty(value)) {
+                                        String imgName = value.substring(value.lastIndexOf("/") + 1);
+                                        if (!TextUtils.isEmpty(imgName)){
+                                            //删除
+                                            FileUtils.deleteFile(Constants.FilePath.FILE_IMG_TEMPLATE, imgName);
+                                        }
+                                    }
+                                }
+                            }
+                        }
 
+                    }
+                }
+            }
             boolean flag = formMapper.deleteFormById(formId);
             return flag == true ? ResultUtils.success("删除表单成功") : ResultUtils.fail("删除表单失败");
         }

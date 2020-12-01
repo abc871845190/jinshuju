@@ -258,4 +258,12 @@ public interface FormMapper {
      * @return
      */
     boolean updateTemplate(Template template);
+
+    /**
+     * 获取表单绑定组件id相应的templateImgUrl
+     *
+     * @param formTemplateId
+     * @return
+     */
+    String getTemplateImgUrlByFormTemplateId(int formTemplateId);
 }

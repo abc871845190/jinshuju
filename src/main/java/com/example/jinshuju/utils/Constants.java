@@ -34,6 +34,7 @@ public interface Constants {
         String FILE_IMG_TEMPLATE = "D:\\eclipse for ee\\jinshuju\\src\\main\\resources\\static\\img\\TemplateImg";
         String FILE_IMG = "D:\\eclipse for ee\\jinshuju\\src\\main\\resources\\static\\img";
         String FILE = "D:\\eclipse for ee\\jinshuju\\src\\main\\resources\\static";
+        String FILE_IMG_QRCODE = "D:\\eclipse for ee\\jinshuju\\src\\main\\resources\\static\\img\\QRCode";
     }
 
     interface Array{

@@ -126,6 +126,12 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.73</version>
         </dependency>
+        <!--commons-codec是Apache开源组织提供的用于摘要运算、编码解码的包。常见的编码解码工具Base64、MD5、Hex、SHA1、DES等-->
+        <dependency>
+            <groupId>commons-codec</groupId><!--可随意-->
+            <artifactId>commons-codec</artifactId><!--可随意-->
+            <version>1.14</version><!--对应jar相应版本（不知道可随意）-->
+        </dependency>
     </dependencies>
 
     <build>

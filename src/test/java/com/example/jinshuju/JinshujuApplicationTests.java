@@ -5,15 +5,17 @@ import com.example.jinshuju.utils.EasyExcelUtils.EasyExcelUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.zxing.WriterException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -115,13 +117,17 @@ class JinshujuApplicationTests {
 
     @Test
     public void testText() {
-        String idList = "1,2,3,4,5,6";
-        String[] idListByString = idList.split(",");
+//        String idList = "1,2,3,4,5,6";
+//        String[] idListByString = idList.split(",");
+//
+//        int[] array = Arrays.asList(idListByString).stream().mapToInt(Integer::parseInt).toArray();
+//        for (int i : array) {
+//            log.info(String.valueOf(i));
+//        }
+        String img = Constants.Url.host+"/img/head/default_img.jpg";
+        String subImg = img.substring(img.lastIndexOf("/")+1);
+        log.info(subImg);
 
-        int[] array = Arrays.asList(idListByString).stream().mapToInt(Integer::parseInt).toArray();
-        for (int i : array) {
-            log.info(String.valueOf(i));
-        }
     }
 
     @Test
@@ -169,5 +175,18 @@ class JinshujuApplicationTests {
 //        log.info(beanTOJson);
 
         log.info(String.valueOf(ArrayUtils.isHaveByInt(2, Constants.Array.MultiSelect)));
+    }
+
+    @Test
+    public void testImg2String() throws IOException {
+        File file = new File(Constants.FilePath.FILE_IMG_HEAD+File.separator+"default_img.jpg");
+        FileInputStream is = new FileInputStream(file);
+        byte[] buffer = new byte[(int) file.length()];
+        is.read(buffer);
+        is.close();
+        String code = new Base64().encodeToString(buffer);
+        //log.info(code);
+        String uncode = new String(Base64.decodeBase64(code));
+        log.info(uncode);
     }
 }

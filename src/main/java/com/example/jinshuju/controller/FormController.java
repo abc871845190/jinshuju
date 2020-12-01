@@ -115,7 +115,7 @@ public class FormController {
         return formService.updateFormName(formId, formName);
     }
 
-    @ApiOperation(value = "修改表单tag", response = Result.class)
+    @ApiOperation(value = "修改表单用户专属tag", response = Result.class)
     @ApiResponses({
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")

@@ -451,4 +451,9 @@
         WHERE ft.form_template_id = #{formTemplateId}
           AND ft.template_id = t.template_id
     </select>
+    <select id="getTemplateImgUrlByFormTemplateId" resultType="java.lang.String" parameterType="int">
+        select template_img_url
+        from form_template
+        where form_template_id = #{formTemplateId}
+    </select>
 </mapper>

@@ -1,5 +1,7 @@
 package com.example.jinshuju.utils;
 
+import org.apache.commons.codec.binary.Base64;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -86,4 +88,46 @@ public class FileUtils {
         }
     }
 
+    /**
+     * <p>将文件转成base64 字符串</p>
+     *
+     * @param path 文件路径
+     * @return
+     * @throws Exception
+     */
+    public static String encodeBase64File(String path) throws Exception {
+        File file = new File(path);
+        FileInputStream inputFile = new FileInputStream(file);
+        byte[] buffer = new byte[(int) file.length()];
+        inputFile.read(buffer);
+        inputFile.close();
+        return new Base64().encodeToString(buffer);
+    }
+
+    /**
+     * 将上传的文件转为base64
+     *
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public static String encodeBase64MutlipartFile(MultipartFile file) throws IOException {
+        InputStream is = file.getInputStream();
+        byte[] buffer = new byte[(int) file.getSize()];
+        is.read(buffer);
+        is.close();
+        String code = new Base64().encodeToString(buffer);
+        return code;
+    }
+
+    /**
+     * 删除指定路径的图片
+     *
+     * @param filePath
+     * @param fileName
+     * @return
+     */
+    public static boolean deleteFile(String filePath, String fileName) {
+        return FileSystemUtils.deleteRecursively(new File(filePath + File.separator, fileName));
+    }
 }
