@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 public class Form {
 
-    private int formId;
+    private String formId;
     private String formName;
     private String formTitle;
     private String formDesc;

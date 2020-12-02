@@ -124,4 +124,12 @@ public interface UserService {
      * @return
      */
     Result updateName(String userName, User user);
+
+    /**
+     * 删除用户
+     *
+     * @param user
+     * @return
+     */
+    Result deleteAccount(User user);
 }

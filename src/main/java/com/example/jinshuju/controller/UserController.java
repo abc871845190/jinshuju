@@ -221,4 +221,17 @@ public class UserController {
             return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
         }
     }
+
+    @ApiOperation(value = "删除账户，会退出登录", response = Result.class)
+    @DeleteMapping("/deleteAccount")
+    public Result deleteAccount(HttpServletRequest request,HttpServletResponse response){
+        //先退出登录
+        User user = userService.checkUserLogin(request, response);
+        if (user != null) {
+            userService.logout(request,response);
+            return userService.deleteAccount(user);
+        } else {
+            return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
+        }
+    }
 }

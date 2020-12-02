@@ -52,7 +52,7 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public Result getAllData(int formId) {
+    public Result getAllData(String formId) {
         List<Data> dataList = dataMapper.getAllDataByFormId(formId);
         if (dataList != null) {
             return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), dataList);
@@ -61,19 +61,19 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public Result getDataCount(int formId) {
+    public Result getDataCount(String formId) {
         int count = dataMapper.getDataCountByFormId(formId);
         return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), count);
     }
 
     @Override
-    public Result getDataCountDaily(int formId) {
+    public Result getDataCountDaily(String formId) {
         int count = dataMapper.getDataCountDailyByFormId(formId);
         return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), count);
     }
 
     @Override
-    public Result deleteAllData(int formId) {
+    public Result deleteAllData(String formId) {
         Boolean flag = dataMapper.deleteAllDataByFormId(formId);
         return flag == true ? ResultUtils.success("清除数据成功") : ResultUtils.fail("清除数据失败");
     }
@@ -103,7 +103,7 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public Result uploadExcel(MultipartFile excelFile, int formId, User user) {
+    public Result uploadExcel(MultipartFile excelFile, String formId, User user) {
         log.info("-------开始uploadExcel-------");
         //记录当前时间
         Instant start = Instant.now();

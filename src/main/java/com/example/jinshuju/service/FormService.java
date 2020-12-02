@@ -32,7 +32,7 @@ public interface FormService {
      * @param formId
      * @return
      */
-    Result getForm(int formId);
+    Result getForm(String formId);
 
     /**
      * 复制同一个表单信息
@@ -41,7 +41,7 @@ public interface FormService {
      * @param formId
      * @return
      */
-    Result copyForm(User user, int formId) throws IOException, WriterException;
+    Result copyForm(User user, String formId) throws IOException, WriterException;
 
     /**
      * 删除表单
@@ -49,7 +49,7 @@ public interface FormService {
      * @param formId
      * @return
      */
-    Result deleteForm(int formId);
+    Result deleteForm(String formId);
 
     /**
      * 修改表单名
@@ -58,7 +58,7 @@ public interface FormService {
      * @param formName
      * @return
      */
-    Result updateFormName(int formId, String formName);
+    Result updateFormName(String formId, String formName);
 
     /**
      * 修改表单Tag
@@ -67,7 +67,7 @@ public interface FormService {
      * @param formTag
      * @return
      */
-    Result updateFormTag(int formId, String formTag);
+    Result updateFormTag(String formId, String formTag);
 
     /**
      * 检查id是否存在
@@ -75,14 +75,14 @@ public interface FormService {
      * @param formId
      * @return
      */
-    Boolean checkFormId(int formId);
+    Boolean checkFormId(String formId);
 
     /**
      * 某id的表单浏览量+1
      *
      * @param formId
      */
-    void updateFormView(int formId);
+    void updateFormView(String formId);
 
     /**
      * 设置表单是否开启填写
@@ -92,7 +92,7 @@ public interface FormService {
      * @param formId
      * @return
      */
-    Result updateFormOpen(int formId);
+    Result updateFormOpen(String formId);
 
     /**
      * 获取该tag下的第n个分页
@@ -125,7 +125,7 @@ public interface FormService {
      * @param formId
      * @return
      */
-    Result getOpenFormUrl(int formId);
+    Result getOpenFormUrl(String formId);
 
     /**
      * 生成表单填写二维码
@@ -133,7 +133,7 @@ public interface FormService {
      * @param formId
      * @param response
      */
-    void createQRCode(int formId, HttpServletResponse response);
+    void createQRCode(String formId, HttpServletResponse response);
 
     /**
      * 表单收藏
@@ -141,7 +141,7 @@ public interface FormService {
      * @param formId
      * @return
      */
-    Result updateFormFavour(int formId);
+    Result updateFormFavour(String formId);
 
     /**
      * 获取用户所有收藏表单
@@ -157,7 +157,7 @@ public interface FormService {
      * @param formId
      * @return
      */
-    Result getTemplates(int formId);
+    Result getTemplates(String formId);
 
     /**
      * 表单公布为模版和取消公布为模版
@@ -165,7 +165,7 @@ public interface FormService {
      * @param formId
      * @return
      */
-    Result updateFormIssure(int formId);
+    Result updateFormIssure(String formId);
 
     /**
      * 获取发布表单信息
@@ -173,7 +173,7 @@ public interface FormService {
      * @param formId
      * @return
      */
-    Result getOpenForm(int formId);
+    Result getOpenForm(String formId);
 
     /**
      * 上传图片
@@ -207,4 +207,13 @@ public interface FormService {
      * @return
      */
     Result deleteFormContentAndData(int formTemplateId, String targetStr);
+
+    /**
+     * 判断该表单是不是属于这个用户
+     *
+     * @param userId
+     * @param formId
+     * @return
+     */
+    Result judgeForm(int userId, String formId);
 }

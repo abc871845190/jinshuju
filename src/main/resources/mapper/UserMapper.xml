@@ -87,8 +87,13 @@
     <update id="updateNameById">
         update user
         set user_name = #{userName}
-        where userId = #{userId}
+        where user_id = #{userId}
     </update>
+    <delete id="deleteAccount" parameterType="int">
+        delete
+        from user
+        where user_id = #{userId}
+    </delete>
     <select id="checkUser" resultType="java.lang.Boolean" parameterType="String">
         select count(1)
         from user

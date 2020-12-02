@@ -28,7 +28,6 @@ import java.util.List;
 @Service
 @Slf4j
 public class FormServiceImpl implements FormService {
-
     @Autowired(required = false)
     FormMapper formMapper;
 
@@ -44,6 +43,7 @@ public class FormServiceImpl implements FormService {
     @Override
     public Result createForm(User user, Form form) throws IOException, WriterException {
         //填补数据
+        form.setFormId(UUIDUtils.getRandomId(16));
         form.setFormName("未命名");
         form.setFormTitle("未命名标题");
         form.setFormDesc("描述");
@@ -60,11 +60,11 @@ public class FormServiceImpl implements FormService {
     }
 
     private Result doCreateForm(User user, Form form) throws IOException, WriterException {
+        String formId = form.getFormId();
         if (formMapper.insertForm(user, form)) {
-            //插入成功，原form实例添加id，获取id
-            int formId = form.getFormId();
+            //插入成功，原form实例添加id
             //生成相应公开访问填写的url 以及二维码
-            String formUrl = "/f/" + String.valueOf(formId);
+            String formUrl = "/f/" + formId;
             form.setFormUrl(formUrl);
             String QRCode = "/img/QRCode/" + QRCodeUtils.createImage(Constants.Url.host + "/f/" + formUrl);
 //            log.info(QRCodePath);
@@ -91,7 +91,7 @@ public class FormServiceImpl implements FormService {
     }
 
     private Result insertTemplateList(Form form, List<Data> dataList, int flag) {
-        int formId = form.getFormId();
+        String formId = form.getFormId();
         //批量插入表单组件关系表
         List<Template> templateList = form.getTemplateList();
         //
@@ -136,7 +136,7 @@ public class FormServiceImpl implements FormService {
      * @param haveOldTemplateList
      * @param haveNewTemplateList
      */
-    private void insertOldAndNewTemplateList(List<Data> dataList, int formId, List<Template> haveOldTemplateList, List<Template> haveNewTemplateList) {
+    private void insertOldAndNewTemplateList(List<Data> dataList, String formId, List<Template> haveOldTemplateList, List<Template> haveNewTemplateList) {
         //判断旧的是否有组件
         if (haveOldTemplateList.size() != 0) {
             //先插入旧的
@@ -177,12 +177,12 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
-    public Result getForm(int formId) {
-        if (formId == 0) {
-            return ResultUtils.fail("id不能为0");
+    public Result getForm(String formId) {
+        if (TextUtils.isEmpty(formId)) {
+            return ResultUtils.fail(ResultEnum.FORM_ID_EMTRY.getCode(), ResultEnum.FORM_ID_EMTRY.getMsg());
         }
         //判断id是否存在
-        if (formMapper.checkFormById(formId)) {
+        if (formMapper.checkFormById(formId)!=null) {
             //根据表单id 拿单个表单信息
             Form form = formMapper.getFormByFormId(formId);
             if (form == null) {
@@ -195,15 +195,16 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
-    public Result copyForm(User user, int formId) throws IOException, WriterException {
+    public Result copyForm(User user, String formId) throws IOException, WriterException {
         //判0
-        if (formId == 0) {
-            return ResultUtils.fail("表单id为0");
+        if (TextUtils.isEmpty(formId)) {
+            return ResultUtils.fail(ResultEnum.FORM_ID_EMTRY.getCode(), ResultEnum.FORM_ID_EMTRY.getMsg());
         }
         //获取表单id的所有表单信息
         Form form = formMapper.getFormByFormId(formId);
         if (form != null) {
             //更新复制表单数据
+            form.setFormId(UUIDUtils.getRandomId(16));
             form.setFormCreateTime(new Timestamp(System.currentTimeMillis()));
             form.setFormUpdateTime(new Timestamp(System.currentTimeMillis()));
             form.setFormViewCount(0);
@@ -216,9 +217,9 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
-    public Result deleteForm(int formId) {
+    public Result deleteForm(String formId) {
         //判断id是否存在
-        if (formMapper.checkFormById(formId)) {
+        if (formMapper.checkFormById(formId)!=null) {
             //删除二维码文件 /img/QRCode/18fd0786fbf644eb94a7aa8c5c0cefa6.jpg
             String QRCode = formMapper.getFormQRCodeById(formId);
             FileUtils.deleteFile(Constants.FilePath.FILE_IMG_QRCODE, QRCode.substring(QRCode.lastIndexOf("/") + 1));
@@ -239,7 +240,7 @@ public class FormServiceImpl implements FormService {
                                     String value = db.getValue();
                                     if (!TextUtils.isEmpty(value)) {
                                         String imgName = value.substring(value.lastIndexOf("/") + 1);
-                                        if (!TextUtils.isEmpty(imgName)){
+                                        if (!TextUtils.isEmpty(imgName)) {
                                             //删除
                                             FileUtils.deleteFile(Constants.FilePath.FILE_IMG_TEMPLATE, imgName);
                                         }
@@ -254,33 +255,33 @@ public class FormServiceImpl implements FormService {
             boolean flag = formMapper.deleteFormById(formId);
             return flag == true ? ResultUtils.success("删除表单成功") : ResultUtils.fail("删除表单失败");
         }
-        return ResultUtils.fail("表单id不存在");
+        return ResultUtils.fail(ResultEnum.FORM_ID_EMTRY.getCode(), ResultEnum.FORM_ID_EMTRY.getMsg());
     }
 
     @Override
-    public Result updateFormName(int formId, String formName) {
+    public Result updateFormName(String formId, String formName) {
         //判断为空
         if (TextUtils.isEmpty(formName)) {
             return ResultUtils.fail("表单名为空");
         }
-        if (formId == 0) {
-            return ResultUtils.fail("表单id不能为0");
+        if (TextUtils.isEmpty(formId)) {
+            return ResultUtils.fail(ResultEnum.FORM_ID_EMTRY.getCode(), ResultEnum.FORM_ID_EMTRY.getMsg());
         }
         if (checkFormId(formId)) {
             Boolean flag = formMapper.updateFormNameById(formId, formName);
             return flag == true ? ResultUtils.success(ResultEnum.FORM_NAME_CHANGE.getCode(), ResultEnum.FORM_NAME_CHANGE.getMsg()) : ResultUtils.fail(ResultEnum.FORM_NAME_REPEAT.getCode(), ResultEnum.FORM_NAME_REPEAT.getMsg());
         }
-        return ResultUtils.fail(ResultEnum.FORM_ENTRY.getCode(), ResultEnum.FORM_ENTRY.getMsg());
+        return ResultUtils.fail(ResultEnum.FORM_EMTRY.getCode(), ResultEnum.FORM_EMTRY.getMsg());
     }
 
     @Override
-    public Result updateFormTag(int formId, String formTag) {
+    public Result updateFormTag(String formId, String formTag) {
         //判断为空
         if (TextUtils.isEmpty(formTag)) {
             return ResultUtils.fail("表单名为空");
         }
-        if (formId == 0) {
-            return ResultUtils.fail("表单id不能为0");
+        if (TextUtils.isEmpty(formId)) {
+            return ResultUtils.fail(ResultEnum.FORM_ID_EMTRY.getCode(), ResultEnum.FORM_ID_EMTRY.getMsg());
         }
         if (checkFormId(formId)) {
             Boolean flag = formMapper.updateFormTagById(formId, formTag);
@@ -290,20 +291,20 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
-    public Boolean checkFormId(int formId) {
-        return formMapper.checkFormById(formId);
+    public Boolean checkFormId(String formId) {
+        return formMapper.checkFormById(formId) != null;
     }
 
     @Override
-    public void updateFormView(int formId) {
+    public void updateFormView(String formId) {
         //TODO:判断表单是否公开
         //TODO:+1浏览量
     }
 
     @Override
-    public Result updateFormOpen(int formId) {
+    public Result updateFormOpen(String formId) {
         //判断id是否存在
-        if (formMapper.checkFormById(formId)) {
+        if (formMapper.checkFormById(formId)!=null) {
             //数据库拿open数字
             int flag = formMapper.getFormOpenById(formId);
             if (flag == 0) {
@@ -314,7 +315,7 @@ public class FormServiceImpl implements FormService {
                 return ResultUtils.success(ResultEnum.FORM_IS_NOT_OPEN.getCode(), ResultEnum.FORM_IS_NOT_OPEN.getMsg());
             }
         }
-        return ResultUtils.fail("表单id不存在");
+        return ResultUtils.fail(ResultEnum.FORM_ID_EMTRY.getCode(), ResultEnum.FORM_ID_EMTRY.getMsg());
     }
 
     @Override
@@ -372,26 +373,26 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
-    public Result getOpenFormUrl(int formId) {
+    public Result getOpenFormUrl(String formId) {
         //判断formId是否存在
-        if (formMapper.checkFormById(formId)) {
+        if (formMapper.checkFormById(formId)!=null) {
             return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), formMapper.getFormUrlById(formId));
         }
-        return ResultUtils.fail("表单不存在");
+        return ResultUtils.fail(ResultEnum.FORM_ID_EMTRY.getCode(), ResultEnum.FORM_ID_EMTRY.getMsg());
     }
 
     @Override
-    public void createQRCode(int formId, HttpServletResponse response) {
-        if (formMapper.checkFormById(formId)) {
+    public void createQRCode(String formId, HttpServletResponse response) {
+        if (formMapper.checkFormById(formId)!=null) {
             String QRcodePath = formMapper.getFormQRCodeById(formId);
             //TODO:....
         }
     }
 
     @Override
-    public Result updateFormFavour(int formId) {
+    public Result updateFormFavour(String formId) {
         //判断formid是否存在
-        if (formMapper.checkFormById(formId)) {
+        if (formMapper.checkFormById(formId)!=null) {
             //数据库拿标识int
             int flag = formMapper.getFormFavourById(formId);
             if (flag == 0) {
@@ -406,7 +407,7 @@ public class FormServiceImpl implements FormService {
                         ResultEnum.FORM_IS_NOT_FAVOUR.getMsg());
             }
         }
-        return ResultUtils.fail("表单不存在");
+        return ResultUtils.fail(ResultEnum.FORM_ID_EMTRY.getCode(), ResultEnum.FORM_ID_EMTRY.getMsg());
     }
 
     @Override
@@ -419,19 +420,19 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
-    public Result getTemplates(int formId) {
+    public Result getTemplates(String formId) {
         //判断id
-        if (formMapper.checkFormById(formId)) {
+        if (formMapper.checkFormById(formId)!=null) {
             List<Template> templateList = formMapper.getTemplatesByFormId(formId);
             return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), templateList);
         }
-        return ResultUtils.fail("表单不存在");
+        return ResultUtils.fail(ResultEnum.FORM_ID_EMTRY.getCode(), ResultEnum.FORM_ID_EMTRY.getMsg());
     }
 
     @Override
-    public Result updateFormIssure(int formId) {
+    public Result updateFormIssure(String formId) {
         //判断formid是否存在
-        if (formMapper.checkFormById(formId)) {
+        if (formMapper.checkFormById(formId)!=null) {
             //数据库拿标识int
             int flag = formMapper.getFormIssureById(formId);
             if (flag == 0) {
@@ -442,13 +443,13 @@ public class FormServiceImpl implements FormService {
                 return ResultUtils.success(ResultEnum.FORM_IS_NOT_ISSURE.getCode(), ResultEnum.FORM_IS_NOT_ISSURE.getMsg());
             }
         }
-        return ResultUtils.fail(ResultEnum.FORM_ENTRY.getCode(), ResultEnum.FORM_ENTRY.getMsg());
+        return ResultUtils.fail(ResultEnum.FORM_EMTRY.getCode(), ResultEnum.FORM_EMTRY.getMsg());
     }
 
     @Override
-    public Result getOpenForm(int formId) {
+    public Result getOpenForm(String formId) {
         //判断formId是否存在
-        if (formMapper.checkFormById(formId)) {
+        if (formMapper.checkFormById(formId)!=null) {
             //判断是否公开
             int flag = formMapper.getFormOpenById(formId);
             if (flag == 0) {
@@ -459,7 +460,7 @@ public class FormServiceImpl implements FormService {
                 return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), formMapper.getFormByFormId(formId));
             }
         }
-        return ResultUtils.fail(ResultEnum.FORM_ENTRY.getCode(), ResultEnum.FORM_ENTRY.getMsg());
+        return ResultUtils.fail(ResultEnum.FORM_EMTRY.getCode(), ResultEnum.FORM_EMTRY.getMsg());
     }
 
     @Override
@@ -522,13 +523,13 @@ public class FormServiceImpl implements FormService {
         //先更新form表字段所更改的内容
         formMapper.updateFormById(form);
         //获取表单id
-        int formId = form.getFormId();
+        String formId = form.getFormId();
         //获取原来组件list
         List<Template> templateList = formMapper.getTemplatesByFormId(formId);
         //新组件list
         List<Template> newTemplateList = form.getTemplateList();
         //删除原组件与新组件不同的组件 新的不管 旧的全删，更新对应组件修改内容以及数据项内容
-        updateOldTemplate1(templateList, newTemplateList, formId);
+        updateOldTemplate(templateList, newTemplateList, formId);
         //备份原来绑定组件list的数据
         List<Data> dataList = dataMapper.getAllDataByFormId(formId);
 
@@ -610,6 +611,14 @@ public class FormServiceImpl implements FormService {
         return ResultUtils.success("删除失败");
     }
 
+    @Override
+    public Result judgeForm(int userId, String formId) {
+        if (TextUtils.isEmpty(formId)) {
+            return ResultUtils.fail(ResultEnum.FORM_ID_EMTRY.getCode(), ResultEnum.FORM_ID_EMTRY.getMsg());
+        }
+        return formMapper.judgeForm(userId, formId) != null ? ResultUtils.success(ResultEnum.TRUE.getCode(), ResultEnum.TRUE.getMsg()) : ResultUtils.success(ResultEnum.FALSE.getCode(), ResultEnum.FALSE.getMsg());
+    }
+
     /**
      * 删除组件对应的content字段，还有form-img-url相应的链接
      *
@@ -667,7 +676,7 @@ public class FormServiceImpl implements FormService {
      * @param newTemplateList
      * @param formId
      */
-    private void updateOldTemplate1(List<Template> templateList, List<Template> newTemplateList, int formId) {
+    private void updateOldTemplate(List<Template> templateList, List<Template> newTemplateList, String formId) {
         //遍历
         boolean flag = false;
         for (Template oldTemplate : templateList) {

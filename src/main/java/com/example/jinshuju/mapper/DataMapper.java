@@ -31,7 +31,7 @@ public interface DataMapper {
      * @param formId
      * @return
      */
-    List<Data> getAllDataByFormId(int formId);
+    List<Data> getAllDataByFormId(String formId);
 
     /**
      * 根据表单id 获取该id所有已填写数据量
@@ -39,7 +39,7 @@ public interface DataMapper {
      * @param formId
      * @return
      */
-    int getDataCountByFormId(int formId);
+    int getDataCountByFormId(String formId);
 
     /**
      * 根据表单id 获取该id当天已填写的数量
@@ -47,7 +47,7 @@ public interface DataMapper {
      * @param formId
      * @return
      */
-    int getDataCountDailyByFormId(int formId);
+    int getDataCountDailyByFormId(String formId);
 
     /**
      * 根据表单id 删除该表单所有已填写的数据项，即清除数据
@@ -55,7 +55,7 @@ public interface DataMapper {
      * @param formId
      * @return
      */
-    Boolean deleteAllDataByFormId(int formId);
+    Boolean deleteAllDataByFormId(String formId);
 
     /**
      * 根据数据项id（唯一值） 删除该表单下的数据项

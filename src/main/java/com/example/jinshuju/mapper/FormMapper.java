@@ -32,7 +32,7 @@ public interface FormMapper {
      * @param formId
      * @return
      */
-    Boolean deleteFormById(int formId);
+    Boolean deleteFormById(String formId);
 
     /**
      * 插入组件关系，没有自带id
@@ -40,14 +40,14 @@ public interface FormMapper {
      * @param templateList
      * @return
      */
-    Boolean insertNewTemplate(@Param("templateList") List<Template> templateList, @Param("formId") int formId);
+    Boolean insertNewTemplate(@Param("templateList") List<Template> templateList, @Param("formId") String formId);
 
     /**
      * 插入自带id的组件list
      *
      * @return
      */
-    Boolean insertOldTemplate(@Param("templateList") List<Template> templateList, @Param("formId") int formId);
+    Boolean insertOldTemplate(@Param("templateList") List<Template> templateList, @Param("formId") String formId);
 
     /**
      * 根据用户id获取用户所有表单信息，按表单创建时间(默认)
@@ -71,7 +71,7 @@ public interface FormMapper {
      * @param formId
      * @return
      */
-    Form getFormByFormId(int formId);
+    Form getFormByFormId(String formId);
 
     /**
      * 根据表单id 获取表单字段list
@@ -79,7 +79,7 @@ public interface FormMapper {
      * @param formId
      * @return
      */
-    List<Template> getTemplatesByFormId(int formId);
+    List<Template> getTemplatesByFormId(String formId);
 
     /**
      * 根据表单id修改表单名
@@ -88,7 +88,7 @@ public interface FormMapper {
      * @param formName
      * @return
      */
-    Boolean updateFormNameById(@Param("formId") int formId, @Param("formName") String formName);
+    Boolean updateFormNameById(@Param("formId") String formId, @Param("formName") String formName);
 
     /**
      * 检查表单id是否存在
@@ -96,7 +96,7 @@ public interface FormMapper {
      * @param formId
      * @return
      */
-    Boolean checkFormById(int formId);
+    Integer checkFormById(String formId);
 
     /**
      * 根据表单id修改表单Tag
@@ -105,7 +105,7 @@ public interface FormMapper {
      * @param formTag
      * @return
      */
-    Boolean updateFormTagById(@Param("formId") int formId, @Param("formTag") String formTag);
+    Boolean updateFormTagById(@Param("formId") String formId, @Param("formTag") String formTag);
 
     /**
      * 根据表单id获取发布标识
@@ -113,7 +113,7 @@ public interface FormMapper {
      * @param formId
      * @return
      */
-    int getFormOpenById(int formId);
+    int getFormOpenById(String formId);
 
     /**
      * 设置表单是否开启填写
@@ -122,7 +122,7 @@ public interface FormMapper {
      * @param formOpen
      * @return
      */
-    Boolean updateFormOpenById(int formId, int formOpen);
+    Boolean updateFormOpenById(String formId, int formOpen);
 
     /**
      * 根据表单id更新表单信息
@@ -138,7 +138,7 @@ public interface FormMapper {
      * @param formId
      * @return
      */
-    Boolean deleteTemplateList(int formId);
+    Boolean deleteTemplateList(String formId);
 
     /**
      * 根据 tag和page 查询分页表单（都设置已公开）
@@ -174,7 +174,7 @@ public interface FormMapper {
      * @param formId
      * @return
      */
-    int getFormFavourById(int formId);
+    int getFormFavourById(String formId);
 
     /**
      * 更新表单收藏
@@ -183,7 +183,7 @@ public interface FormMapper {
      * @param formFavour
      * @return
      */
-    Boolean updateFormFavourById(@Param("formId") int formId, @Param("formFavour") int formFavour);
+    Boolean updateFormFavourById(@Param("formId") String formId, @Param("formFavour") int formFavour);
 
     /**
      * 通过formId 获取表单公开url
@@ -191,7 +191,7 @@ public interface FormMapper {
      * @param formId
      * @return
      */
-    String getFormUrlById(int formId);
+    String getFormUrlById(String formId);
 
     /**
      * 通过formId 获取表单二维码地址
@@ -199,7 +199,7 @@ public interface FormMapper {
      * @param formId
      * @return
      */
-    String getFormQRCodeById(int formId);
+    String getFormQRCodeById(String formId);
 
     /**
      * 通过userid 获取所有收藏的表单
@@ -215,7 +215,7 @@ public interface FormMapper {
      * @param formId
      * @return
      */
-    int getFormIssureById(int formId);
+    int getFormIssureById(String formId);
 
     /**
      * 通过表单id更新发布标识
@@ -224,7 +224,7 @@ public interface FormMapper {
      * @param formIssure
      * @return
      */
-    Boolean updateFormIssureById(@Param("formId") int formId, @Param("formIssure") int formIssure);
+    Boolean updateFormIssureById(@Param("formId") String formId, @Param("formIssure") int formIssure);
 
     /**
      * 删除整个组件
@@ -266,4 +266,13 @@ public interface FormMapper {
      * @return
      */
     String getTemplateImgUrlByFormTemplateId(int formTemplateId);
+
+    /**
+     * 判断该表单是不是属于这个用户
+     *
+     * @param userId
+     * @param formId
+     * @return
+     */
+    Integer judgeForm(@Param("userId") int userId, @Param("formId") String formId);
 }

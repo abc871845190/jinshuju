@@ -74,7 +74,7 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @GetMapping("/form/{formId}")
-    public Result getForm(@PathVariable("formId") int formId) {
+    public Result getForm(@PathVariable("formId") String formId) {
         return formService.getForm(formId);
     }
 
@@ -84,7 +84,7 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @PostMapping("/copy/{formId}")
-    public Result copyForm(@PathVariable("formId") int formId,
+    public Result copyForm(@PathVariable("formId") String formId,
                            HttpServletRequest request,
                            HttpServletResponse response) throws IOException, WriterException {
         User user = userService.checkUserLogin(request, response);
@@ -100,7 +100,7 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @DeleteMapping("/form/{formId}")
-    public Result deleteForm(@PathVariable("formId") int formId) {
+    public Result deleteForm(@PathVariable("formId") String formId) {
         return formService.deleteForm(formId);
     }
 
@@ -111,7 +111,7 @@ public class FormController {
     })
     @PatchMapping("/updateName/{formId}/{formName}")
     public Result updateFormName(@PathVariable("formName") String formName,
-                                 @PathVariable("formId") int formId) {
+                                 @PathVariable("formId") String formId) {
         return formService.updateFormName(formId, formName);
     }
 
@@ -122,7 +122,7 @@ public class FormController {
     })
     @PatchMapping("/updateTag/{formId}/{formTag}")
     public Result updateFormTag(@PathVariable("formTag") String formTag,
-                                @PathVariable("formId") int formId) {
+                                @PathVariable("formId") String formId) {
         return formService.updateFormTag(formId, formTag);
     }
 
@@ -132,7 +132,7 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @PatchMapping("/updateOpen/{formId}")
-    public Result updateFormOpen(@PathVariable("formId") int formId) {
+    public Result updateFormOpen(@PathVariable("formId") String formId) {
         return formService.updateFormOpen(formId);
     }
 
@@ -177,12 +177,12 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @GetMapping("/getOpenFormUrl/{formId}")
-    public Result getOpenFormUrl(@PathVariable("formId") int formId) {
+    public Result getOpenFormUrl(@PathVariable("formId") String formId) {
         return formService.getOpenFormUrl(formId);
     }
 
     @GetMapping("/createQRCode/{formId}")
-    public void createQRCodeByUrl(HttpServletResponse response, @PathVariable("formId") int formId) {
+    public void createQRCodeByUrl(HttpServletResponse response, @PathVariable("formId") String formId) {
         formService.createQRCode(formId, response);
     }
 
@@ -193,7 +193,7 @@ public class FormController {
             @ApiResponse(code = 1, message = "失败")
     })
     @PatchMapping("/updateFavour/{formId}")
-    public Result updateFavour(@PathVariable("formId") int formId) {
+    public Result updateFavour(@PathVariable("formId") String formId) {
         return formService.updateFormFavour(formId);
     }
 
@@ -214,7 +214,7 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @GetMapping("/getTemplates/{formId}")
-    public Result getTemplates(@PathVariable("formId") int formId) {
+    public Result getTemplates(@PathVariable("formId") String formId) {
         return formService.getTemplates(formId);
     }
 
@@ -224,13 +224,13 @@ public class FormController {
             @ApiResponse(code = 2, message = "失败")
     })
     @PatchMapping("/updateIssure/{formId}")
-    public Result updateIssure(@PathVariable("formId") int formId) {
+    public Result updateIssure(@PathVariable("formId") String formId) {
         return formService.updateFormIssure(formId);
     }
 
     @ApiOperation(value = "获取发布表单", response = Result.class)
     @GetMapping("/getOpenForm/{formId}")
-    public Result getOpenForm(@PathVariable("formId") int formId) {
+    public Result getOpenForm(@PathVariable("formId") String formId) {
         return formService.getOpenForm(formId);
     }
 
@@ -272,5 +272,16 @@ public class FormController {
     @DeleteMapping("/deleteFormContentAndData")
     public Result deleteFormContentAndData(@RequestParam("formTemplateId") int formTemplateId, @RequestParam("optionKey") String mapItem) {
         return formService.deleteFormContentAndData(formTemplateId, mapItem);
+    }
+
+    @ApiOperation(value = "判断该表单是不是属于这个用户", response = Result.class)
+    @GetMapping("/judgeForm")
+    public Result judgeForm(HttpServletRequest request,HttpServletResponse response,@RequestParam("formId") String formId){
+        User user = userService.checkUserLogin(request,response);
+        if (user!=null){
+            return formService.judgeForm(user.getUserId(),formId);
+        }else{
+            return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg())    ;
+        }
     }
 }

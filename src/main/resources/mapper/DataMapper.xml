@@ -80,10 +80,10 @@
             #{data.dataId}
         </foreach>
     </update>
-    <delete id="deleteAllDataByFormId" parameterType="int">
+    <delete id="deleteAllDataByFormId" parameterType="String">
         DELETE
         from `data`
-        WHERE form_id = #{formId}
+        WHERE BINARY form_id = #{formId}
     </delete>
     <delete id="deleteDataByDataId" parameterType="int">
         DELETE
@@ -107,7 +107,7 @@
     <delete id="deleteDataByFormId" parameterType="int">
         delete
         from data
-        where form_id = #{formId}
+        where BINARY form_id = #{formId}
     </delete>
     <delete id="deleteDataDetailsByFormTemplateId">
         delete
@@ -129,7 +129,7 @@
         <collection property="dataDetailsList" select="getDataDetailsByDataId"
                     ofType="com.example.jinshuju.pojo.DataDetails" column="data_id"/>
     </resultMap>
-    <select id="getAllDataByFormId" resultMap="DataResultMap" parameterType="int">
+    <select id="getAllDataByFormId" resultMap="DataResultMap" parameterType="String">
         SELECT d.data_id,
                d.data_create_time,
                d.data_update_time,
@@ -141,7 +141,7 @@
                u.user_create_time
         FROM DATA d,
              USER u
-        WHERE d.form_id = #{formId}
+        WHERE BINARY d.form_id = #{formId}
           AND d.user_id = u.user_id
     </select>
     <resultMap id="DataDetailsResultMap" type="com.example.jinshuju.pojo.DataDetails">
@@ -154,15 +154,15 @@
         FROM data_details
         WHERE data_id = #{dataId}
     </select>
-    <select id="getDataCountByFormId" resultType="java.lang.Integer" parameterType="int">
+    <select id="getDataCountByFormId" resultType="java.lang.Integer" parameterType="String">
         SELECT COUNT(*)
         FROM `data`
-        WHERE form_id = #{formId}
+        WHERE BINARY form_id = #{formId}
     </select>
-    <select id="getDataCountDailyByFormId" resultType="java.lang.Integer" parameterType="int">
+    <select id="getDataCountDailyByFormId" resultType="java.lang.Integer" parameterType="String">
         SELECT COUNT(*)
         FROM `data`
-        WHERE form_id = #{formId}
+        WHERE BINARY form_id = #{formId}
           AND TO_DAYS(NOW()) = TO_DAYS(data_update_time)
     </select>
 

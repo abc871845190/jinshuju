@@ -44,25 +44,25 @@ public class DataController {
 
     @ApiOperation(value = "查看表单数据", response = Result.class)
     @GetMapping("/getAllData/{formId}")
-    public Result getAllData(@PathVariable int formId) {
+    public Result getAllData(@PathVariable String formId) {
         return dataService.getAllData(formId);
     }
 
     @ApiOperation(value = "查看填写所有人数", response = Result.class)
     @GetMapping("/getDataCount/{formId}")
-    public Result getDataCount(@PathVariable int formId) {
+    public Result getDataCount(@PathVariable String formId) {
         return dataService.getDataCount(formId);
     }
 
     @ApiOperation(value = "查看当天填写人数", response = Result.class)
     @GetMapping("/getDataCountDaily/{formId}")
-    public Result getDataCountDaily(@PathVariable int formId) {
+    public Result getDataCountDaily(@PathVariable String formId) {
         return dataService.getDataCountDaily(formId);
     }
 
     @ApiOperation(value = "清空数据", response = Result.class)
     @DeleteMapping("/deleteAllData/{formId]")
-    public Result deleteAllData(@PathVariable int formId) {
+    public Result deleteAllData(@PathVariable String formId) {
         return dataService.deleteAllData(formId);
     }
 
@@ -81,7 +81,7 @@ public class DataController {
     @ApiOperation(value = "导入excel文件 --excel头字段必须有原表单设置的所有字段，最好一对一对应--", response = Result.class)
     @PostMapping("/uploadExcel")
     public Result uploadExcel(@RequestParam("excelFile") MultipartFile excelFile,
-                              @RequestParam("formId") int formId,
+                              @RequestParam("formId") String formId,
                               HttpServletRequest request,
                               HttpServletResponse response) {
         return dataService.uploadExcel(excelFile, formId, userService.checkUserLogin(request, response));

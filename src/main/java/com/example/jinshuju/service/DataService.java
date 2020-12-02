@@ -21,7 +21,7 @@ public interface DataService {
      * @param formId
      * @return
      */
-    Result getAllData(int formId);
+    Result getAllData(String formId);
 
     /**
      * 获取表单所有已填数据量
@@ -29,7 +29,7 @@ public interface DataService {
      * @param formId
      * @return
      */
-    Result getDataCount(int formId);
+    Result getDataCount(String formId);
 
     /**
      * 获取当天表单填写人数
@@ -37,7 +37,7 @@ public interface DataService {
      * @param formId
      * @return
      */
-    Result getDataCountDaily(int formId);
+    Result getDataCountDaily(String formId);
 
     /**
      * 删除表单所有填写数据。
@@ -45,7 +45,7 @@ public interface DataService {
      * @param formId
      * @return
      */
-    Result deleteAllData(int formId);
+    Result deleteAllData(String formId);
 
     /**
      * 删除单项数据项
@@ -71,7 +71,7 @@ public interface DataService {
      * @param user
      * @return
      */
-    Result uploadExcel(MultipartFile excelFile, int formId, User user);
+    Result uploadExcel(MultipartFile excelFile, String formId, User user);
 
     /**
      * 批量删除数据项

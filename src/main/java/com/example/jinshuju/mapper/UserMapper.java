@@ -130,5 +130,13 @@ public interface UserMapper {
      * @param userId
      * @return
      */
-    boolean updateNameById(@Param("userName") String userName,@Param("userId") int userId);
+    boolean updateNameById(@Param("userName") String userName, @Param("userId") int userId);
+
+    /**
+     * 删除用户
+     *
+     * @param userId
+     * @return
+     */
+    boolean deleteAccount(int userId);
 }

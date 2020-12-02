@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
@@ -275,7 +276,7 @@ public class UserServiceImpl implements UserService {
         if (userMapper.updateEmailById(user)) {
             return ResultUtils.success("修改邮箱成功");
         } else {
-            return ResultUtils.fail("修改邮箱失败");
+            return ResultUtils.fail("邮箱重复");
         }
 
     }
@@ -292,7 +293,7 @@ public class UserServiceImpl implements UserService {
         if (userMapper.updateTelephoneById(user)) {
             return ResultUtils.success("修改电话成功");
         } else {
-            return ResultUtils.fail("修改电话失败");
+            return ResultUtils.fail("电话重复");
         }
     }
 
@@ -333,35 +334,41 @@ public class UserServiceImpl implements UserService {
 //            e.printStackTrace();
 //        }
 
-        String newImg = FileUtils.uploadMultipartFile(file,Constants.FilePath.FILE_IMG_HEAD);
+        String newImg = FileUtils.uploadMultipartFile(file, Constants.FilePath.FILE_IMG_HEAD);
 
         String oldImg = userMapper.getUserImg(userId);
         //判断原图片是不是创建用户时的值
         String imgName = null;
-        if (!oldImg.equals("/img/head/default_img.jpg")){
+        if (!oldImg.equals("/img/head/default_img.jpg")) {
             //截取图片名字
-            imgName = oldImg.substring(oldImg.lastIndexOf("/")+1);
+            imgName = oldImg.substring(oldImg.lastIndexOf("/") + 1);
         }
-        if (!TextUtils.isEmpty(imgName)){
+        if (!TextUtils.isEmpty(imgName)) {
             //删除图片
-            FileUtils.deleteFile(Constants.FilePath.FILE_IMG_HEAD,imgName);
+            FileUtils.deleteFile(Constants.FilePath.FILE_IMG_HEAD, imgName);
             //更新用户数据库
-            userMapper.updateImg("/img/head/"+newImg,userId);
+            userMapper.updateImg("/img/head/" + newImg, userId);
         }
-        return ResultUtils.success("上传成功", "/img/head/"+newImg);
+        return ResultUtils.success("上传成功", "/img/head/" + newImg);
     }
 
     @Override
     public Result updateName(String userName, User user) {
-        if (TextUtils.isEmpty(userName)){
+        if (TextUtils.isEmpty(userName)) {
             return ResultUtils.fail("用户名为空");
         }
-        if (userMapper.checkUserNameByName(userName)){
+        if (userMapper.checkUserNameByName(userName)) {
             return ResultUtils.fail("用户名已存在");
-        }else{
+        } else {
             int userId = user.getUserId();
-            return userMapper.updateNameById(userName,userId) == true ? ResultUtils.success("修改成功"):ResultUtils.fail("用户名重复");
+            return userMapper.updateNameById(userName, userId) == true ? ResultUtils.success("修改成功") : ResultUtils.fail("用户名重复");
         }
+    }
+
+    @Override
+    public Result deleteAccount(User user) {
+        int userId = user.getUserId();
+        return userMapper.deleteAccount(userId) == true ? ResultUtils.success("删除成功") : ResultUtils.fail("删除失败");
     }
 
     /**
