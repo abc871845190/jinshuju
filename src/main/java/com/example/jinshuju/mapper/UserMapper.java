@@ -62,7 +62,7 @@ public interface UserMapper {
      * @param email
      * @return
      */
-    Boolean checkEmailByEmail(String email);
+    Integer checkEmailByEmail(String email);
 
     /**
      * 根据用户名查记录
@@ -70,7 +70,7 @@ public interface UserMapper {
      * @param username
      * @return
      */
-    Boolean checkUserNameByName(String username);
+    Integer checkUserNameByName(String username);
 
     /**
      * 修改密码
@@ -87,7 +87,7 @@ public interface UserMapper {
      * @param user
      * @return
      */
-    Boolean updateEmailById(User user);
+    Boolean updateEmailById(@Param("user") User user, @Param("time") Timestamp time);
 
     /**
      * 修改电话
@@ -95,14 +95,14 @@ public interface UserMapper {
      * @param user
      * @return
      */
-    Boolean updateTelephoneById(User user);
+    Boolean updateTelephoneById(@Param("user") User user, @Param("time") Timestamp time);
 
     /**
      * 根据用户id查询用户是否存在
      *
      * @return
      */
-    Boolean checkUserExist(int userId);
+    Integer checkUserExist(int userId);
 
     int checkUpdateCode(User user);
 
@@ -121,7 +121,7 @@ public interface UserMapper {
      * @param userId
      * @return
      */
-    boolean updateImg(@Param("img") String img, @Param("userId") int userId);
+    boolean updateImg(@Param("img") String img, @Param("userId") int userId, @Param("time") Timestamp time);
 
     /**
      * 修改用户名
@@ -130,7 +130,7 @@ public interface UserMapper {
      * @param userId
      * @return
      */
-    boolean updateNameById(@Param("userName") String userName, @Param("userId") int userId);
+    boolean updateNameById(@Param("userName") String userName, @Param("userId") int userId, @Param("time") Timestamp time);
 
     /**
      * 删除用户

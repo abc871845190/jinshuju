@@ -216,4 +216,12 @@ public interface FormService {
      * @return
      */
     Result judgeForm(int userId, String formId);
+
+    /**
+     * 获取表单用户专属标签tag
+     *
+     * @param formId
+     * @return
+     */
+    Result getFormTags(String formId);
 }

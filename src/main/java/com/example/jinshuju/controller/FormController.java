@@ -276,12 +276,19 @@ public class FormController {
 
     @ApiOperation(value = "判断该表单是不是属于这个用户", response = Result.class)
     @GetMapping("/judgeForm")
-    public Result judgeForm(HttpServletRequest request,HttpServletResponse response,@RequestParam("formId") String formId){
-        User user = userService.checkUserLogin(request,response);
-        if (user!=null){
-            return formService.judgeForm(user.getUserId(),formId);
-        }else{
-            return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg())    ;
+    public Result judgeForm(HttpServletRequest request, HttpServletResponse response, @RequestParam("formId") String formId) {
+        User user = userService.checkUserLogin(request, response);
+        if (user != null) {
+            return formService.judgeForm(user.getUserId(), formId);
+        } else {
+            return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
         }
     }
+
+    @ApiOperation(value = "获取表单用户专属标签tag", response = Result.class)
+    @GetMapping("/getFormTags")
+    public Result getFormTags(String formId) {
+        return formService.getFormTags(formId);
+    }
+
 }

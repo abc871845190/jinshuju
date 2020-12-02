@@ -125,7 +125,8 @@
     </insert>
     <update id="updateFormNameById">
         update form
-        set form_name = #{formName}
+        set form_name        = #{formName},
+            form_update_time = #{time}
         where BINARY form_id = #{formId}
     </update>
     <update id="updateFormTagById">
@@ -135,7 +136,8 @@
     </update>
     <update id="updateFormOpenById">
         update form
-        set form_open = #{formOpen}
+        set form_open        = #{formOpen},
+            form_update_time = #{time}
         where BINARY form_id = #{formId}
     </update>
     <update id="updateFormById" parameterType="com.example.jinshuju.pojo.Form">
@@ -155,12 +157,14 @@
     </update>
     <update id="updateFormFavourById">
         update form
-        set form_isFavour = #{formFavour}
+        set form_isFavour    = #{formFavour},
+            form_update_time = #{time}
         where BINARY form_id = #{formId}
     </update>
     <update id="updateFormIssureById">
         update form
-        set form_isIssure = #{formIssure}
+        set form_isIssure    = #{formIssure},
+            form_update_time = #{time}
         where BINARY form_id = #{formId}
     </update>
     <update id="updateTemplateContent">
@@ -212,6 +216,8 @@
         <result property="formImg" column="form_img"/>
         <result property="formType" column="form_type"/>
         <result property="formIsFavour" column="form_isFavour"/>
+        <result property="formCut" column="form_cut"/>
+        <result property="formCutTime" column="form_cut_time"/>
         <collection property="templateList" ofType="com.example.jinshuju.pojo.Template"
                     column="form_id" select="getTemplatesByFormId"/>
     </resultMap>
@@ -229,6 +235,8 @@
         <result property="formImg" column="form_img"/>
         <result property="formType" column="form_type"/>
         <result property="formIsFavour" column="form_isFavour"/>
+        <result property="formCut" column="form_cut"/>
+        <result property="formCutTime" column="form_cut_time"/>
         <result property="formDataCount" column="form_data_count"/>
     </resultMap>
     <select id="getFormsByUserIdAndCreateTime" resultMap="getFormsResultMap" parameterType="int">
@@ -464,5 +472,10 @@
         WHERE user_id = #{userId}
           and BINARY form_id = #{formId}
         LIMIT 1
+    </select>
+    <select id="getFormTagsByFormId" resultType="java.lang.String" parameterType="String">
+        select form_tag
+        from form
+        where form_id = #{formId}
     </select>
 </mapper>

@@ -6,6 +6,7 @@ import com.example.jinshuju.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Mapper
@@ -88,7 +89,7 @@ public interface FormMapper {
      * @param formName
      * @return
      */
-    Boolean updateFormNameById(@Param("formId") String formId, @Param("formName") String formName);
+    Boolean updateFormNameById(@Param("formId") String formId, @Param("formName") String formName, @Param("time") Timestamp time);
 
     /**
      * 检查表单id是否存在
@@ -122,7 +123,7 @@ public interface FormMapper {
      * @param formOpen
      * @return
      */
-    Boolean updateFormOpenById(String formId, int formOpen);
+    Boolean updateFormOpenById(@Param("formId") String formId, @Param("formOpen") int formOpen, @Param("time") Timestamp time);
 
     /**
      * 根据表单id更新表单信息
@@ -183,7 +184,7 @@ public interface FormMapper {
      * @param formFavour
      * @return
      */
-    Boolean updateFormFavourById(@Param("formId") String formId, @Param("formFavour") int formFavour);
+    Boolean updateFormFavourById(@Param("formId") String formId, @Param("formFavour") int formFavour, @Param("time") Timestamp time);
 
     /**
      * 通过formId 获取表单公开url
@@ -224,7 +225,7 @@ public interface FormMapper {
      * @param formIssure
      * @return
      */
-    Boolean updateFormIssureById(@Param("formId") String formId, @Param("formIssure") int formIssure);
+    Boolean updateFormIssureById(@Param("formId") String formId, @Param("formIssure") int formIssure, @Param("time") Timestamp time);
 
     /**
      * 删除整个组件
@@ -275,4 +276,12 @@ public interface FormMapper {
      * @return
      */
     Integer judgeForm(@Param("userId") int userId, @Param("formId") String formId);
+
+    /**
+     * 获取表单用户专属标签tag
+     *
+     * @param formId
+     * @return
+     */
+    String getFormTagsByFormId(String formId);
 }

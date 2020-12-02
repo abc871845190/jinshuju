@@ -15,10 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.sql.Timestamp;
 
 /**
@@ -211,12 +213,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result checkEmail(String email) {
-        return userMapper.checkEmailByEmail(email) == true ? ResultUtils.success("邮箱存在") : ResultUtils.fail("邮箱不存在");
+        return userMapper.checkEmailByEmail(email) != null ? ResultUtils.success("邮箱已存在") : ResultUtils.success("邮箱不存在");
     }
 
     @Override
     public Result checkUserName(String username) {
-        return userMapper.checkUserNameByName(username) == true ? ResultUtils.success("用户名存在") : ResultUtils.fail("用户名不存在");
+        return userMapper.checkUserNameByName(username) != null ? ResultUtils.success("用户名已存在") : ResultUtils.success("用户名不存在");
     }
 
     @Override
@@ -273,7 +275,7 @@ public class UserServiceImpl implements UserService {
         if (TextUtils.isEmpty(user.getUserEmail())) {
             return ResultUtils.fail("邮箱为空");
         }
-        if (userMapper.updateEmailById(user)) {
+        if (userMapper.updateEmailById(user, new Timestamp(System.currentTimeMillis()))) {
             return ResultUtils.success("修改邮箱成功");
         } else {
             return ResultUtils.fail("邮箱重复");
@@ -290,7 +292,7 @@ public class UserServiceImpl implements UserService {
         if (TextUtils.isEmpty(user.getUserTelephone())) {
             return ResultUtils.fail("电话为空");
         }
-        if (userMapper.updateTelephoneById(user)) {
+        if (userMapper.updateTelephoneById(user, new Timestamp(System.currentTimeMillis()))) {
             return ResultUtils.success("修改电话成功");
         } else {
             return ResultUtils.fail("电话重复");
@@ -347,7 +349,7 @@ public class UserServiceImpl implements UserService {
             //删除图片
             FileUtils.deleteFile(Constants.FilePath.FILE_IMG_HEAD, imgName);
             //更新用户数据库
-            userMapper.updateImg("/img/head/" + newImg, userId);
+            userMapper.updateImg("/img/head/" + newImg, userId, new Timestamp(System.currentTimeMillis()));
         }
         return ResultUtils.success("上传成功", "/img/head/" + newImg);
     }
@@ -357,17 +359,23 @@ public class UserServiceImpl implements UserService {
         if (TextUtils.isEmpty(userName)) {
             return ResultUtils.fail("用户名为空");
         }
-        if (userMapper.checkUserNameByName(userName)) {
+        if (userMapper.checkUserNameByName(userName) != null) {
             return ResultUtils.fail("用户名已存在");
         } else {
             int userId = user.getUserId();
-            return userMapper.updateNameById(userName, userId) == true ? ResultUtils.success("修改成功") : ResultUtils.fail("用户名重复");
+            return userMapper.updateNameById(userName, userId, new Timestamp(System.currentTimeMillis())) == true ? ResultUtils.success("修改成功") : ResultUtils.fail("用户名重复");
         }
     }
 
     @Override
     public Result deleteAccount(User user) {
         int userId = user.getUserId();
+        //删除用户图片
+        //      ---/img/head/default_img.jpg---
+        String imgUrl = userMapper.getUserImg(userId);
+        if (!imgUrl.equals("/img/head/default_img.jpg")) {
+            FileSystemUtils.deleteRecursively(new File(Constants.FilePath.FILE + imgUrl));
+        }
         return userMapper.deleteAccount(userId) == true ? ResultUtils.success("删除成功") : ResultUtils.fail("删除失败");
     }
 

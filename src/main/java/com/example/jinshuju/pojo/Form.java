@@ -6,7 +6,6 @@ import java.util.List;
 
 @Data
 public class Form {
-
     private String formId;
     private String formName;
     private String formTitle;
@@ -27,4 +26,6 @@ public class Form {
     private java.sql.Timestamp formDataUpdateTime; //最新一次填写数据的时间
     private int formDataCountByUser; //单用户数据填写量
     private int formIsIssure; //表单是否发布为模版
+    private int formCut; //表单是否开启截止
+    private java.sql.Timestamp formCutTime; //表单截止日期
 }

@@ -67,6 +67,10 @@ spring:
   mvc:
     #静态文件路径
     static-path-pattern: /**
+    #可以将这些请求转换为标准的http方法，使得支持GET、POST、PUT与DELETE请求，该过滤器为HiddenHttpMethodFilter
+    hiddenmethod:
+      filter:
+        enabled: true
   servlet:
     multipart:
       #上传单个文件总最大值

@@ -69,24 +69,28 @@
             user_update_time = #{now}
         where user_id = #{userid}
     </update>
-    <update id="updateEmailById" parameterType="com.example.jinshuju.pojo.User">
+    <update id="updateEmailById">
         update user
-        set user_email = #{userEmail}
-        where user_id = #{userId}
+        set user_email       = #{user.userEmail},
+            user_update_time = #{time}
+        where user_id = #{user.userId}
     </update>
-    <update id="updateTelephoneById" parameterType="com.example.jinshuju.pojo.User">
+    <update id="updateTelephoneById">
         update user
-        set user_telephone = #{userTelephone}
-        where user_id = #{userId}
+        set user_telephone   = #{user.userTelephone},
+            user_update_time = #{time}
+        where user_id = #{user.userId}
     </update>
     <update id="updateImg">
         update user
-        set user_img = #{img}
+        set user_img         = #{img},
+            user_update_time = #{time}
         where user_id = #{userId}
     </update>
     <update id="updateNameById">
         update user
-        set user_name = #{userName}
+        set user_name        = #{userName},
+            user_update_time = #{time}
         where user_id = #{userId}
     </update>
     <delete id="deleteAccount" parameterType="int">
@@ -114,25 +118,28 @@
         from user
         where user_id = #{userid}
     </select>
-    <select id="checkEmailByEmail" resultType="java.lang.Boolean" parameterType="String">
-        select count(1)
+    <select id="checkEmailByEmail" resultType="java.lang.Integer" parameterType="String">
+        select 1
         from user
         where user_email = #{email}
+        limit 1
     </select>
-    <select id="checkUserNameByName" resultType="java.lang.Boolean" parameterType="String">
-        select count(1)
+    <select id="checkUserNameByName" resultType="java.lang.Integer" parameterType="String">
+        select 1
         from user
         where user_name = #{username}
+        limit 1
     </select>
     <select id="findOneAllById" resultMap="UserResultMap" parameterType="int">
         select *
         from user
         where user_id = #{userid}
     </select>
-    <select id="checkUserExist" resultType="java.lang.Boolean" parameterType="int">
-        select count(1)
+    <select id="checkUserExist" resultType="java.lang.Integer" parameterType="int">
+        select 1
         from user
         where user_id = #{userId}
+        limit 1
     </select>
     <select id="getUserImg" resultType="java.lang.String" parameterType="int">
         select user_img

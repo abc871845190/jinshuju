@@ -57,16 +57,16 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         //设置允许跨域的路径
-        registry.addMapping("/**")
-                //设置允许跨域请求的域名
-                //当**Credentials为true时，**Origin不能为星号，需为具体的ip地址【如果接口不带cookie,ip无需设成具体ip】
-                .allowedHeaders("*")
-                .allowedMethods("*")
-                .allowedOrigins("http://localhost:8080")
-                //支持安全证书。跨域携带cookie需要配置这个
-                .allowCredentials(true)
-                //预检请求的有效期，单位为秒。设置maxage，可以避免每次都发出预检请求
-                .maxAge(3600);
+//        registry.addMapping("/**")
+//                //设置允许跨域请求的域名
+//                //当**Credentials为true时，**Origin不能为星号，需为具体的ip地址【如果接口不带cookie,ip无需设成具体ip】
+//                .allowedHeaders("*")
+//                .allowedMethods("*")
+//                .allowedOrigins("http://localhost:8080")
+//                //支持安全证书。跨域携带cookie需要配置这个
+//                .allowCredentials(true)
+//                //预检请求的有效期，单位为秒。设置maxage，可以避免每次都发出预检请求
+//                .maxAge(3600);
     }
 
 }
