@@ -2,7 +2,8 @@ package com.example.jinshuju.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * 静态控制类
@@ -10,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @Slf4j
 public class RootController {
-    @RequestMapping("/")
-    public String returnMsg(){
+    @GetMapping("/jinshuju/")
+    public ModelAndView returnMsg(){
         log.info("to index");
-        return "index";
+        return new ModelAndView("index");
     }
 }
