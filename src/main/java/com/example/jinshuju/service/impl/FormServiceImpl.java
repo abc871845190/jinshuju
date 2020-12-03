@@ -57,6 +57,7 @@ public class FormServiceImpl implements FormService {
         form.setFormIsFavour(0);
         form.setFormIsIssure(0);
         form.setFormCut(0);
+        form.setFormCutTime(new Timestamp(new Date().getTime()));
         //插入form，获取id
         //log.info(form.toString());
         return doCreateForm(user, form);
@@ -529,7 +530,7 @@ public class FormServiceImpl implements FormService {
         //新组件list
         List<Template> newTemplateList = form.getTemplateList();
         //删除原组件与新组件不同的组件 新的不管 旧的全删，更新对应组件修改内容以及数据项内容
-        updateOldTemplate(templateList, newTemplateList, formId);
+        updateOldTemplate(templateList, newTemplateList);
         //备份原来绑定组件list的数据
         List<Data> dataList = dataMapper.getAllDataByFormId(formId);
         //删除与form绑定的组件
@@ -649,7 +650,7 @@ public class FormServiceImpl implements FormService {
                 //关闭截止和开启填写功能
                 formMapper.updateFormCutAndOpen(formId);
                 return ResultUtils.success("表单截止时间已过期，已关闭截止和开启填写标识！");
-            }else {
+            } else {
                 //未过期
                 return ResultUtils.success("表单截止时间未过期");
             }
@@ -735,12 +736,14 @@ public class FormServiceImpl implements FormService {
      *
      * @param templateList
      * @param newTemplateList
-     * @param formId
      */
-    private void updateOldTemplate(List<Template> templateList, List<Template> newTemplateList, String formId) {
+    private void updateOldTemplate(List<Template> templateList, List<Template> newTemplateList) {
         //遍历
         boolean flag = false;
+        log.info("-------------------------------------------------------------------");
         log.info("updateOldTemplate   ==>  newTemplateList  ==>  " + newTemplateList.toString());
+        log.info("-------------------------------------------------------------------");
+        log.info("updateOldTemplate   ==>  oldTemplateList  ==>  " + templateList.toString());
         for (Template oldTemplate : templateList) {
             for (Template newTemplate : newTemplateList) {
                 //（1）如果有formTemplateId 循环遍历查找原来组件list是否有这个id 即判断是否为0
@@ -787,13 +790,20 @@ public class FormServiceImpl implements FormService {
      * @param oldTemplate
      * @param newTemplate
      * @param oldFormTemplateId
+     * @param flag              0为多选   1为单选
      */
     private void updateDataContent(Template oldTemplate, Template newTemplate, int oldFormTemplateId, int flag) {
         List<Data> dataList = dataMapper.getAllDataByFormTemplateId(oldFormTemplateId);
         if (dataList != null && dataList.size() != 0) {
+            log.info("-------------------------------------------------------------------");
+            log.info("updateDataContent  ==>  dataList  ==>  " + dataList.toString());
             //解析组件content
             List<DataBean> oldTemplateContent = JSON.parseArray(oldTemplate.getTemplateContent(), DataBean.class);
             List<DataBean> newTemplateContent = JSON.parseArray(newTemplate.getTemplateContent(), DataBean.class);
+            log.info("-------------------------------------------------------------------");
+            log.info("updateDataContent  ==>  oldTemplateContent  ==>  " + oldTemplateContent.toString());
+            log.info("-------------------------------------------------------------------");
+            log.info("updateDataContent  ==>  newTemplateContent  ==>  " + newTemplateContent.toString());
             //遍历
             for (DataBean oldContent : oldTemplateContent) {
                 for (DataBean newContent : newTemplateContent) {
@@ -821,6 +831,7 @@ public class FormServiceImpl implements FormService {
                                     newDataContent = JSON.toJSONString(dataBeanList);
                                 } else {
                                     DataBean db = JSON.parseObject(dataContent, DataBean.class);
+                                    log.info(db.toString());
                                     if (db.getKey() == keyValue) {
                                         //覆盖
                                         db.setValue(newValue);

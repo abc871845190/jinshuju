@@ -33,17 +33,25 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public Result insertData(Data data) {
+        log.info("-------------------------------------------------------------------");
+        log.info("insertData  ==>  data  ==>  " + data.toString());
         data.setDataCreateTime(new Timestamp(System.currentTimeMillis()));
         data.setDataUpdateTime(new Timestamp(System.currentTimeMillis()));
         //第一，先插入data表数据项
         if (dataMapper.insertData(data)) {
             //ture    现dataid为新插入数据项id
-            if (dataMapper.insertDataDetails(data)) {
-                //ture
-                return ResultUtils.success("插入数据项成功");
+            //先判断表单是否有组件
+            List<Template> templateList = formMapper.getTemplatesByFormId(data.getForm().getFormId());
+            if (templateList != null && templateList.size() != 0) {
+                if (dataMapper.insertDataDetails(data)) {
+                    //ture
+                    return ResultUtils.success("插入数据项成功");
+                } else {
+                    //false
+                    return ResultUtils.fail("插入详细数据项失败");
+                }
             } else {
-                //false
-                return ResultUtils.fail("插入详细数据项失败");
+                return ResultUtils.success("插入数据项成功");
             }
         } else {
             //false
@@ -187,7 +195,7 @@ public class DataServiceImpl implements DataService {
     @Override
     public Result deleteBatch(String idList) {
         //判空
-        if (TextUtils.isEmpty(idList)){
+        if (TextUtils.isEmpty(idList)) {
             return ResultUtils.fail("数据项id为空");
         }
         //解析字符串

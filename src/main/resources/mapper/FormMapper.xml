@@ -500,7 +500,7 @@
         where BINARY form_id = #{formId}
     </select>
     <select id="judgeFormCutTime" resultType="java.lang.Boolean">
-        SELECT form_cut_time<= NOW()
+        SELECT form_cut_time &lt;= NOW()
         FROM form
         WHERE BINARY form_id = #{formId}
     </select>

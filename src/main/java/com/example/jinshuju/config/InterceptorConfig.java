@@ -1,12 +1,15 @@
 package com.example.jinshuju.config;
 
 import com.example.jinshuju.filter.LoginFilter;
-import com.example.jinshuju.utils.Constants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.http.CacheControl;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class InterceptorConfig implements WebMvcConfigurer {
@@ -41,7 +44,10 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
         //图片
-        registry.addResourceHandler("/img/**").addResourceLocations("file:/" + Constants.FilePath.FILE_IMG + File.separator);
+        //registry.addResourceHandler("/img/**").addResourceLocations("file:/" + Constants.FilePath.FILE_IMG + File.separator);
+        //静态文件
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("classpath:/static/").setCacheControl(CacheControl.maxAge(5, TimeUnit.HOURS).cachePublic());
     }
 
     @Bean

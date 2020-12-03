@@ -11,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @Slf4j
 public class RootController {
-    @GetMapping("/jinshuju/")
+    @GetMapping("/")
     public ModelAndView returnMsg(){
         log.info("to index");
         return new ModelAndView("index");
