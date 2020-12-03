@@ -809,7 +809,7 @@ public class FormServiceImpl implements FormService {
                 for (DataBean newContent : newTemplateContent) {
                     //匹配到一样的key值
                     if (oldContent.getKey() == newContent.getKey()) {
-                        //直接拿新的值和键
+                        //记录新的值和键
                         int keyValue = newContent.getKey();
                         String newValue = newContent.getValue();
                         //匹配数据list
