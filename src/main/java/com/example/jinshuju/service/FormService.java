@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 
 public interface FormService {
     /**
@@ -224,4 +225,37 @@ public interface FormService {
      * @return
      */
     Result getFormTags(String formId);
+
+    /**
+     * 判断该表单是否公开填写
+     *
+     * @param formId
+     * @return
+     */
+    Result judgeFormOpen(String formId);
+
+    /**
+     * 判断该表单是否截止填写，过时关闭公开填写
+     *
+     * @param formId
+     * @return
+     */
+    Result judgeFormCut(String formId);
+
+    /**
+     * 表单公开填写开启和关闭截止功能 默认两小时
+     *
+     * @param formId
+     * @return
+     */
+    Result updateFormCut(String formId);
+
+    /**
+     * 自定义截止时间
+     *
+     * @param formId
+     * @param date
+     * @return
+     */
+    Result updateFormCutTime(String formId, Date date);
 }

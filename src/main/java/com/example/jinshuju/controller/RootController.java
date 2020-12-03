@@ -16,4 +16,5 @@ public class RootController {
         log.info("to index");
         return new ModelAndView("index");
     }
+
 }

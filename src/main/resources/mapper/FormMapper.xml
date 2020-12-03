@@ -185,7 +185,23 @@
         </set>
         where form_template_id = #{formTemplateId}
     </update>
-
+    <update id="updateFormCutByFormId">
+        update form
+        set form_cut      = #{flag},
+            form_cut_time = #{time}
+        where BINARY form_id = #{formId}
+    </update>
+    <update id="updateFormCutTime">
+        update form
+        set form_cut_time = #{date}
+        where BINARY form_id = #{formId}
+    </update>
+    <update id="updateFormCutAndOpen">
+        update form
+        set form_cut  = 0,
+            form_open = 0
+        where BINARY form_id = #{formId}
+    </update>
     <delete id="deleteFormById" parameterType="String">
         delete
         from form
@@ -476,6 +492,16 @@
     <select id="getFormTagsByFormId" resultType="java.lang.String" parameterType="String">
         select form_tag
         from form
-        where form_id = #{formId}
+        where BINARY form_id = #{formId}
+    </select>
+    <select id="getFormCutByFormId" resultType="java.lang.Integer" parameterType="String">
+        select form_cut
+        from form
+        where BINARY form_id = #{formId}
+    </select>
+    <select id="judgeFormCutTime" resultType="java.lang.Boolean">
+        SELECT form_cut_time<= NOW()
+        FROM form
+        WHERE BINARY form_id = #{formId}
     </select>
 </mapper>

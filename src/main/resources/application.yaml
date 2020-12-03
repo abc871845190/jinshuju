@@ -40,6 +40,84 @@ spring:
     #serverTimezone时区，characterEncoding编码，useAffectedRows是否用受影响的行数替代查找到的行数来返回数据
     url: jdbc:mysql://localhost:3306/jinshuju2?autoReconnect=true&characterEncoding=utf-8&testOnBorrow=true&serverTimezone=Asia/Shanghai&useAffectedRows=true
     username: root
+    #druid
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      # 初始化连接池的连接数量大小，最小，最大
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      # 配置获取连接等待超时的时间
+      max-wait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位毫秒
+      time-between-eviction-runs-millis: 60000
+      # 配置一个连接在池中最小生存时间 单位是毫秒
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1 FROM user
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      # 打开 PSCache，并且指定每个连接上 PSCache 的大小 官方建议MySQL下建议关闭   个人建议如果想用SQL防火墙 建议打开
+      pool-prepared-statements: false
+      max-pool-prepared-statement-per-connection-size: 20
+      # 配置监控统计拦截的 Filter，去掉后监控界面 SQL 无法统计，wall 用于防火墙
+      # 通过 connection-properties 属性打开 mergeSql 功能；慢 SQL 记录
+      connection-properties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
+      # 配置 DruidStatFilter
+      web-stat-filter:
+        enabled: true
+        url-pattern: /*
+        #设置不统计哪些URL
+        exclusions: .js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*
+      # 配置 DruidStatViewServlet
+      stat-view-servlet:
+        url-pattern: /druid/*
+        # IP 白名单，没有配置或者为空，则允许所有访问
+        allow: 127.0.0.1
+        # IP 黑名单，若白名单也存在，则优先使用
+        #        deny: 192.168.31.253
+        # 禁用 HTML 中 Reset All 按钮
+        reset-enable: false
+        # 登录用户名/密码
+        login-username: root
+        login-password: 123456
+        enabled: true
+      filter:
+        stat:
+          enabled: true
+#quartz定时任务配置
+#  quartz:
+#    #          dataSource:
+#    #            default:
+#    #              driver: com.mysql.jdbc.Driver
+#    #              URL: jdbc:mysql://localhost:3306/jobconfig?useUnicode=true&characterEncoding=utf8
+#    #              user: root
+#    #              password: 12345678
+#    #              maxConnections: 5
+#    #相关属性配置
+#    properties:
+#      org:
+#        quartz:
+#          scheduler:
+#            instanceName: quartzScheduler
+#            instanceId: AUTO
+#          jobStore:
+#            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+#            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+#            tablePrefix: qrtz_
+#            isClustered: false
+#            clusterCheckinInterval: 10000
+#            useProperties: false
+#          threadPool:
+#            class: org.quartz.simpl.SimpleThreadPool
+#            threadCount: 10
+#            threadPriority: 5
+#            threadsInheritContextClassLoaderOfInitializingThread: true
+#    #数据库方式
+#    job-store-type: JDBC
+#    #初始化表结构
+#    jdbc:
+#      initialize-schema: never
   jackson:
     #时间格式化
     date-format: yyyy-MM-dd HH:mm:ss

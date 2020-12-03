@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/FormController")
@@ -291,4 +292,27 @@ public class FormController {
         return formService.getFormTags(formId);
     }
 
+    @ApiOperation(value = "判断该表单是否公开填写", response = Result.class)
+    @GetMapping("/judgeFormOpen")
+    public Result judgeFormOpen(@RequestParam("formId") String formId) {
+        return formService.judgeFormOpen(formId);
+    }
+
+    @ApiOperation(value = "判断该表单是否截止填写，过时关闭公开填写", response = Result.class)
+    @GetMapping("/judgeFormCut")
+    public Result judgeFormCut(@RequestParam("formId") String formId) {
+        return formService.judgeFormCut(formId);
+    }
+
+    @ApiOperation(value = "表单公开填写开启和关闭截止功能，默认两小时", response = Result.class)
+    @PostMapping("/updateFormCut")
+    public Result updateFormCut(@RequestParam("formId") String formId) {
+        return formService.updateFormCut(formId);
+    }
+
+    @ApiOperation(value = "表单公开填写开启和关闭截止功能，默认两小时", response = Result.class)
+    @PostMapping("/addFormCutTime")
+    public Result addFormCutTime(@RequestParam("formId")String formId,@RequestParam("date") Date date){
+        return formService.updateFormCutTime(formId,date);
+    }
 }

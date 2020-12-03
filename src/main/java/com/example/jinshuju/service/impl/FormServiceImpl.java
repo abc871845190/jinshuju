@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -144,9 +146,7 @@ public class FormServiceImpl implements FormService {
             formMapper.insertOldTemplate(haveOldTemplateList, formId);
         }
         //判断是否有新的组件  插入新的组件
-        if (haveNewTemplateList.size() == 0) {
-
-        } else {
+        if (haveNewTemplateList.size() != 0) {
             formMapper.insertNewTemplate(haveNewTemplateList, formId);
         }
         //插入备份的组件list的数据
@@ -625,6 +625,61 @@ public class FormServiceImpl implements FormService {
         return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), formMapper.getFormTagsByFormId(formId));
     }
 
+    @Override
+    public Result judgeFormOpen(String formId) {
+        if (formMapper.checkFormById(formId) == null) {
+            return ResultUtils.fail(ResultEnum.FORM_ID_EMTRY.getCode(), ResultEnum.FORM_ID_EMTRY.getMsg());
+        }
+        return formMapper.getFormOpenById(formId) == 0 ? ResultUtils.success(ResultEnum.FALSE.getCode(), ResultEnum.FALSE.getMsg()) : ResultUtils.success(ResultEnum.TRUE.getCode(), ResultEnum.TRUE.getMsg());
+    }
+
+    @Override
+    public Result judgeFormCut(String formId) {
+        if (formMapper.checkFormById(formId) == null) {
+            return ResultUtils.fail(ResultEnum.FORM_ID_EMTRY.getCode(), ResultEnum.FORM_ID_EMTRY.getMsg());
+        }
+        int flag = formMapper.getFormCutByFormId(formId);
+        if (flag == 0) {
+            return ResultUtils.success("没有开启截止功能");
+        } else {
+            //对比截止时间
+            boolean isCut = formMapper.judgeFormCutTime(formId); //0未过期 1过期
+            if (isCut) {
+                //过期
+                //关闭截止和开启填写功能
+                formMapper.updateFormCutAndOpen(formId);
+                return ResultUtils.success("表单截止时间已过期，已关闭截止和开启填写标识！");
+            }else {
+                //未过期
+                return ResultUtils.success("表单截止时间未过期");
+            }
+        }
+    }
+
+    @Override
+    public Result updateFormCut(String formId) {
+        if (formMapper.checkFormById(formId) == null) {
+            return ResultUtils.fail(ResultEnum.FORM_ID_EMTRY.getCode(), ResultEnum.FORM_ID_EMTRY.getMsg());
+        }
+        int flag = formMapper.getFormCutByFormId(formId);
+        if (flag == 0) {
+            formMapper.updateFormCutByFormId(formId, flag + 1, new Timestamp(DateUtils.addDateTime(new Date(), 2, Calendar.HOUR).getTime()));
+            return ResultUtils.success("表单开启截止");
+        } else {
+            formMapper.updateFormCutByFormId(formId, flag - 1, new Timestamp(new Date().getTime()));
+            return ResultUtils.success("表单关闭截止");
+        }
+    }
+
+    @Override
+    public Result updateFormCutTime(String formId, Date date) {
+        if (formMapper.checkFormById(formId) == null) {
+            return ResultUtils.fail(ResultEnum.FORM_ID_EMTRY.getCode(), ResultEnum.FORM_ID_EMTRY.getMsg());
+        }
+        formMapper.updateFormCutTime(formId, new Timestamp(date.getTime()));
+        return ResultUtils.success();
+    }
+
     /**
      * 删除组件对应的content字段，还有form-img-url相应的链接
      *
@@ -685,6 +740,7 @@ public class FormServiceImpl implements FormService {
     private void updateOldTemplate(List<Template> templateList, List<Template> newTemplateList, String formId) {
         //遍历
         boolean flag = false;
+        log.info("updateOldTemplate   ==>  newTemplateList  ==>  " + newTemplateList.toString());
         for (Template oldTemplate : templateList) {
             for (Template newTemplate : newTemplateList) {
                 //（1）如果有formTemplateId 循环遍历查找原来组件list是否有这个id 即判断是否为0

@@ -92,4 +92,5 @@ public class DataController {
     public Result deleteBatch(@RequestParam(name = "id",defaultValue = "") String idList){
         return dataService.deleteBatch(idList);
     }
+
 }

@@ -284,4 +284,47 @@ public interface FormMapper {
      * @return
      */
     String getFormTagsByFormId(String formId);
+
+    /**
+     * 获取表单截止标识
+     *
+     * @param formId
+     * @return
+     */
+    int getFormCutByFormId(String formId);
+
+    /**
+     * 表单开启或关闭截止
+     *
+     * @param formId
+     * @param flag
+     * @param timestamp
+     * @return
+     */
+    boolean updateFormCutByFormId(@Param("formId") String formId, @Param("flag") int flag, @Param("time") Timestamp timestamp);
+
+    /**
+     * 更新截止时间
+     *
+     * @param formId
+     * @param timestamp
+     * @return
+     */
+    boolean updateFormCutTime(@Param("formId") String formId, @Param("date") Timestamp timestamp);
+
+    /**
+     * 判断这个时间是否过期
+     *
+     * @param formId
+     * @return
+     */
+    boolean judgeFormCutTime(String formId);
+
+    /**
+     * 关闭截止和开启填写功能
+     *
+     * @param formId
+     * @return
+     */
+    boolean updateFormCutAndOpen(String formId);
 }
