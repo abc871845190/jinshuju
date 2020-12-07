@@ -1,14 +1,13 @@
 package com.example.jinshuju.config;
 
 import com.example.jinshuju.filter.LoginFilter;
+import com.example.jinshuju.utils.Constants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.CacheControl;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
@@ -44,7 +43,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
         //图片
-        //registry.addResourceHandler("/img/**").addResourceLocations("file:/" + Constants.FilePath.FILE_IMG + File.separator);
+        registry.addResourceHandler("/img/**").addResourceLocations("file:/" + Constants.FilePath.FILE_IMG + File.separator);
         //静态文件
         registry.addResourceHandler("/static/**")
                 .addResourceLocations("classpath:/static/").setCacheControl(CacheControl.maxAge(5, TimeUnit.HOURS).cachePublic());
@@ -66,14 +65,27 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 //设置允许跨域请求的域名
                 //当**Credentials为true时，**Origin不能为星号，需为具体的ip地址【如果接口不带cookie,ip无需设成具体ip】
-                .allowedHeaders("*")
-                .allowedMethods("*")
-                .allowedOrigins("http://localhost:8080")
+                .allowedOrigins("http://localhost:8080","http://127.0.0.1:8080","http://172.20.165.233:8080")
                 //支持安全证书。跨域携带cookie需要配置这个
                 .allowCredentials(true)
+                .allowedHeaders("*")
+                .allowedMethods("*")
                 //预检请求的有效期，单位为秒。设置maxage，可以避免每次都发出预检请求
                 .maxAge(3600);
     }
 
+    /**
+     * 等价于
+     *
+     * @param registry
+     * @GetMapping("/") public ModelAndView returnMsg(){
+     * log.info("to index");
+     * return new ModelAndView("index");
+     * }
+     */
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("/index");
+    }
 }
 

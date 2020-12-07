@@ -46,7 +46,7 @@ public class FormServiceImpl implements FormService {
     public Result createForm(User user, Form form) throws IOException, WriterException {
         //填补数据
         form.setFormId(UUIDUtils.getRandomId(16));
-        form.setFormName("未命名");
+        form.setFormName("未命名标题");
         form.setFormTitle("未命名标题");
         form.setFormDesc("描述");
         form.setFormImg("null");
@@ -59,7 +59,7 @@ public class FormServiceImpl implements FormService {
         form.setFormCut(0);
         form.setFormCutTime(new Timestamp(new Date().getTime()));
         //插入form，获取id
-        //log.info(form.toString());
+        log.info("createForm  ==>  form  ==>  " + form.toString());
         return doCreateForm(user, form);
     }
 
@@ -74,6 +74,7 @@ public class FormServiceImpl implements FormService {
 //            log.info(QRCodePath);
             form.setFormQRCode(QRCode);
             //更新表单url和二维码数据
+            //log.info("doCreateForm  ==>  form  ==>  " + form.toString());
             formMapper.updateFormById(form);
             //更新form的类别表
             //判断form type属性是否为空
@@ -141,20 +142,39 @@ public class FormServiceImpl implements FormService {
      * @param haveNewTemplateList
      */
     private void insertOldAndNewTemplateList(List<Data> dataList, String formId, List<Template> haveOldTemplateList, List<Template> haveNewTemplateList) {
+        log.info("insertOldAndNewTemplateList  ==>  dataList  ==>  " + dataList.toString());
         //判断旧的是否有组件
         if (haveOldTemplateList.size() != 0) {
             //先插入旧的
             formMapper.insertOldTemplate(haveOldTemplateList, formId);
         }
-        //判断是否有新的组件  插入新的组件
+        boolean flag = false; //有插入新组件动作标识
+        //判断是否有新的组件  插入新的组件  并返回新formTemplateId
         if (haveNewTemplateList.size() != 0) {
             formMapper.insertNewTemplate(haveNewTemplateList, formId);
+            log.info("insertOldAndNewTemplateList  ==>  haveNewTemplateList  ==>  " + haveNewTemplateList.toString());
+            flag = true;
         }
         //插入备份的组件list的数据
         if (dataList != null && dataList.size() != 0) {
             for (Data d : dataList) {
                 d.setForm(new Form());
                 d.getForm().setFormId(formId);
+                if (flag) {
+                    //获取这个dataDetails
+                    List<DataDetails> dataDetailsList = d.getDataDetailsList();
+                    log.info("insertOldAndNewTemplateList  ==>  oldDataDetailsList  ==>  " + dataDetailsList.toString());
+                    if (dataDetailsList != null && dataDetailsList.size() != 0) {
+                        for (Template t : haveNewTemplateList) {
+                            DataDetails newDataDetails = new DataDetails();
+                            newDataDetails.setFormTemplateId(t.getFormTemplateId());
+                            newDataDetails.setDataContent("");
+                            dataDetailsList.add(newDataDetails);
+                        }
+                    }
+                    log.info("insertOldAndNewTemplateList  ==>  newDataDetailsList  ==>  " + dataDetailsList.toString());
+                    d.setDataDetailsList(dataDetailsList);
+                }
             }
             dataMapper.insertDataDetailsList(dataList);
         }
@@ -210,8 +230,12 @@ public class FormServiceImpl implements FormService {
             form.setFormCreateTime(new Timestamp(System.currentTimeMillis()));
             form.setFormUpdateTime(new Timestamp(System.currentTimeMillis()));
             form.setFormViewCount(0);
+            form.setFormTitle(form.getFormName() + "-副本");
             form.setFormName(form.getFormName() + "-副本");
             form.setFormIsFavour(0);
+            form.setFormCut(0);
+            form.setFormIsIssure(0);
+            form.setFormOpen(0);
             //插入新表单
             return doCreateForm(user, form);
         }
@@ -518,6 +542,7 @@ public class FormServiceImpl implements FormService {
     @Override
     public Result updateForm(Form form) {
         //必填的数据有 id,name = title,desc,formimg,templatelist
+        log.info("updateForm  ==>  form  ==>  " + form.toString());
         //填补数据
         form.setFormUpdateTime(new Timestamp(System.currentTimeMillis()));
         //如果表单数据一模一样，照样运行一次插入更新操作，不会中途停止。
@@ -533,6 +558,7 @@ public class FormServiceImpl implements FormService {
         updateOldTemplate(templateList, newTemplateList);
         //备份原来绑定组件list的数据
         List<Data> dataList = dataMapper.getAllDataByFormId(formId);
+        log.info("updateForm  ==>  dataList  ==>  " + dataList.toString());
         //删除与form绑定的组件
         formMapper.deleteTemplateList(formId);
         //插入新的组件list
@@ -741,14 +767,15 @@ public class FormServiceImpl implements FormService {
         //遍历
         boolean flag = false;
         log.info("-------------------------------------------------------------------");
-        log.info("updateOldTemplate   ==>  newTemplateList  ==>  " + newTemplateList.toString());
+        log.info("updateOldTemplate   ==>  newTemplateList新的组件list  ==>  " + newTemplateList.toString());
         log.info("-------------------------------------------------------------------");
-        log.info("updateOldTemplate   ==>  oldTemplateList  ==>  " + templateList.toString());
+        log.info("updateOldTemplate   ==>  oldTemplateList旧的组件list  ==>  " + templateList.toString());
         for (Template oldTemplate : templateList) {
             for (Template newTemplate : newTemplateList) {
                 //（1）如果有formTemplateId 循环遍历查找原来组件list是否有这个id 即判断是否为0
                 if (newTemplate.getFormTemplateId() == 0) {
                     //（2）如果没有formTemplateId 即为新的组件 没有动作
+
                 } else {
                     // （3）有就是先对比是否删减旧的组件
                     int oldFormTemplateId = oldTemplate.getFormTemplateId();
@@ -796,14 +823,14 @@ public class FormServiceImpl implements FormService {
         List<Data> dataList = dataMapper.getAllDataByFormTemplateId(oldFormTemplateId);
         if (dataList != null && dataList.size() != 0) {
             log.info("-------------------------------------------------------------------");
-            log.info("updateDataContent  ==>  dataList  ==>  " + dataList.toString());
+            log.info("updateDataContent  ==>  dataList旧的表单data  ==>  " + dataList.toString());
             //解析组件content
             List<DataBean> oldTemplateContent = JSON.parseArray(oldTemplate.getTemplateContent(), DataBean.class);
             List<DataBean> newTemplateContent = JSON.parseArray(newTemplate.getTemplateContent(), DataBean.class);
             log.info("-------------------------------------------------------------------");
-            log.info("updateDataContent  ==>  oldTemplateContent  ==>  " + oldTemplateContent.toString());
+            log.info("updateDataContent  ==>  oldTemplateContent旧表单组件content拆分  ==>  " + oldTemplateContent.toString());
             log.info("-------------------------------------------------------------------");
-            log.info("updateDataContent  ==>  newTemplateContent  ==>  " + newTemplateContent.toString());
+            log.info("updateDataContent  ==>  newTemplateContent新表单组件content拆分  ==>  " + newTemplateContent.toString());
             //遍历
             for (DataBean oldContent : oldTemplateContent) {
                 for (DataBean newContent : newTemplateContent) {
@@ -812,41 +839,61 @@ public class FormServiceImpl implements FormService {
                         //记录新的值和键
                         int keyValue = newContent.getKey();
                         String newValue = newContent.getValue();
+                        log.info("updateDataContent  ==>  keyValue  ==>  " + keyValue + "  ==>  newValue  ==>  " + newValue);
                         //匹配数据list
                         for (Data d : dataList) {
-                            for (DataDetails dd : d.getDataDetailsList()) {
-                                //解析dataContent
-                                String dataContent = dd.getDataContent();
-                                String newDataContent = null;
-                                if (flag == 0) {
-                                    List<DataBean> dataBeanList = JSON.parseArray(dataContent, DataBean.class);
-                                    //遍历
-                                    for (DataBean db : dataBeanList) {
-                                        if (db.getKey() == keyValue) {
-                                            //有该选项，直接覆盖新的值上去
-                                            db.setValue(newValue);
+                            //判断是否dataContent是否为空
+                            if (d.getDataDetailsList() != null && d.getDataDetailsList().size() != 0) {
+                                //dataContent不为空 证明有数据
+                                for (DataDetails dd : d.getDataDetailsList()) {
+                                    //返回的数据details有可能为空  空就无法判断
+                                    if (dd.getDataContent() != null && dd.getDataContent().length() != 0) {
+                                        log.info("updateDataContent  ==>  dataDetails匹配data的数据  ==>  " + dd.getDataContent());
+                                        //解析dataContent
+                                        String dataContent = dd.getDataContent();
+                                        String newDataContent = null;
+                                        if (flag == 0) {
+                                            //多选
+                                            List<DataBean> dataBeanList = JSON.parseArray(dataContent, DataBean.class);
+                                            log.info("updateDataContent  ==>  多选dataBean数据解析值  ==>  " + dataBeanList.toString());
+                                            //遍历
+                                            if (dataBeanList != null && dataBeanList.size() != 0) {
+                                                for (DataBean db : dataBeanList) {
+                                                    if (db.getKey() == keyValue) {
+                                                        //有该选项，直接覆盖新的值上去
+                                                        db.setValue(newValue);
+                                                    }
+                                                }
+                                            }
+                                            //序列化list
+                                            newDataContent = JSON.toJSONString(dataBeanList);
+                                            log.info("updateDataContent  ==>  newDataContent序列化之后的新dataContent  ==>  " + newDataContent);
+
+                                        } else {
+                                            //单选
+                                            DataBean db = JSON.parseObject(dataContent, DataBean.class);
+                                            log.info("updateDataContent  ==>  单选dataBean数据解析值  ==>  " + db.toString());
+                                            if (db != null) {
+                                                if (db.getKey() == keyValue) {
+                                                    //覆盖
+                                                    db.setValue(newValue);
+                                                }
+                                            }
+                                            //序列化
+                                            newDataContent = JSON.toJSONString(db);
+                                            log.info("updateDataContent  ==>  newDataContent序列化之后的新dataContent  ==>  " + newDataContent);
                                         }
+                                        //设置新的dataContent
+                                        dd.setDataContent(newDataContent);
                                     }
-                                    //序列化list
-                                    newDataContent = JSON.toJSONString(dataBeanList);
-                                } else {
-                                    DataBean db = JSON.parseObject(dataContent, DataBean.class);
-                                    log.info(db.toString());
-                                    if (db.getKey() == keyValue) {
-                                        //覆盖
-                                        db.setValue(newValue);
-                                    }
-                                    //序列化
-                                    newDataContent = JSON.toJSONString(db);
                                 }
-                                //设置新的dataContent
-                                dd.setDataContent(newDataContent);
                             }
                         }
                     }
                 }
             }
             //向数据库更新相关的数据项信息
+            log.info("updateDataContent  ==>  newDataList修改完原数据之后的数据项  ==>  " + dataList.toString());
             dataMapper.updateDataDetailsList(dataList);
         } else {
             //没有数据   无动作

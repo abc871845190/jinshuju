@@ -162,4 +162,12 @@ public interface DataMapper {
      * @return
      */
     List<Data> getAllDataByFormTemplateId(int formTemplateId);
+
+    /**
+     * 批量插入新数据
+     *
+     * @param dataList
+     * @return
+     */
+    boolean insertNewDataList(List<Data> dataList);
 }

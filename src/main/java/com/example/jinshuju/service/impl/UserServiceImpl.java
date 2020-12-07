@@ -134,6 +134,7 @@ public class UserServiceImpl implements UserService {
         redisUtils.set(Constants.User.KEY_TOKEN + tokenKey, token, Constants.TimeValue.ONE_WEEK);
         //把tokenKey写到cookie里面
         CookiesUtils.setCookies(response, Constants.User.COOKIES_TOKEN, tokenKey, "/");
+        response.setHeader(Constants.User.HEADER_TOKEN, tokenKey);
         //生成refreshToken
         String refreshToken = JwtUtils.createRefreshJWT(String.valueOf(foundUser.getUserId()), Constants.TimeValue.ONE_WEEK * 1000);
         //log.info("create refreshToken is   ==>   "+refreshToken);
@@ -151,9 +152,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User checkUserLogin(HttpServletRequest request, HttpServletResponse response) {
         //拿cookies的md5token
-        // String tokenKey = CookiesUtils.getCookieValue(request, Constants.User.COOKIES_TOKEN);
+        String tokenKey1 = CookiesUtils.getCookieValue(request, Constants.User.COOKIES_TOKEN);
+        //log.info("tokenKey1   ==>   " + tokenKey1);
         //跨域拿请求头的token
         String tokenKey = request.getHeader("token");
+        //log.info("tokenKey   ==>   " + tokenKey);
         //log.info("tokenKey   ==>   " + tokenKey);
         //把md5token在redis里面拿数据
         User realuser = parseByToken(tokenKey);
@@ -224,9 +227,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result updatePsw(int userid, String originPsw, String newPsw) {
         //判空
-        if (userid == 0) {
-            return ResultUtils.fail("用户id为空");
-        }
         if (TextUtils.isEmpty(originPsw)) {
             return ResultUtils.fail("原密码为空");
         }

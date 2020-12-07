@@ -19,11 +19,16 @@ server:
     session:
       #session生命周期
       timeout: 30m
+#      cookie:
+#        domain: 172.20.165.233:8080
+#        http-only: true
+#        path: /
   tomcat:
     uri-encoding: utf-8
   max-http-header-size: 10240000
   undertow:
     max-http-post-size: 10240000
+  address: 0.0.0.0
 spring:
   application:
     #访问根路径
@@ -85,39 +90,39 @@ spring:
       filter:
         stat:
           enabled: true
-#quartz定时任务配置
-#  quartz:
-#    #          dataSource:
-#    #            default:
-#    #              driver: com.mysql.jdbc.Driver
-#    #              URL: jdbc:mysql://localhost:3306/jobconfig?useUnicode=true&characterEncoding=utf8
-#    #              user: root
-#    #              password: 12345678
-#    #              maxConnections: 5
-#    #相关属性配置
-#    properties:
-#      org:
-#        quartz:
-#          scheduler:
-#            instanceName: quartzScheduler
-#            instanceId: AUTO
-#          jobStore:
-#            class: org.quartz.impl.jdbcjobstore.JobStoreTX
-#            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
-#            tablePrefix: qrtz_
-#            isClustered: false
-#            clusterCheckinInterval: 10000
-#            useProperties: false
-#          threadPool:
-#            class: org.quartz.simpl.SimpleThreadPool
-#            threadCount: 10
-#            threadPriority: 5
-#            threadsInheritContextClassLoaderOfInitializingThread: true
-#    #数据库方式
-#    job-store-type: JDBC
-#    #初始化表结构
-#    jdbc:
-#      initialize-schema: never
+  #quartz定时任务配置
+  #  quartz:
+  #    #          dataSource:
+  #    #            default:
+  #    #              driver: com.mysql.jdbc.Driver
+  #    #              URL: jdbc:mysql://localhost:3306/jobconfig?useUnicode=true&characterEncoding=utf8
+  #    #              user: root
+  #    #              password: 12345678
+  #    #              maxConnections: 5
+  #    #相关属性配置
+  #    properties:
+  #      org:
+  #        quartz:
+  #          scheduler:
+  #            instanceName: quartzScheduler
+  #            instanceId: AUTO
+  #          jobStore:
+  #            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+  #            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+  #            tablePrefix: qrtz_
+  #            isClustered: false
+  #            clusterCheckinInterval: 10000
+  #            useProperties: false
+  #          threadPool:
+  #            class: org.quartz.simpl.SimpleThreadPool
+  #            threadCount: 10
+  #            threadPriority: 5
+  #            threadsInheritContextClassLoaderOfInitializingThread: true
+  #    #数据库方式
+  #    job-store-type: JDBC
+  #    #初始化表结构
+  #    jdbc:
+  #      initialize-schema: never
   jackson:
     #时间格式化
     date-format: yyyy-MM-dd HH:mm:ss

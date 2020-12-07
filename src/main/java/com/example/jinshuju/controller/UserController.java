@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -107,12 +108,15 @@ public class UserController {
             @ApiImplicitParam(paramType = "query", name = "newPsw", value = "新密码", required = true, dataType = "String", example = "1234567")
     })
     @PatchMapping("/updatePsw")
-    public Result updatePsw(@RequestBody Map<String, Object> map) {
-        int userid = (int) map.get("userid");
+    public Result updatePsw(@RequestBody Map<String, Object> map, HttpServletRequest request, HttpServletResponse response) {
+        User user = userService.checkUserLogin(request, response);
+        if (user == null) {
+            return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
+        }
         String originPsw = (String) map.get("oriPsw");
         String newPsw = (String) map.get("newPsw");
         //log.info("id = " + userid + "  oriPsw = " + originPsw + "  newPsw = " + newPsw);
-        return userService.updatePsw(userid, originPsw, newPsw);
+        return userService.updatePsw(user.getUserId(), originPsw, newPsw);
     }
 
     /**
@@ -128,10 +132,10 @@ public class UserController {
     })
     @PatchMapping("/updateEmail")
     public Result updateEmail(@RequestBody User user, HttpServletRequest request, HttpServletResponse response) {
-        User thisUser = userService.checkUserLogin(request,response);
-        if (thisUser!=null){
+        User thisUser = userService.checkUserLogin(request, response);
+        if (thisUser != null) {
             user.setUserId(thisUser.getUserId());
-        }else {
+        } else {
             return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
         }
         return userService.updateEmail(user);
@@ -143,11 +147,11 @@ public class UserController {
             @ApiResponse(code = 2, message = "失败")
     })
     @PatchMapping("/updateTelephone")
-    public Result updateTelephone(@RequestBody User user,HttpServletRequest request,HttpServletResponse response) {
-        User thisUser = userService.checkUserLogin(request,response);
-        if (thisUser!=null){
+    public Result updateTelephone(@RequestBody User user, HttpServletRequest request, HttpServletResponse response) {
+        User thisUser = userService.checkUserLogin(request, response);
+        if (thisUser != null) {
             user.setUserId(thisUser.getUserId());
-        }else {
+        } else {
             return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
         }
         return userService.updateTelephone(user);
@@ -213,10 +217,10 @@ public class UserController {
 
     @ApiOperation(value = "修改用户名，会检查用户名是否重复", response = Result.class)
     @PatchMapping("/updateUserName")
-    public Result updateUserName(@RequestParam("userName") String userName,HttpServletRequest request,HttpServletResponse response){
+    public Result updateUserName(@RequestParam("userName") String userName, HttpServletRequest request, HttpServletResponse response) {
         User user = userService.checkUserLogin(request, response);
         if (user != null) {
-            return userService.updateName(userName,user);
+            return userService.updateName(userName, user);
         } else {
             return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());
         }
@@ -224,11 +228,11 @@ public class UserController {
 
     @ApiOperation(value = "删除账户，会退出登录", response = Result.class)
     @DeleteMapping("/deleteAccount")
-    public Result deleteAccount(HttpServletRequest request,HttpServletResponse response){
+    public Result deleteAccount(HttpServletRequest request, HttpServletResponse response) {
         //先退出登录
         User user = userService.checkUserLogin(request, response);
         if (user != null) {
-            userService.logout(request,response);
+            userService.logout(request, response);
             return userService.deleteAccount(user);
         } else {
             return ResultUtils.fail(ResultEnum.USER_NOT_LOGIN.getCode(), ResultEnum.USER_NOT_LOGIN.getMsg());

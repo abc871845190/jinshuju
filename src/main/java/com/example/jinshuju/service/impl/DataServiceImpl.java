@@ -206,4 +206,18 @@ public class DataServiceImpl implements DataService {
         dataMapper.deleteBatch(array);
         return ResultUtils.success();
     }
+
+    @Override
+    public Result insertBatch(List<Data> dataList) {
+        //判空
+        if (dataList != null && dataList.size() != 0) {
+            if (dataMapper.insertNewDataList(dataList)) {
+                //插入成功返回相应的dataId
+                dataMapper.insertDataDetailsList(dataList);
+                return ResultUtils.success("插入成功");
+            }
+            return ResultUtils.fail("插入失败");
+        }
+        return ResultUtils.fail("数据列表为空");
+    }
 }

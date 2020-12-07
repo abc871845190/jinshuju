@@ -1,5 +1,7 @@
 package com.example.jinshuju;
 
+import com.alibaba.fastjson.JSON;
+import com.example.jinshuju.pojo.DataBean;
 import com.example.jinshuju.utils.*;
 import com.example.jinshuju.utils.EasyExcelUtils.EasyExcelUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -88,12 +90,12 @@ class JinshujuApplicationTests {
     @Test
     public void testUUID() {
         //log.info(String.valueOf(UUID.randomUUID()).replace("-",""));
-        char[] digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8',
+        char[] digits = {'0', '1', '2', '3', '4', '5', '6', '7', '8',
                 '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
                 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y',
                 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
                 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
-                'Z' };
+                'Z'};
         Random random = new Random();
         char[] cs = new char[12];
         for (int i = 0; i < cs.length; i++) {
@@ -136,8 +138,8 @@ class JinshujuApplicationTests {
 //        for (int i : array) {
 //            log.info(String.valueOf(i));
 //        }
-        String img = Constants.Url.host+"/img/head/default_img.jpg";
-        String subImg = img.substring(img.lastIndexOf("/")+1);
+        String img = Constants.Url.host + "/img/head/default_img.jpg";
+        String subImg = img.substring(img.lastIndexOf("/") + 1);
         log.info(subImg);
 
     }
@@ -170,7 +172,8 @@ class JinshujuApplicationTests {
 // 单选  ==>  {key:"0",value:"xx"}
 //        String checkbox = "[{key:\"0\",value:\"xx\"},{key:\"1\",value:\"xxx\"},{key:\"2\",value:\"啊啊啊\"}]";
 //        String radio = "{key:\"0\",value:\"xx\"}";
-//
+        String emptyCheckBox = "[]";
+        String emptyRadio = "";
 //        List<DataBean> dataBeanList = JSON.parseArray(checkbox,DataBean.class);
 //        log.info(dataBeanList.toString());
 //        log.info(String.valueOf(dataBeanList.size()));
@@ -186,12 +189,18 @@ class JinshujuApplicationTests {
 //        String beanTOJson = JSON.toJSONString(db);
 //        log.info(beanTOJson);
 
-        log.info(String.valueOf(ArrayUtils.isHaveByInt(2, Constants.Array.MultiSelect)));
+//        log.info(String.valueOf(ArrayUtils.isHaveByInt(2, Constants.Array.MultiSelect)));
+        List<DataBean> dataBeanList = JSON.parseArray(emptyCheckBox,DataBean.class);
+        log.info(dataBeanList.toString());
+        log.info(String.valueOf(dataBeanList.size()));
+        DataBean dataBean = JSON.parseObject(emptyRadio,DataBean.class);
+        log.info(dataBeanList.toString());
+        log.info(String.valueOf(dataBean!=null));
     }
 
     @Test
     public void testImg2String() throws IOException {
-        File file = new File(Constants.FilePath.FILE_IMG_HEAD+File.separator+"default_img.jpg");
+        File file = new File(Constants.FilePath.FILE_IMG_HEAD + File.separator + "default_img.jpg");
         FileInputStream is = new FileInputStream(file);
         byte[] buffer = new byte[(int) file.length()];
         is.read(buffer);

@@ -53,7 +53,8 @@
         values (#{formId},
                 (select id from form_type where form_type = #{formType}))
     </insert>
-    <insert id="insertNewTemplate">
+    <insert id="insertNewTemplate" useGeneratedKeys="true" keyProperty="templateList.formTemplateId"
+            keyColumn="form_template_id">
         insert into form_template (
         form_id,
         template_id,
@@ -63,7 +64,8 @@
         template_default,
         template_type,
         template_icon,
-        template_img_url
+        template_img_url,
+        template_require
         ) values
         <foreach collection="templateList" item="item" index="index" separator=",">
             <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -84,6 +86,7 @@
                 <if test="item.templateIcon != null and item.templateIcon != ''">#{item.templateIcon},</if>
                 <if test="item.templateImgUrl == null or item.templateImgUrl == ''">null,</if>
                 <if test="item.templateImgUrl != null and item.templateImgUrl != ''">#{item.templateImgUrl},</if>
+                #{item.templateRequire},
             </trim>
         </foreach>
     </insert>
@@ -98,7 +101,8 @@
         template_default,
         template_type,
         template_icon,
-        template_img_url
+        template_img_url,
+        template_require
         ) values
         <foreach collection="templateList" item="item" index="index" separator=",">
             <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -120,12 +124,14 @@
                 <if test="item.templateIcon != null and item.templateIcon != ''">#{item.templateIcon},</if>
                 <if test="item.templateImgUrl == null or item.templateImgUrl == ''">null,</if>
                 <if test="item.templateImgUrl != null and item.templateImgUrl != ''">#{item.templateImgUrl},</if>
+                #{item.templateRequire},
             </trim>
         </foreach>
     </insert>
     <update id="updateFormNameById">
         update form
         set form_name        = #{formName},
+            form_title       = #{formName},
             form_update_time = #{time}
         where BINARY form_id = #{formId}
     </update>
@@ -148,7 +154,7 @@
             <if test="formTitle == null or formTitle == ''">form_title = "未命名标题",</if>
             <if test="formTitle != null and formTitle != ''">form_title = #{formTitle},</if>
             <if test="formDesc != null and formDesc != ''">form_desc = #{formDesc},</if>
-            <if test="formImg != null and formImg != ''">form_desc = #{formImg},</if>
+            <if test="formImg != null and formImg != ''">form_img = #{formImg},</if>
             <if test="formQRCode != null and formQRCode != ''">form_QRCode = #{formQRCode},</if>
             <if test="formUrl != null and formUrl != ''">form_url = #{formUrl},</if>
             form_update_time = #{formUpdateTime}
@@ -280,6 +286,7 @@
         <result property="templateType" column="template_type"/>
         <result property="templateIcon" column="template_icon"/>
         <result property="templateImgUrl" column="template_img_url"/>
+        <result property="templateRequire" column="template_require"/>
     </resultMap>
     <select id="getTemplatesByFormId" parameterType="String" resultMap="TemplateResultMap">
         SELECT ft.form_template_id,
@@ -292,7 +299,8 @@
                t.template_name,
                t.template_desc,
                ft.template_icon,
-               ft.template_img_url
+               ft.template_img_url,
+               ft.template_require
         FROM form_template ft,
              template t
         WHERE BINARY form_id = #{formId}
@@ -471,7 +479,8 @@
                t.template_name,
                t.template_desc,
                ft.template_icon,
-               ft.template_img_url
+               ft.template_img_url,
+               ft.template_require
         FROM form_template ft,
              template t
         WHERE ft.form_template_id = #{formTemplateId}

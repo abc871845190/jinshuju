@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @RestController
 @RequestMapping("/DataController")
@@ -93,4 +94,9 @@ public class DataController {
         return dataService.deleteBatch(idList);
     }
 
+    @ApiOperation(value = "批量添加data    id为String类型", response = Result.class)
+    @DeleteMapping("/insertBatch")
+    public Result insertBatch(@RequestParam("dataList") List<Data> dataList){
+        return dataService.insertBatch(dataList);
+    }
 }

@@ -52,6 +52,13 @@
             </foreach>
         </foreach>
     </insert>
+    <insert id="insertNewDataList" useGeneratedKeys="true" keyProperty="dataId" keyColumn="data_id">
+        insert into data(form_id, user_id, data_create_time, data_update_time, data_write_time)
+        VALUES
+        <foreach collection="dataList" item="item" separator="," index="index">
+            (#{item.form.formId},#{item.user.userId},now(),now(),#{item.dataWriteTime})
+        </foreach>
+    </insert>
     <update id="updateDataTime" parameterType="com.example.jinshuju.pojo.Data">
         update data
         set data_update_time = #{dataUpdateTime}
@@ -64,20 +71,22 @@
     </update>
     <update id="updateDataDetailsList">
         UPDATE data_details
-        SET data_content = (
+        SET data_content =
         CASE
         <foreach collection="dataList" item="data" index="i">
             <foreach collection="data.dataDetailsList" item="dataDetail" index="j">
                 WHEN data_id = #{data.dataId} AND form_template_id = #{dataDetail.formTemplateId} THEN
-                <if test="dataDetail.dataContent != null and dataDetail.dataContent != ''">#{dataDetail.dataContent}</if>
-                <if test="dataDetail.dataContent == null or dataDetail.dataContent == ''">"[]"</if>
+                <if test="dataDetail.dataContent != null and dataDetail.dataContent != ''">#{dataDetail.dataContent}
+                </if>
+                <if test="dataDetail.dataContent == null or dataDetail.dataContent == ''">""</if>
             </foreach>
         </foreach>
         END
-        )
-        WHERE data_id IN
+        WHERE (data_id,form_template_id) IN
         <foreach collection="dataList" item="data" index="i" separator="," open="(" close=")">
-            #{data.dataId}
+            <foreach collection="data.dataDetailsList" item="dataDetail" index="j">
+                (#{data.dataId},#{dataDetail.formTemplateId})
+            </foreach>
         </foreach>
     </update>
     <delete id="deleteAllDataByFormId" parameterType="String">

@@ -7,6 +7,7 @@ public interface Constants {
     interface User {
         String KEY_TOKEN = "key_token_";
         String COOKIES_TOKEN = "cookies_token";
+        String HEADER_TOKEN = "header_token";
     }
 
     interface TimeValue {
