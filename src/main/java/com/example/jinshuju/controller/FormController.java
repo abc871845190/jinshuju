@@ -137,7 +137,7 @@ public class FormController {
         return formService.updateFormOpen(formId);
     }
 
-    @ApiOperation(value = "获取所有已公开表单该tag下的第n个分页以及搜寻的关键字", response = Result.class)
+    @ApiOperation(value = "获取所有已公开模版该tag下的第n个分页以及搜寻的关键字", response = Result.class)
     @ApiResponses({
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
@@ -150,7 +150,7 @@ public class FormController {
         return formService.getFormsPage(keyWord, formTag, pageInt);
     }
 
-    @ApiOperation(value = "获取所有已公开表单该tag下的总分页数以及关键字", response = Result.class)
+    @ApiOperation(value = "获取所有已公开模版该tag下的总分页数以及关键字", response = Result.class)
     @ApiResponses({
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")

@@ -90,4 +90,6 @@ public interface DataService {
      * @return
      */
     Result insertBatch(List<Data> dataList);
+
+    Result testData();
 }

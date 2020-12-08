@@ -2,6 +2,7 @@ package com.example.jinshuju.controller;
 
 import com.example.jinshuju.pojo.Data;
 import com.example.jinshuju.pojo.User;
+import com.example.jinshuju.service.AsyncService;
 import com.example.jinshuju.service.DataService;
 import com.example.jinshuju.service.UserService;
 import com.example.jinshuju.utils.ResultUtils.Result;
@@ -28,14 +29,17 @@ public class DataController {
     @Autowired(required = false)
     UserService userService;
 
+    @Autowired(required = false)
+    AsyncService asyncService;
+
     @ApiOperation(value = "添加表单数据", response = Result.class)
     @PostMapping("/Data")
-    public Result insertData(@RequestBody Data data,HttpServletRequest request,HttpServletResponse response) {
-        User user = userService.checkUserLogin(request,response);
-        if (user!= null){
+    public Result insertData(@RequestBody Data data, HttpServletRequest request, HttpServletResponse response) {
+        User user = userService.checkUserLogin(request, response);
+        if (user != null) {
             //登陆了就放id
             data.setUser(user);
-        }else{
+        } else {
             //没登陆就放0
             data.setUser(new User());
             data.getUser().setUserId(0);
@@ -90,13 +94,23 @@ public class DataController {
 
     @ApiOperation(value = "批量删除data    id为String类型", response = Result.class)
     @DeleteMapping("/deleteBatch")
-    public Result deleteBatch(@RequestParam(name = "id",defaultValue = "") String idList){
+    public Result deleteBatch(@RequestParam(name = "id", defaultValue = "") String idList) {
         return dataService.deleteBatch(idList);
     }
 
     @ApiOperation(value = "批量添加data    id为String类型", response = Result.class)
     @DeleteMapping("/insertBatch")
-    public Result insertBatch(@RequestParam("dataList") List<Data> dataList){
+    public Result insertBatch(@RequestParam("dataList") List<Data> dataList) {
         return dataService.insertBatch(dataList);
+    }
+
+    /**
+     * 插入数据压榨
+     *
+     * @return
+     */
+    @PostMapping("/testData")
+    public Result testData() {
+        return asyncService.testData();
     }
 }

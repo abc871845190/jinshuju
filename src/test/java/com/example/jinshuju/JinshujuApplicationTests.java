@@ -142,6 +142,14 @@ class JinshujuApplicationTests {
         String subImg = img.substring(img.lastIndexOf("/") + 1);
         log.info(subImg);
 
+        String oldImg = "/img/head/43ed875f22d49cf788765f5420ef4ea.jpg";
+        String imgName = null;
+        if (!oldImg.equals("/img/head/default_img.jpg")) {
+            //截取图片名字
+            log.info("图片不是默认图片");
+            imgName = oldImg.substring(oldImg.lastIndexOf("/") + 1);
+            log.info(imgName);
+        }
     }
 
     @Test

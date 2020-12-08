@@ -44,6 +44,7 @@ public interface Constants {
     }
 
     interface Url{
-        String host = "jinshuju.max3.fgnwctvip.com";
+        String host = "http://qforest.max3.fgnwctvip.com";
+        String host1 = "http://qforest.fast2.fgnwctvip.com";
     }
 }

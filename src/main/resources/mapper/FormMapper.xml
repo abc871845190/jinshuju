@@ -58,6 +58,7 @@
         insert into form_template (
         form_id,
         template_id,
+        template_desc,
         template_title,
         template_content,
         template_count,
@@ -71,6 +72,8 @@
             <trim prefix="(" suffix=")" suffixOverrides=",">
                 #{formId},
                 #{item.templateId},
+                <if test="item.templateDesc == null or item.templateDesc == ''">"描述",</if>
+                <if test="item.templateDesc != null and item.templateDesc != ''">#{item.templateDesc},</if>
                 <if test="item.templateTitle == null or item.templateTitle == ''">"未定义组件名",</if>
                 <if test="item.templateTitle != null and item.templateTitle != ''">#{item.templateTitle},</if>
                 <if test="item.templateContent == null or item.templateContent == ''">
@@ -95,6 +98,7 @@
         form_template_id,
         form_id,
         template_id,
+        template_desc,
         template_title,
         template_content,
         template_count,
@@ -109,6 +113,8 @@
                 #{item.formTemplateId},
                 #{formId},
                 #{item.templateId},
+                <if test="item.templateDesc == null or item.templateDesc == ''">"描述",</if>
+                <if test="item.templateDesc != null and item.templateDesc != ''">#{item.templateDesc},</if>
                 <if test="item.templateTitle == null or item.templateTitle == ''">"未定义组件名",</if>
                 <if test="item.templateTitle != null and item.templateTitle != ''">#{item.templateTitle},</if>
                 <if test="item.templateContent == null or item.templateContent == ''">
@@ -240,6 +246,7 @@
         <result property="formIsFavour" column="form_isFavour"/>
         <result property="formCut" column="form_cut"/>
         <result property="formCutTime" column="form_cut_time"/>
+        <result property="formQRCode" column="form_QRCode"/>
         <collection property="templateList" ofType="com.example.jinshuju.pojo.Template"
                     column="form_id" select="getTemplatesByFormId"/>
     </resultMap>
@@ -297,7 +304,7 @@
                ft.template_content,
                ft.template_type,
                t.template_name,
-               t.template_desc,
+               ft.template_desc,
                ft.template_icon,
                ft.template_img_url,
                ft.template_require
@@ -371,6 +378,7 @@
         <result property="formDesc" column="form_desc"/>
         <result property="formTag" column="form_tag"/>
         <result property="formUrl" column="form_url"/>
+        <result property="formQRCode" column="form_QRCode"/>
         <result property="formViewCount" column="form_view_count"/>
         <result property="formType" column="form_type"/>
         <result property="formDataCountByUser" column="form_data_fill_count"/>
@@ -381,6 +389,7 @@
                         f.form_name,
                         f.form_desc,
                         f.form_tag,
+                        f.form_QRCode,
                         f.form_url,
                         f.form_view_count,
                         ft.form_type,
@@ -477,7 +486,7 @@
                ft.template_content,
                ft.template_type,
                t.template_name,
-               t.template_desc,
+               ft.template_desc,
                ft.template_icon,
                ft.template_img_url,
                ft.template_require

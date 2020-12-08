@@ -336,21 +336,24 @@ public class UserServiceImpl implements UserService {
 //            e.printStackTrace();
 //        }
 
-        String newImg = FileUtils.uploadMultipartFile(file, Constants.FilePath.FILE_IMG_HEAD);
+        String newImg = null;
 
         String oldImg = userMapper.getUserImg(userId);
         //判断原图片是不是创建用户时的值
         String imgName = null;
         if (!oldImg.equals("/img/head/default_img.jpg")) {
             //截取图片名字
+            log.info("图片不是默认图片");
             imgName = oldImg.substring(oldImg.lastIndexOf("/") + 1);
         }
         if (!TextUtils.isEmpty(imgName)) {
             //删除图片
+            log.info("删除图片");
             FileUtils.deleteFile(Constants.FilePath.FILE_IMG_HEAD, imgName);
-            //更新用户数据库
-            userMapper.updateImg("/img/head/" + newImg, userId, new Timestamp(System.currentTimeMillis()));
         }
+        newImg = FileUtils.uploadMultipartFile(file, Constants.FilePath.FILE_IMG_HEAD);
+        //更新用户数据库
+        userMapper.updateImg("/img/head/" + newImg, userId, new Timestamp(System.currentTimeMillis()));
         return ResultUtils.success("上传成功", "/img/head/" + newImg);
     }
 

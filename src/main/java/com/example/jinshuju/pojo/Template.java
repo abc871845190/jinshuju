@@ -7,7 +7,7 @@ public class Template {
 
     private int templateId;
     private String templateName;
-    private String templateDesc;
+    private String templateDesc; //组件描述
     private String templateTitle;
     private String templateContent;
     private String templateContentDefault;

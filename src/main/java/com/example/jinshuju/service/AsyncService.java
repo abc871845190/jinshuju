@@ -13,5 +13,5 @@ public interface AsyncService {
      */
     Result deleteImg(String fileUrl);
 
-
+    Result testData();
 }

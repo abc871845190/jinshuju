@@ -1,6 +1,7 @@
 package com.example.jinshuju.service.impl;
 
 import com.example.jinshuju.service.AsyncService;
+import com.example.jinshuju.service.DataService;
 import com.example.jinshuju.service.FormService;
 import com.example.jinshuju.service.MailService;
 import com.example.jinshuju.utils.ResultUtils.Result;
@@ -19,6 +20,9 @@ public class AsyncServiceImpl implements AsyncService {
     @Autowired(required = false)
     FormService formService;
 
+    @Autowired(required = false)
+    DataService dataService;
+
     @Override
     @Async
     public void sendEmail(String subject, String content, String[] toWho) {
@@ -31,4 +35,9 @@ public class AsyncServiceImpl implements AsyncService {
         return formService.deleteImg(fileUrl);
     }
 
+    @Override
+    @Async
+    public Result testData() {
+        return dataService.testData();
+    }
 }

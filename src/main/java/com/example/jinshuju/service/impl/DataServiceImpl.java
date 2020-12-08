@@ -220,4 +220,62 @@ public class DataServiceImpl implements DataService {
         }
         return ResultUtils.fail("数据列表为空");
     }
+
+    @Override
+    public Result testData() {
+        log.info("testData=====ing====");
+        Data data = new Data();
+        data.setForm(new Form());
+        data.getForm().setFormId("0Gd6hRhkBP0xmUak");
+        data.setUser(new User());
+        data.getUser().setUserId(0);
+        List<DataDetails> dataDetailsList = new ArrayList<>();
+        DataDetails dataDetails = new DataDetails();
+        dataDetails.setFormTemplateId(588);
+        dataDetails.setDataContent("{\"key\":0,\"value\":\"选项1\"}");
+        DataDetails dataDetails1 = new DataDetails();
+        dataDetails1.setFormTemplateId(589);
+        dataDetails1.setDataContent("[{\"key\":1,\"value\":\"选项2\"}]");
+        DataDetails dataDetails2 = new DataDetails();
+        dataDetails2.setFormTemplateId(590);
+        dataDetails2.setDataContent("123");
+        DataDetails dataDetails3 = new DataDetails();
+        dataDetails3.setFormTemplateId(591);
+        dataDetails3.setDataContent("456");
+        DataDetails dataDetails4 = new DataDetails();
+        dataDetails4.setFormTemplateId(592);
+        dataDetails4.setDataContent("嘎嘎");
+        DataDetails dataDetails5 = new DataDetails();
+        dataDetails5.setFormTemplateId(593);
+        dataDetails5.setDataContent("{\"key\":1,\"value\":\"选项2\"}");
+        dataDetailsList.add(dataDetails);
+        dataDetailsList.add(dataDetails1);
+        dataDetailsList.add(dataDetails2);
+        dataDetailsList.add(dataDetails3);
+        dataDetailsList.add(dataDetails4);
+        dataDetailsList.add(dataDetails5);
+        data.setDataDetailsList(dataDetailsList);
+        data.setDataCreateTime(new Timestamp(System.currentTimeMillis()));
+        data.setDataUpdateTime(new Timestamp(System.currentTimeMillis()));
+        //第一，先插入data表数据项
+        if (dataMapper.insertData(data)) {
+            //ture    现dataid为新插入数据项id
+            //先判断表单是否有组件
+            List<Template> templateList = formMapper.getTemplatesByFormId(data.getForm().getFormId());
+            if (templateList != null && templateList.size() != 0) {
+                if (dataMapper.insertDataDetails(data)) {
+                    //ture
+                    return ResultUtils.success("插入数据项成功");
+                } else {
+                    //false
+                    return ResultUtils.fail("插入详细数据项失败");
+                }
+            } else {
+                return ResultUtils.success("插入数据项成功");
+            }
+        } else {
+            //false
+            return ResultUtils.fail("插入数据项失败");
+        }
+    }
 }

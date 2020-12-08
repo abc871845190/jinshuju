@@ -70,8 +70,8 @@ public class FormServiceImpl implements FormService {
             //生成相应公开访问填写的url 以及二维码
             String formUrl = "/f/" + formId;
             form.setFormUrl(formUrl);
-            String QRCode = "/img/QRCode/" + QRCodeUtils.createImage(Constants.Url.host + "/f/" + formUrl);
-//            log.info(QRCodePath);
+            String QRCode = "/img/QRCode/" + QRCodeUtils.createImage(Constants.Url.host1 + formUrl);
+            //log.info(QRCodePath);
             form.setFormQRCode(QRCode);
             //更新表单url和二维码数据
             //log.info("doCreateForm  ==>  form  ==>  " + form.toString());
@@ -230,8 +230,8 @@ public class FormServiceImpl implements FormService {
             form.setFormCreateTime(new Timestamp(System.currentTimeMillis()));
             form.setFormUpdateTime(new Timestamp(System.currentTimeMillis()));
             form.setFormViewCount(0);
-            form.setFormTitle(form.getFormName() + "-副本");
-            form.setFormName(form.getFormName() + "-副本");
+            form.setFormName(form.getFormTitle() + "-副本");
+            form.setFormTitle(form.getFormTitle() + "-副本");
             form.setFormIsFavour(0);
             form.setFormCut(0);
             form.setFormIsIssure(0);
