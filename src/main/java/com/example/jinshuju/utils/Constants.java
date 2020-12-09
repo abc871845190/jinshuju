@@ -46,5 +46,6 @@ public interface Constants {
     interface Url{
         String host = "http://qforest.max3.fgnwctvip.com";
         String host1 = "http://qforest.fast2.fgnwctvip.com";
+        String host2 = "http://qforest.fast.fgnwctvip.com";
     }
 }

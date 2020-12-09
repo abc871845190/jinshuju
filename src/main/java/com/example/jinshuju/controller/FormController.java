@@ -137,30 +137,30 @@ public class FormController {
         return formService.updateFormOpen(formId);
     }
 
-    @ApiOperation(value = "获取所有已公开模版该tag下的第n个分页以及搜寻的关键字", response = Result.class)
-    @ApiResponses({
-            @ApiResponse(code = 1, message = "成功"),
-            @ApiResponse(code = 2, message = "失败")
-    })
-    @GetMapping("/getFormsPage")
-    public Result getFormsPage(@RequestParam(name = "keyWord", required = false, defaultValue = "") String keyWord,
-                               @RequestParam(name = "formTag", required = false, defaultValue = "") String formTag,
-                               @RequestParam(name = "page", required = false, defaultValue = "1") int pageInt) {
-        //log.info(keyWord + "   " + formTag + "   " + pageInt);
-        return formService.getFormsPage(keyWord, formTag, pageInt);
-    }
-
-    @ApiOperation(value = "获取所有已公开模版该tag下的总分页数以及关键字", response = Result.class)
-    @ApiResponses({
-            @ApiResponse(code = 1, message = "成功"),
-            @ApiResponse(code = 2, message = "失败")
-    })
-    @GetMapping("/getPageCount")
-    public Result getPageCount(@RequestParam(name = "keyWord", required = false, defaultValue = "") String keyWord,
-                               @RequestParam(name = "formTag", required = false, defaultValue = "") String formTag) {
-        //log.info(keyWord + "   " + formTag);
-        return formService.getPageCount(keyWord, formTag);
-    }
+//    @ApiOperation(value = "获取所有已公开模版该tag下的第n个分页以及搜寻的关键字", response = Result.class)
+//    @ApiResponses({
+//            @ApiResponse(code = 1, message = "成功"),
+//            @ApiResponse(code = 2, message = "失败")
+//    })
+//    @GetMapping("/getFormsPage")
+//    public Result getFormsPage(@RequestParam(name = "keyWord", required = false, defaultValue = "") String keyWord,
+//                               @RequestParam(name = "formTag", required = false, defaultValue = "") String formTag,
+//                               @RequestParam(name = "page", required = false, defaultValue = "1") int pageInt) {
+//        //log.info(keyWord + "   " + formTag + "   " + pageInt);
+//        return formService.getFormsPage(keyWord, formTag, pageInt);
+//    }
+//
+//    @ApiOperation(value = "获取所有已公开模版该tag下的总分页数以及关键字", response = Result.class)
+//    @ApiResponses({
+//            @ApiResponse(code = 1, message = "成功"),
+//            @ApiResponse(code = 2, message = "失败")
+//    })
+//    @GetMapping("/getPageCount")
+//    public Result getPageCount(@RequestParam(name = "keyWord", required = false, defaultValue = "") String keyWord,
+//                               @RequestParam(name = "formTag", required = false, defaultValue = "") String formTag) {
+//        //log.info(keyWord + "   " + formTag);
+//        return formService.getPageCount(keyWord, formTag);
+//    }
 
     @ApiOperation(value = "查看我为别人填写过的表单", response = Result.class)
     @ApiResponses({
@@ -180,11 +180,6 @@ public class FormController {
     @GetMapping("/getOpenFormUrl/{formId}")
     public Result getOpenFormUrl(@PathVariable("formId") String formId) {
         return formService.getOpenFormUrl(formId);
-    }
-
-    @GetMapping("/createQRCode/{formId}")
-    public void createQRCodeByUrl(HttpServletResponse response, @PathVariable("formId") String formId) {
-        formService.createQRCode(formId, response);
     }
 
     @ApiOperation(value = "收藏表单和取消收藏表单", response = Result.class)
@@ -224,9 +219,12 @@ public class FormController {
             @ApiResponse(code = 1, message = "成功"),
             @ApiResponse(code = 2, message = "失败")
     })
-    @PatchMapping("/updateIssure/{formId}")
-    public Result updateIssure(@PathVariable("formId") String formId) {
-        return formService.updateFormIssure(formId);
+    @PatchMapping("/updateIssure")
+    public Result updateIssure(@RequestParam("formId") String formId,
+                               @RequestParam("formIssureTag") String formIssureTag,
+                               @RequestParam(name = "formIssureDesc", defaultValue = "") String formIssureDesc,
+                               @RequestParam("formIssureName") String formIssureName) {
+        return formService.updateFormIssure(formId, formIssureTag,formIssureDesc,formIssureName);
     }
 
     @ApiOperation(value = "获取发布表单", response = Result.class)
@@ -312,7 +310,7 @@ public class FormController {
 
     @ApiOperation(value = "表单公开填写开启和关闭截止功能，默认两小时", response = Result.class)
     @PostMapping("/addFormCutTime")
-    public Result addFormCutTime(@RequestParam("formId")String formId,@RequestParam("date") Date date){
-        return formService.updateFormCutTime(formId,date);
+    public Result addFormCutTime(@RequestParam("formId") String formId, @RequestParam("date") Date date) {
+        return formService.updateFormCutTime(formId, date);
     }
 }

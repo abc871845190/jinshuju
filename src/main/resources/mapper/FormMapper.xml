@@ -22,7 +22,6 @@
             <if test="form.formImg == null or form.formImg == ''">form_img,</if>
             user_id,
             form_isFavour,
-            form_isIssure,
         </trim>
         <trim prefix="values(" suffix=")" suffixOverrides=",">
             #{form.formId},
@@ -38,10 +37,9 @@
             <if test="form.formUrl != null and form.formUrl != null">#{form.formUrl},</if>
             #{form.formViewCount},
             <if test="form.formImg != null and form.formImg != ''">#{form.formImg},</if>
-            <if test="form.formImg == null or form.formImg == ''">"localhost:8080/img/default_img.jpg",</if>
+            <if test="form.formImg == null or form.formImg == ''">"/img/default_img.jpg",</if>
             #{user.userId},
             #{form.formIsFavour},
-            #{form.formIsIssure},
         </trim>
         <!--        <selectKey keyProperty="form.formId" keyColumn="form_id" order="AFTER" resultType="int">-->
         <!--            select LAST_INSERT_ID()-->
@@ -72,7 +70,7 @@
             <trim prefix="(" suffix=")" suffixOverrides=",">
                 #{formId},
                 #{item.templateId},
-                <if test="item.templateDesc == null or item.templateDesc == ''">"描述",</if>
+                <if test="item.templateDesc == null or item.templateDesc == ''">"",</if>
                 <if test="item.templateDesc != null and item.templateDesc != ''">#{item.templateDesc},</if>
                 <if test="item.templateTitle == null or item.templateTitle == ''">"未定义组件名",</if>
                 <if test="item.templateTitle != null and item.templateTitle != ''">#{item.templateTitle},</if>
@@ -113,7 +111,7 @@
                 #{item.formTemplateId},
                 #{formId},
                 #{item.templateId},
-                <if test="item.templateDesc == null or item.templateDesc == ''">"描述",</if>
+                <if test="item.templateDesc == null or item.templateDesc == ''">"",</if>
                 <if test="item.templateDesc != null and item.templateDesc != ''">#{item.templateDesc},</if>
                 <if test="item.templateTitle == null or item.templateTitle == ''">"未定义组件名",</if>
                 <if test="item.templateTitle != null and item.templateTitle != ''">#{item.templateTitle},</if>
@@ -175,8 +173,7 @@
     </update>
     <update id="updateFormIssureById">
         update form
-        set form_isIssure    = #{formIssure},
-            form_update_time = #{time}
+        set form_update_time = #{time}
         where BINARY form_id = #{formId}
     </update>
     <update id="updateTemplateContent">
@@ -333,44 +330,6 @@
         select form_open
         from form
         where BINARY form_id = #{formId}
-    </select>
-    <select id="getFormsByTagAndPage" resultMap="FormResultMap">
-        SELECT
-        f.*,
-        ft.form_type
-        FROM
-        form f,
-        form_form_type fft,
-        form_type ft
-        WHERE
-        f.form_isIssure = 1
-        AND BINARY f.form_id = BINARY fft.form_id
-        AND fft.form_type_id = ft.id
-        <if test="formTagArray != null">
-            AND
-            <foreach collection="formTagArray" index="index" item="item" open="(" close=")" separator="and">
-                find_in_set(#{item},f.form_tag)
-            </foreach>
-        </if>
-        <if test="keyWord != null">
-            AND find_in_set(#{keyWord},f.form_name)
-        </if>
-        LIMIT #{offset},#{rows}
-    </select>
-    <select id="getFormsCountByTag" resultType="java.lang.Integer">
-        select count(*)
-        from form
-        where
-        form_isIssure = 1
-        <if test="formTagArray != null">
-            and
-            <foreach collection="formTagArray" index="index" item="item" open="(" close=")" separator="and">
-                find_in_set(#{item},form_tag)
-            </foreach>
-        </if>
-        <if test="keyWord != null">
-            AND find_in_set(#{keyWord},form_name)
-        </if>
     </select>
     <resultMap id="FormDataResultMap" type="com.example.jinshuju.pojo.Form">
         <id property="formId" column="form_id"/>

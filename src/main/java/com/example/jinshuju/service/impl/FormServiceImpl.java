@@ -15,10 +15,10 @@ import com.google.zxing.WriterException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -55,7 +55,6 @@ public class FormServiceImpl implements FormService {
         form.setFormOpen(0);
         form.setFormViewCount(0);
         form.setFormIsFavour(0);
-        form.setFormIsIssure(0);
         form.setFormCut(0);
         form.setFormCutTime(new Timestamp(new Date().getTime()));
         //插入form，获取id
@@ -63,7 +62,8 @@ public class FormServiceImpl implements FormService {
         return doCreateForm(user, form);
     }
 
-    private Result doCreateForm(User user, Form form) throws IOException, WriterException {
+    @Override
+    public Result doCreateForm(User user, Form form) throws WriterException, IOException {
         String formId = form.getFormId();
         if (formMapper.insertForm(user, form)) {
             //插入成功，原form实例添加id
@@ -142,7 +142,7 @@ public class FormServiceImpl implements FormService {
      * @param haveNewTemplateList
      */
     private void insertOldAndNewTemplateList(List<Data> dataList, String formId, List<Template> haveOldTemplateList, List<Template> haveNewTemplateList) {
-        log.info("insertOldAndNewTemplateList  ==>  dataList  ==>  " + dataList.toString());
+        //log.info("insertOldAndNewTemplateList  ==>  dataList  ==>  " + dataList.toString());
         //判断旧的是否有组件
         if (haveOldTemplateList.size() != 0) {
             //先插入旧的
@@ -224,6 +224,7 @@ public class FormServiceImpl implements FormService {
         }
         //获取表单id的所有表单信息
         Form form = formMapper.getFormByFormId(formId);
+        log.info("copyForm  ==>  oldForm  ==>  " + form.toString());
         if (form != null) {
             //更新复制表单数据
             form.setFormId(UUIDUtils.getRandomId(16));
@@ -234,8 +235,51 @@ public class FormServiceImpl implements FormService {
             form.setFormTitle(form.getFormTitle() + "-副本");
             form.setFormIsFavour(0);
             form.setFormCut(0);
-            form.setFormIsIssure(0);
             form.setFormOpen(0);
+            if (form.getTemplateList().size() != 0 && form.getTemplateList() != null) {
+                //有组件 遍历
+                for (Template t : form.getTemplateList()) {
+                    t.setFormTemplateId(0);
+                    int templateId = t.getTemplateId();
+                    if (templateId == 5 || templateId == 6) {
+                        //图片类型
+                        //将templateImgUrl里面所有文件复制并替换
+                        //获取templateImgUrl
+                        String templateImgUrl = t.getTemplateImgUrl();
+                        String newTemplateImgUrl = null;
+                        if (!TextUtils.isEmpty(templateImgUrl)) {
+                            List<DataBean> dataBeanList = JSON.parseArray(templateImgUrl, DataBean.class);
+                            if (dataBeanList != null && dataBeanList.size() != 0) {
+                                for (DataBean db : dataBeanList) {
+                                    String imgUrl = db.getValue();
+                                    log.info("copyForm  ==>  oldImgUrl  ==>  " + imgUrl);
+                                    if (!TextUtils.isEmpty(imgUrl)) {
+                                        String fileName = imgUrl.substring(imgUrl.lastIndexOf("/") + 1);
+                                        String fileType = fileName.substring(fileName.lastIndexOf(".") + 1);
+                                        String newFileName = UUIDUtils.getUUID().replace("-", "") + "." + fileType;
+                                        File oldFile = new File(Constants.FilePath.FILE_IMG_TEMPLATE + File.separator + fileName);
+                                        File newFile = new File(Constants.FilePath.FILE_IMG_TEMPLATE + File.separator + newFileName);
+                                        try {
+                                            FileCopyUtils.copy(oldFile, newFile);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                        String newImgUrl = Constants.Url.host1 + "/img/TemplateImg/" + newFileName;
+                                        log.info("copyForm  ==>  newImgUrl  ==>  " + newImgUrl);
+                                        //设置到新的value里面
+                                        db.setValue(newImgUrl);
+                                    }
+                                }
+                            }
+                            //序列化
+                            newTemplateImgUrl = JSON.toJSONString(dataBeanList);
+                        }
+                        t.setTemplateImgUrl(newTemplateImgUrl);
+                        log.info("copyForm  ==>  templateImgUrl  ==>  " + t.getTemplateImgUrl());
+                    }
+                }
+            }
+            log.info("copyForm  ==>  newForm  ==>  " + form.toString());
             //插入新表单
             return doCreateForm(user, form);
         }
@@ -344,49 +388,49 @@ public class FormServiceImpl implements FormService {
         return ResultUtils.fail(ResultEnum.FORM_ID_EMTRY.getCode(), ResultEnum.FORM_ID_EMTRY.getMsg());
     }
 
-    @Override
-    public Result getFormsPage(String keyWord, String formTag, int pageInt) {
-        //如果传值keyWord = null 或者 = "" 在sql判断
-        //keyWord判空
-        if (TextUtils.isEmpty(keyWord)) {
-            keyWord = null;
-        }
-        //初定size为20个
-        int rows = 20;
-        int offset = (pageInt - 1) * rows;
-        //解析formTag 如果formTag = null 或者 = ""
-        String[] formTagArray;
-        if (TextUtils.isEmpty(formTag)) {
-            //一律处理formTagArray为null
-            formTagArray = null;
-        } else {
-            //不为空
-            formTagArray = TextUtils.splitString(formTag, ",");
-        }
-        List<Form> formList = formMapper.getFormsByTagAndPage(keyWord, formTagArray, offset, rows);
-        return ResultUtils.success("成功", formList);
-    }
-
-    @Override
-    public Result getPageCount(String keyWord, String formTag) {
-        //keyWord判空
-        if (TextUtils.isEmpty(keyWord)) {
-            keyWord = null;
-        }
-        //初定size为20个
-        int rows = 20;
-        //解析formTag
-        String[] formTagArray;
-        if (TextUtils.isEmpty(formTag)) {
-            //一律处理formTagArray为null
-            formTagArray = null;
-        } else {
-            //不为空
-            formTagArray = TextUtils.splitString(formTag, ",");
-        }
-        int allCount = formMapper.getFormsCountByTag(keyWord, formTagArray);
-        return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), (allCount + rows - 1) / rows);
-    }
+//    @Override
+//    public Result getFormsPage(String keyWord, String formTag, int pageInt) {
+//        //如果传值keyWord = null 或者 = "" 在sql判断
+//        //keyWord判空
+//        if (TextUtils.isEmpty(keyWord)) {
+//            keyWord = null;
+//        }
+//        //初定size为20个
+//        int rows = 20;
+//        int offset = (pageInt - 1) * rows;
+//        //解析formTag 如果formTag = null 或者 = ""
+//        String[] formTagArray;
+//        if (TextUtils.isEmpty(formTag)) {
+//            //一律处理formTagArray为null
+//            formTagArray = null;
+//        } else {
+//            //不为空
+//            formTagArray = TextUtils.splitString(formTag, ",");
+//        }
+//        List<Form> formList = formMapper.getFormsByTagAndPage(keyWord, formTagArray, offset, rows);
+//        return ResultUtils.success("成功", formList);
+//    }
+//
+//    @Override
+//    public Result getPageCount(String keyWord, String formTag) {
+//        //keyWord判空
+//        if (TextUtils.isEmpty(keyWord)) {
+//            keyWord = null;
+//        }
+//        //初定size为20个
+//        int rows = 20;
+//        //解析formTag
+//        String[] formTagArray;
+//        if (TextUtils.isEmpty(formTag)) {
+//            //一律处理formTagArray为null
+//            formTagArray = null;
+//        } else {
+//            //不为空
+//            formTagArray = TextUtils.splitString(formTag, ",");
+//        }
+//        int allCount = formMapper.getFormsCountByTag(keyWord, formTagArray);
+//        return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), (allCount + rows - 1) / rows);
+//    }
 
     @Override
     public Result getFilledForms(User user) {
@@ -405,14 +449,6 @@ public class FormServiceImpl implements FormService {
             return ResultUtils.success(ResultEnum.SUCCESS.getMsg(), formMapper.getFormUrlById(formId));
         }
         return ResultUtils.fail(ResultEnum.FORM_ID_EMTRY.getCode(), ResultEnum.FORM_ID_EMTRY.getMsg());
-    }
-
-    @Override
-    public void createQRCode(String formId, HttpServletResponse response) {
-        if (formMapper.checkFormById(formId) != null) {
-            String QRcodePath = formMapper.getFormQRCodeById(formId);
-            //TODO:....
-        }
     }
 
     @Override
@@ -456,18 +492,20 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
-    public Result updateFormIssure(String formId) {
+    public Result updateFormIssure(String formId, String formIssureTag, String formIssureDesc, String formIssureName) {
+        //判空
+        if (TextUtils.isEmpty(formIssureTag)) {
+            return ResultUtils.fail("表单发布模板tag为空");
+        }
         //判断formid是否存在
         if (formMapper.checkFormById(formId) != null) {
             //数据库拿标识int
             int flag = formMapper.getFormIssureById(formId);
             if (flag == 0) {
-                formMapper.updateFormIssureById(formId, flag + 1, new Timestamp(System.currentTimeMillis()));
+                formMapper.updateFormIssureById(formId, flag + 1, formIssureTag, new Timestamp(System.currentTimeMillis()));
                 return ResultUtils.success(ResultEnum.FORM_IS_ISSURE.getCode(), ResultEnum.FORM_IS_ISSURE.getMsg());
-            } else {
-                formMapper.updateFormIssureById(formId, flag - 1, new Timestamp(System.currentTimeMillis()));
-                return ResultUtils.success(ResultEnum.FORM_IS_NOT_ISSURE.getCode(), ResultEnum.FORM_IS_NOT_ISSURE.getMsg());
             }
+            return ResultUtils.fail("表单已经发布为模板");
         }
         return ResultUtils.fail(ResultEnum.FORM_ID_EMTRY.getCode(), ResultEnum.FORM_ID_EMTRY.getMsg());
     }

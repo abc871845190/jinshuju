@@ -6,7 +6,6 @@ import com.example.jinshuju.utils.ResultUtils.Result;
 import com.google.zxing.WriterException;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
@@ -95,23 +94,23 @@ public interface FormService {
      */
     Result updateFormOpen(String formId);
 
-    /**
-     * 获取该tag下的第n个分页
-     *
-     * @param keyWord
-     * @param formTag
-     * @param pageInt
-     * @return
-     */
-    Result getFormsPage(String keyWord, String formTag, int pageInt);
-
-    /**
-     * 获取该tag的总分页数
-     *
-     * @param formTag
-     * @return
-     */
-    Result getPageCount(String keyWord, String formTag);
+//    /**
+//     * 获取该tag下的第n个分页
+//     *
+//     * @param keyWord
+//     * @param formTag
+//     * @param pageInt
+//     * @return
+//     */
+//    Result getFormsPage(String keyWord, String formTag, int pageInt);
+//
+//    /**
+//     * 获取该tag的总分页数
+//     *
+//     * @param formTag
+//     * @return
+//     */
+//    Result getPageCount(String keyWord, String formTag);
 
     /**
      * 查看我为别人填写过的表单
@@ -127,14 +126,6 @@ public interface FormService {
      * @return
      */
     Result getOpenFormUrl(String formId);
-
-    /**
-     * 生成表单填写二维码
-     *
-     * @param formId
-     * @param response
-     */
-    void createQRCode(String formId, HttpServletResponse response);
 
     /**
      * 表单收藏
@@ -164,9 +155,11 @@ public interface FormService {
      * 表单公布为模版和取消公布为模版
      *
      * @param formId
+     * @param formIssureDesc
+     * @param formIssureName
      * @return
      */
-    Result updateFormIssure(String formId);
+    Result updateFormIssure(String formId, String formIssureTag, String formIssureDesc, String formIssureName);
 
     /**
      * 获取发布表单信息
@@ -258,4 +251,13 @@ public interface FormService {
      * @return
      */
     Result updateFormCutTime(String formId, Date date);
+
+    /**
+     * 创建表单连串操作
+     *
+     * @param user
+     * @param form
+     * @return
+     */
+    Result doCreateForm(User user, Form form) throws WriterException, IOException;
 }

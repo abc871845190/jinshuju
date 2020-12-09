@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -198,12 +199,12 @@ class JinshujuApplicationTests {
 //        log.info(beanTOJson);
 
 //        log.info(String.valueOf(ArrayUtils.isHaveByInt(2, Constants.Array.MultiSelect)));
-        List<DataBean> dataBeanList = JSON.parseArray(emptyCheckBox,DataBean.class);
+        List<DataBean> dataBeanList = JSON.parseArray(emptyCheckBox, DataBean.class);
         log.info(dataBeanList.toString());
         log.info(String.valueOf(dataBeanList.size()));
-        DataBean dataBean = JSON.parseObject(emptyRadio,DataBean.class);
+        DataBean dataBean = JSON.parseObject(emptyRadio, DataBean.class);
         log.info(dataBeanList.toString());
-        log.info(String.valueOf(dataBean!=null));
+        log.info(String.valueOf(dataBean != null));
     }
 
     @Test
@@ -217,5 +218,30 @@ class JinshujuApplicationTests {
         //log.info(code);
         String uncode = new String(Base64.decodeBase64(code));
         log.info(uncode);
+    }
+
+    @Test
+    public void testFile() {
+        //[{"key":1,"value":"http://jinshuju.fast2.fgnwctvip.com/img/TemplateImg/d2359ffed0e04e9298bb712be69473f6.png"}]
+        String formImgUrl = "[{\"key\":1,\"value\":\"http://jinshuju.fast2.fgnwctvip.com/img/TemplateImg/bd2c9996b7aa49329108ee42b2114a46.gif\"}]";
+        List<DataBean> dataBeanList = JSON.parseArray(formImgUrl, DataBean.class);
+        if (dataBeanList != null && dataBeanList.size() != 0) {
+            for (DataBean db : dataBeanList) {
+                String fileUrl = db.getValue();
+                String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+                log.info(fileName);
+                String fileType = fileName.substring(fileName.lastIndexOf(".") + 1);
+                log.info(fileType);
+                String newFileName = UUIDUtils.getUUID().replace("-", "") + "." + fileType;
+                File oldFile = new File(Constants.FilePath.FILE_IMG_TEMPLATE + File.separator + fileName);
+                File newFile = new File(Constants.FilePath.FILE_IMG_TEMPLATE + File.separator + newFileName);
+                try {
+                    FileCopyUtils.copy(oldFile, newFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                log.info(newFileName);
+            }
+        }
     }
 }

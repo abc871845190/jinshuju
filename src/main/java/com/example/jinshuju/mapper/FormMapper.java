@@ -141,25 +141,25 @@ public interface FormMapper {
      */
     Boolean deleteTemplateList(String formId);
 
-    /**
-     * 根据 tag和page 查询分页表单（都设置已公开）
-     *
-     * @param keyWord      表单名关键词
-     * @param formTagArray
-     * @param offset
-     * @param rows
-     * @return
-     */
-    List<Form> getFormsByTagAndPage(@Param("keyWord") String keyWord, @Param("formTagArray") String[] formTagArray, @Param("offset") int offset, @Param("rows") int rows);
-
-    /**
-     * 根据 tag 查询分页总数目（都设置已公开的）
-     *
-     * @param keyWord      表单名关键词
-     * @param formTagArray
-     * @return
-     */
-    int getFormsCountByTag(@Param("keyWord") String keyWord, @Param("formTagArray") String[] formTagArray);
+//    /**
+//     * 根据 tag和page 查询分页表单（都设置已公开）
+//     *
+//     * @param keyWord      表单名关键词
+//     * @param formTagArray
+//     * @param offset
+//     * @param rows
+//     * @return
+//     */
+//    List<Form> getFormsByTagAndPage(@Param("keyWord") String keyWord, @Param("formTagArray") String[] formTagArray, @Param("offset") int offset, @Param("rows") int rows);
+//
+//    /**
+//     * 根据 tag 查询分页总数目（都设置已公开的）
+//     *
+//     * @param keyWord      表单名关键词
+//     * @param formTagArray
+//     * @return
+//     */
+//    int getFormsCountByTag(@Param("keyWord") String keyWord, @Param("formTagArray") String[] formTagArray);
 
     /**
      * 根据用户id 获取该id所填写过别人的表单，---排除自己的表单---
@@ -225,7 +225,7 @@ public interface FormMapper {
      * @param formIssure
      * @return
      */
-    Boolean updateFormIssureById(@Param("formId") String formId, @Param("formIssure") int formIssure, @Param("time") Timestamp time);
+    Boolean updateFormIssureById(@Param("formId") String formId, @Param("formIssure") int formIssure, @Param("formIssureTag") String formIssureTag, @Param("time") Timestamp time);
 
     /**
      * 删除整个组件
