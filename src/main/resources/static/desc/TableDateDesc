@@ -1,0 +1,26 @@
+表单数据传输说明
+{
+    component:               注册组件的名字,
+    selected:                 是否被选中
+    data:{                    详细内容
+        head:                 大标题名称
+        detailed:             大标题描述
+        title:                标题名称
+        desc:                 小组件描述
+        options:              单选框/多选框选项
+        type:                 设定类型
+        data:空               存储返回的数据
+    }
+}
+
+components:
+    t_head          表头标题
+    t_checkbox      多选框
+    t_radio         单选框
+    t_select        下拉选择框
+    t_textbox       输入框:
+        type:
+        normal             普通输入框
+        textarea           多行文本输入框
+        Chinese            汉字输入框
+        number             数字输入框

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.jinshuju.mapper.IssureFormMapper">
+
+
+    <insert id="insertFormIssure">
+        insert into issure_form
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            issure_form_id,
+            issure_form_name,
+            <if test="issureForm.issureFormDesc != null and issureForm.issureFormDesc != ''">issure_form_desc,</if>
+            issure_form_create_time,
+            <if test="issureForm.issureFormTag != null and issureForm.issureFormTag != null">issure_form_tag,</if>
+            issure_form_view_count,
+            issure_form_like_count,
+            issure_form_use_count,
+            issure_form_img,
+            user_id,
+            <if test="issureForm.issureFormScreenshot != null and issureForm.issureFormScreenshot != null">
+                issure_form_screenshot,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            #{issureForm.issureFormId},
+            <if test="issureForm.issureFormName != null and issureForm.issureFormName != ''">
+                #{issureForm.issureFormName},
+            </if>
+            <if test="issureForm.issureFormName == null or issureForm.issureFormName == ''">"未命名表单名",</if>
+            <if test="issureForm.issureFormDesc != null and issureForm.issureFormDesc != ''">
+                #{issureForm.issureFormDesc},
+            </if>
+            #{issureForm.issureFormCreateTime},
+            <if test="issureForm.issureFormTag != null and issureForm.issureFormTag != null">
+                #{issureForm.issureFormTag},
+            </if>
+            <if test="issureForm.issureFormTag == null or issureForm.issureFormTag == null">"",</if>
+            #{issureForm.issureFormViewCount},
+            #{issureForm.issureFormLikeCount},
+            #{issureForm.issureFormUseCount},
+            <if test="issureForm.issureFormImg != null and issureForm.issureFormImg != ''">
+                #{issureForm.issureFormImg},
+            </if>
+            <if test="issureForm.issureFormImg == null or issureForm.issureFormImg == ''">"/img/default_img.jpg",</if>
+            #{userId},
+            <if test="issureForm.issureFormScreenshot != null and issureForm.issureFormScreenshot != null">
+                #{issureForm.issureFormScreenshot}
+            </if>
+        </trim>
+    </insert>
+    <insert id="insertFormIssureTemplate">
+        insert into issure_form_template (
+        issure_form_id,
+        template_id,
+        template_desc,
+        issure_template_title,
+        issure_template_content,
+        issure_template_count,
+        issure_template_default,
+        template_type,
+        template_icon,
+        template_img_url,
+        template_require
+        ) values
+        <foreach collection="templateList" item="item" index="index" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{issureFormId},
+                #{item.templateId},
+                <if test="item.templateDesc == null or item.templateDesc == ''">"",</if>
+                <if test="item.templateDesc != null and item.templateDesc != ''">#{item.templateDesc},</if>
+                <if test="item.templateTitle == null or item.templateTitle == ''">"未定义组件名",</if>
+                <if test="item.templateTitle != null and item.templateTitle != ''">#{item.templateTitle},</if>
+                <if test="item.templateContent == null or item.templateContent == ''">
+                    (SELECT template_content_default FROM template WHERE template_id = #{item.templateId}),
+                </if>
+                <if test="item.templateContent != null and item.templateContent != ''">#{item.templateContent},</if>
+                #{item.templateCount},
+                <if test="item.templateDefault == null or item.templateDefault == ''">"null",</if>
+                <if test="item.templateDefault != null and item.templateDefault != ''">#{item.templateDefault},</if>
+                <if test="item.templateType == null or item.templateType == ''">"normal",</if>
+                <if test="item.templateType != null and item.templateType != ''">#{item.templateType},</if>
+                <if test="item.templateIcon == null or item.templateIcon == ''">null,</if>
+                <if test="item.templateIcon != null and item.templateIcon != ''">#{item.templateIcon},</if>
+                <if test="item.templateImgUrl == null or item.templateImgUrl == ''">null,</if>
+                <if test="item.templateImgUrl != null and item.templateImgUrl != ''">#{item.templateImgUrl},</if>
+                #{item.templateRequire},
+            </trim>
+        </foreach>
+    </insert>
+    <delete id="deleteIssureForm" parameterType="String">
+        delete
+        from issure_form
+        where issure_form_id = #{issureFormId}
+    </delete>
+    <resultMap id="IssureFormResultMap" type="com.example.jinshuju.pojo.IssureForm">
+        <id property="issureFormId" column="issure_form_id"/>
+        <result property="issureFormName" column="issure_form_name"/>
+        <result property="issureFormDesc" column="issure_form_desc"/>
+        <result property="issureFormCreateTime" column="issure_form_create_time"/>
+        <result property="issureFormTag" column="issure_form_tag"/>
+        <result property="issureFormViewCount" column="issure_form_view_count"/>
+        <result property="issureFormLikeCount" column="issure_form_like_count"/>
+        <result property="issureFormUseCount" column="issure_form_use_count"/>
+        <result property="issureFormImg" column="issure_form_img"/>
+        <association property="user" javaType="com.example.jinshuju.pojo.User"
+                     resultMap="com.example.jinshuju.mapper.UserMapper.UserDataMap"/>
+        <collection property="templateList" ofType="com.example.jinshuju.pojo.Template"
+                    column="issure_form_id" select="getTemplatesByIssureFormId"/>
+    </resultMap>
+    <select id="getIssureFormListByTagAndPage" resultMap="IssureFormResultMap">
+        SELECT
+        isf.*,
+        u.user_name,
+        u.user_img,
+        u.user_create_time,
+        u.user_email,
+        u.user_telephone
+        FROM
+        issure_form isf,user u
+        WHERE
+        isf.user_id = u.user_id
+        <if test="formTagArray != null">
+            AND
+            <foreach collection="formTagArray" index="index" item="item" open="(" close=")" separator="and">
+                find_in_set(#{item},isf.issure_form_tag)
+            </foreach>
+        </if>
+        <if test="keyWord != null">
+            AND find_in_set(#{keyWord},isf.issure_form_name)
+        </if>
+        LIMIT #{offset},#{rows}
+    </select>
+    <select id="getTemplatesByIssureFormId" resultType="com.example.jinshuju.pojo.Template" parameterType="String">
+        SELECT ift.issure_form_template_id,
+               ift.template_id,
+               ift.issure_template_title,
+               ift.issure_template_default,
+               ift.issure_template_count,
+               ift.issure_template_content,
+               ift.template_type,
+               t.template_name,
+               ift.template_desc,
+               ift.template_icon,
+               ift.template_img_url,
+               ift.template_require
+        FROM issure_form_template ift,
+             template t
+        WHERE BINARY issure_form_id = #{issure_form_id}
+          AND ift.template_id = t.template_id
+    </select>
+    <select id="getFormsCountByTag" resultType="java.lang.Integer">
+        select count(*)
+        from issure_form
+        where
+        1 = 1
+        <if test="formTagArray != null">
+            and
+            <foreach collection="formTagArray" index="index" item="item" open="(" close=")" separator="and">
+                find_in_set(#{item},issure_form_tag)
+            </foreach>
+        </if>
+        <if test="keyWord != null">
+            AND find_in_set(#{keyWord},issure_form_name)
+        </if>
+    </select>
+    <select id="checkIssureForm" resultType="java.lang.Integer">
+        select 1
+        from issure_form
+        where issure_form_id = #{issureFormId}
+        limit 1
+    </select>
+    <select id="getIssureFormById" resultMap="IssureFormResultMap">
+        select isf.*,
+               u.user_name,
+               u.user_img,
+               u.user_create_time,
+               u.user_email,
+               u.user_telephone
+        from issure_form isf,
+             user u
+        WHERE issure_form_id = #{issureFormId}
+          and u.user_id = isf.user_id
+    </select>
+</mapper>
