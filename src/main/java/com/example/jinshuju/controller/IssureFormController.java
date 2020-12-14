@@ -65,7 +65,7 @@ public class IssureFormController {
     public Result getIssureForm(@PathVariable("issureFormId") String issureFormId) {
         return issureFormService.getIssureForm(issureFormId);
     }
-    @ApiOperation(value = "选取模板为自己的表单，要登录", response = Result.class)
+    @ApiOperation(value = "选取模板为自己的表单，要登录，选用量加一", response = Result.class)
     @GetMapping("/copyIssureForm/{issureFormId}")
     public Result copyIssureForm(@PathVariable("issureFormId")String issureFormId,HttpServletRequest request,HttpServletResponse response) throws IOException, WriterException {
         User user = userService.checkUserLogin(request, response);

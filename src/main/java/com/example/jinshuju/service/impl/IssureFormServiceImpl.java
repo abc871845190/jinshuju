@@ -244,6 +244,7 @@ public class IssureFormServiceImpl implements IssureFormService {
                     }
                 }
             }
+            //TODO:redis存储模板表单的id和选用量
             return formService.doCreateForm(user,form);
         }
         return ResultUtils.fail("模板id为空");
