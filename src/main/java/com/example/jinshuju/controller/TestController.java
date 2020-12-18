@@ -47,4 +47,9 @@ public class TestController {
     public Result checkUpdateCode(@RequestBody User user) {
         return userService.checkUpdateCode(user);
     }
+
+    @GetMapping("/testResult")
+    public Result testResult(){
+        return ResultUtils.success();
+    }
 }
